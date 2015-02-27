@@ -694,6 +694,9 @@
     <ClCompile Include="Model3d\Ayataka\CmdlModelFactory.cpp">
       <Filter>Model3d\Ayataka</Filter>
     </ClCompile>
+    <ClCompile Include="Model3d\Ayataka\templib\pugixml.cpp">
+      <Filter>Model3d\Ayataka\templib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GobSystem">
@@ -743,6 +746,9 @@
     </Filter>
     <Filter Include="Model3d\Ayataka">
       <UniqueIdentifier>{030a9016-1950-4e49-9e20-461d772d77fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model3d\Ayataka\templib">
+      <UniqueIdentifier>{774f6fd8-a2d6-48b8-8693-d23750f796cc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

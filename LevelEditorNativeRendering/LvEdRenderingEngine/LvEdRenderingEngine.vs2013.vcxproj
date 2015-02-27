@@ -35,9 +35,11 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Model3d\Ayataka\Ayataka.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Model3d\Ayataka\Ayataka.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -68,7 +70,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;_DEBUG;_WINDOWS;_USRDLL;LVEDRENDERINGENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\DirectX\XNAMath</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\DirectX\XNAMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -96,7 +98,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;NDEBUG;_WINDOWS;_USRDLL;LVEDRENDERINGENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\DirectX\XNAMath</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\DirectX\XNAMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -315,6 +317,7 @@
     <ClCompile Include="LvEdRenderingEngine.cpp" />
     <ClCompile Include="Model3d\AtgiModelFactory.cpp" />
     <ClCompile Include="Model3d\Ayataka\CmdlModelFactory.cpp" />
+    <ClCompile Include="Model3d\Ayataka\templib\pugixml.cpp" />
     <ClCompile Include="Model3d\ColladaModelFactory.cpp" />
     <ClCompile Include="Model3d\Model3dBuilder.cpp" />
     <ClCompile Include="Model3d\XmlModelFactory.cpp" />

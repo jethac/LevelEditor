@@ -1,5 +1,6 @@
 
 #pragma once
+#include "pugixmlUtil.h"
 
 namespace LvEdEngine
 {
@@ -14,6 +15,7 @@ namespace LvEdEngine
 		virtual bool LoadResource( Resource* resource, const WCHAR * filename );
 
         void ProcessXml(xml_node * root, Model3dBuilder * builder);
+		void ProcessXml( Model3dBuilder* builder, const pugi::xpath_node& root );
     private:
 		ID3D11Device* m_device;
 		void ParseError( const char * fmt, ... );
@@ -33,5 +35,8 @@ namespace LvEdEngine
         void GetTransform(xml_node* node, Matrix * out );
         void ProcessInstance(Model3dBuilder * builder, xml_node* xmlInstance, Node * node);
         void ProcessNode(Model3dBuilder * builder, xml_node* xmlNode, Node * parent);
-    };
+
+		void ProcessModel( Model3dBuilder* builder, const pugi::xpath_node& modelNode );
+		void ProcessMaterial( Model3dBuilder * builder, const pugi::xpath_node& materialNode );
+	};
 };

@@ -1,3 +1,6 @@
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 
 #include "../../VectorMath/V3dMath.h"
 #include "../../VectorMath/CollisionPrimitives.h"
@@ -11,9 +14,178 @@
 #include "../rapidxmlhelpers.h"
 #include "CmdlModelFactory.h"
 
+#include "StringUtil.h"
+
 namespace LvEdEngine
 {
+// ----------------------------------------------------------------------------------------------
+CmdlModelFactory::CmdlModelFactory(ID3D11Device* device) : m_device(device)
+{
+}
 
+// ----------------------------------------------------------------------------------------------
+Resource* CmdlModelFactory::CreateResource(Resource* def)
+{
+    UNREFERENCED_VARIABLE(def);
+    return new Model();
+}
+
+// ----------------------------------------------------------------------------------------------
+bool CmdlModelFactory::LoadResource( Resource* resource, const WCHAR * filename )
+{
+	//UINT dataSize;
+	//BYTE* data = FileUtils::LoadFile( filename, &dataSize );
+	//if( !data ) {
+	//	return false;
+	//}
+
+	Model * model = (Model*)resource;
+	model->SetSourceFileName( filename );
+
+	// char name for logging 'char*' exceptions
+	char charName[MAX_PATH];
+	WideCharToMultiByte( 0, 0, filename, -1, charName, MAX_PATH, NULL, NULL );
+
+	bool succeeded = true;
+	
+	//====================
+
+	Model3dBuilder builder;
+	builder.m_model = model;
+
+	
+	pugi::xml_document doc;
+	if( !doc.load_file( filename ) ) {
+		return false;
+	}
+
+	builder.Begin();
+
+	ProcessXml( &builder, doc );
+
+	builder.End();
+	//====================
+	
+#if 0
+	xml_document doc;
+
+	try {
+		doc.parse<0>( (char*)data );
+
+		m_parseErrors = 0;
+
+		builder.Begin();
+
+		ProcessXml( doc.first_node(), &builder );
+
+		builder.End();
+
+		if( m_parseErrors > 0 ) {
+			Logger::Log( OutputMessageType::Error, L"%d errors occured while parsing, '%s'\n",
+						 m_parseErrors, filename );
+		}
+		else {
+			// this will create the D3D vertex/index buffers as well
+			// as trigger the loading of the textures.
+			model->Construct( m_device, ResourceManager::Inst() );
+		}
+
+		succeeded = true;
+	}
+	catch( rapidxml::parse_error& error ) {
+		Logger::Log( OutputMessageType::Error, "Parse exception: '%s' while processing '%s'\n", error.what(), charName );
+	}
+	catch( std::runtime_error& error ) {
+		Logger::Log( OutputMessageType::Error, "Processing exception: '%s' while processing '%s'\n", error.what(), charName );
+	}
+	catch( ... ) {
+		Logger::Log( OutputMessageType::Error, L"Generic exception while processing '%s'\n", filename );
+	}
+
+	if( !succeeded ) {
+		// clean up model (remove all geometry), but don't free memory because there
+		// are other references to this model from 
+		model->Destroy();
+	}
+
+	SAFE_DELETE_ARRAY( data );
+#endif
+
+	return succeeded;
+}
+
+// ------------------------------------------------------------------------------------------------
+void CmdlModelFactory::ProcessXml( xml_node * atg, Model3dBuilder * builder )
+{
+	// textures
+	for( xml_node* node = FindChildByName( atg, "texture" ); node != NULL; node = FindNextByName( node, "texture" ) ) {
+		ProcessTexture( builder, node );
+	}
+	// shaders
+	for( xml_node* node = FindChildByName( atg, "shader" ); node != NULL; node = FindNextByName( node, "shader" ) ) {
+		ProcessShader( builder, node );
+	}
+	//materials
+	for( xml_node* node = FindChildByName( atg, "material" ); node != NULL; node = FindNextByName( node, "material" ) ) {
+		ProcessShader( builder, node );
+	}
+
+	// instance meshes
+	for( xml_node* scene = FindChildByName( atg, "scene" ); scene != NULL; scene = FindNextByName( scene, "scene" ) ) {
+		for( xml_node* mesh = FindChildByName( scene, "mesh" ); mesh != NULL; mesh = FindNextByName( mesh, "mesh" ) ) {
+			const char* name = GetAttributeText( mesh, "name", true );
+			if( !name ) {
+				name = "!missing-name!";
+			}
+			Node* node = new Node();
+			node->name = name;
+			ProcessCustomDataAttributes( mesh, node );
+			ProcessMesh( builder, mesh, node );
+			builder->AddInstance( node );
+		}
+	}
+
+
+	// scene
+	{
+		xml_node* scene = FindChildByName( atg, "scene" );
+		assert( scene );
+		Node * sceneNode = builder->m_model->CreateNode( "ATGISceneNode" );
+		builder->m_model->SetRoot( sceneNode );
+
+		// nodes
+		for( xml_node* node = FindChildByName( scene, "node" ); node != NULL; node = FindNextByName( node, "node" ) ) {
+			ProcessNode( builder, node, sceneNode );
+		}
+
+		// lod groups, treat them the same as nodes.
+		for( xml_node* node = FindChildByName( scene, "lodgroup" ); node != NULL; node = FindNextByName( node, "lodgroup" ) ) {
+			ProcessNode( builder, node, sceneNode );
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------------------------
+void CmdlModelFactory::ProcessXml( Model3dBuilder* builder, const pugi::xpath_node& root )
+{
+	const char* pRootString = "NintendoWareIntermediateFile/GraphicsContentCtr/Models/%s";
+	pugi::xpath_node_set nodeSet = evaluateXpathQuery( root, pRootString, "Model" );
+	if( nodeSet.size() == 0 ) {
+		nodeSet = evaluateXpathQuery( root, pRootString, "SkeletalModel" );
+	}
+	assert( nodeSet.size() > 0 );
+
+	ProcessModel( builder, nodeSet.first() );
+}
+
+void CmdlModelFactory::ParseError( const char * fmt, ... )
+{
+	va_list args;
+	va_start( args, fmt );
+	Logger::LogVA( OutputMessageType::Error, fmt, args );
+	va_end( args );
+	m_parseErrors++;
+}
 
 // ------------------------------------------------------------------------------------------------
 void CmdlModelFactory::ProcessTexture(Model3dBuilder * builder, xml_node* texNode)
@@ -561,151 +733,49 @@ void CmdlModelFactory::ProcessNode(Model3dBuilder * builder, xml_node* xmlNode, 
     }
 }
 
-// ------------------------------------------------------------------------------------------------
-void CmdlModelFactory::ProcessXml(xml_node * atg, Model3dBuilder * builder)
+void CmdlModelFactory::ProcessModel( Model3dBuilder* builder, const pugi::xpath_node& modelNode )
 {
-    // textures
-    for(xml_node* node = FindChildByName(atg, "texture"); node != NULL; node = FindNextByName(node, "texture"))
-    {
-        ProcessTexture(builder, node);
-    }
-    // shaders
-    for(xml_node* node = FindChildByName(atg, "shader"); node != NULL; node = FindNextByName(node, "shader"))
-    {
-        ProcessShader(builder, node);
-    }
-    //materials
-    for(xml_node* node = FindChildByName(atg, "material"); node != NULL; node = FindNextByName(node, "material"))
-    {
-        ProcessShader(builder, node);
-    }
+	pugi::xpath_node_set nodeSet;
 
-    // instance meshes
-    for(xml_node* scene = FindChildByName(atg, "scene"); scene != NULL; scene = FindNextByName(scene, "scene"))
-    {
-        for(xml_node* mesh = FindChildByName(scene, "mesh"); mesh != NULL; mesh = FindNextByName(mesh, "mesh"))
-        {
-            const char* name = GetAttributeText(mesh, "name", true);
-            if (!name)
-            {
-                name = "!missing-name!";
-            }
-            Node* node = new Node();
-            node->name = name;
-            ProcessCustomDataAttributes(mesh, node);
-            ProcessMesh(builder, mesh, node);
-            builder->AddInstance(node);
-        }
-    }
-    
-
-    // scene
-    {
-        xml_node* scene = FindChildByName(atg, "scene" );
-        assert(scene);
-        Node * sceneNode = builder->m_model->CreateNode("ATGISceneNode");
-        builder->m_model->SetRoot(sceneNode);
-
-        // nodes
-        for(xml_node* node = FindChildByName(scene, "node"); node != NULL; node = FindNextByName(node, "node"))
-        {
-            ProcessNode(builder, node, sceneNode);
-        }
-
-        // lod groups, treat them the same as nodes.
-        for(xml_node* node = FindChildByName(scene, "lodgroup"); node != NULL; node = FindNextByName(node, "lodgroup"))
-        {
-            ProcessNode(builder, node, sceneNode);
-        }
-    }
+	// Materials
+	nodeSet = evaluateXpathQuery( modelNode, "Materials/MaterialCtr" );
+	for( auto node : nodeSet ) {
+		ProcessMaterial( builder, node );
+	}
+	/*const int materialNum = nodeSetMaterial.size();
+	for( int i = 0; i < materialNum; ++i ) {
+		_loadMaterial( cmdl, nodeSetMaterial[i] );
+	}*/
 }
 
-// ----------------------------------------------------------------------------------------------
-CmdlModelFactory::CmdlModelFactory(ID3D11Device* device) : m_device(device)
+void CmdlModelFactory::ProcessMaterial( Model3dBuilder * builder, const pugi::xpath_node& materialNode )
 {
-}
-
-// ----------------------------------------------------------------------------------------------
-Resource* CmdlModelFactory::CreateResource(Resource* def)
-{
-    UNREFERENCED_VARIABLE(def);
-    return new Model();
-}
-
-// ----------------------------------------------------------------------------------------------
-bool CmdlModelFactory::LoadResource( Resource* resource, const WCHAR * filename )
-{
-	UINT dataSize;
-	BYTE* data = FileUtils::LoadFile( filename, &dataSize );
-	if( !data ) {
-		return false;
+	// Material name
+	const char* name = getAttributeString( materialNode.node(), "Name" );
+	if( name == NULL ) {
+		name = "!missing-name!";
 	}
 
-	Model * model = (Model*)resource;
-	model->SetSourceFileName( filename );
+	Material* material = builder->m_model->CreateMaterial( name );
 
-	// char name for logging 'char*' exceptions
-	char charName[MAX_PATH];
-	WideCharToMultiByte( 0, 0, filename, -1, charName, MAX_PATH, NULL, NULL );
+	// Textures
+	pugi::xpath_node_set nodeSet = evaluateXpathQuery( materialNode, "TextureMappers/PixelBasedTextureMapperCtr" );
+	//for( auto textureNode : nodeSet ) 
+	{
+		auto textureNode = nodeSet.first();
 
+		pugi::xpath_node_set nodeSetTextureRef = evaluateXpathQuery( textureNode, "TextureReference" );
+		aya::string textureRefName = split( nodeSetTextureRef.first().node().text().as_string(), "\"" ).at( 1 );
 
-
-	Model3dBuilder builder;
-	builder.m_model = model;
-	xml_document doc;
-	bool succeeded = false;
-
-	try {
-		doc.parse<0>( (char*)data );
-
-		m_parseErrors = 0;
-
-		builder.Begin();
-
-		ProcessXml( doc.first_node(), &builder );
-
-		builder.End();
-
-		if( m_parseErrors > 0 ) {
-			Logger::Log( OutputMessageType::Error, L"%d errors occured while parsing, '%s'\n",
-						 m_parseErrors, filename );
+		// TODO: correct path
+		Model3dBuilder::MaterialData& materialData = builder->m_material;
+		const char* pTextureRefName = textureRefName.c_str();
+		if( materialData.image2file.find( pTextureRefName ) != materialData.image2file.end() ) {
+			materialData.image2file[pTextureRefName] = pTextureRefName;
 		}
-		else {
-			// this will create the D3D vertex/index buffers as well
-			// as trigger the loading of the textures.
-			model->Construct( m_device, ResourceManager::Inst() );
-		}
-
-		succeeded = true;
+		
+		material->texNames[0] = pTextureRefName;
 	}
-	catch( rapidxml::parse_error& error ) {
-		Logger::Log( OutputMessageType::Error, "Parse exception: '%s' while processing '%s'\n", error.what(), charName );
-	}
-	catch( std::runtime_error& error ) {
-		Logger::Log( OutputMessageType::Error, "Processing exception: '%s' while processing '%s'\n", error.what(), charName );
-	}
-	catch( ... ) {
-		Logger::Log( OutputMessageType::Error, L"Generic exception while processing '%s'\n", filename );
-	}
-
-	if( !succeeded ) {
-		// clean up model (remove all geometry), but don't free memory because there
-		// are other references to this model from 
-		model->Destroy();
-	}
-
-	SAFE_DELETE_ARRAY( data );
-
-	return succeeded;
-}
-
-void CmdlModelFactory::ParseError( const char * fmt, ... )
-{
-	va_list args;
-	va_start( args, fmt );
-	Logger::LogVA( OutputMessageType::Error, fmt, args );
-	va_end( args );
-	m_parseErrors++;
 }
 
 }; // namespace LvEdEngine
