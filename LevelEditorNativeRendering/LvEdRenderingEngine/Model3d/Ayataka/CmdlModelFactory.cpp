@@ -15,6 +15,18 @@
 #include "CmdlModelFactory.h"
 
 #include "StringUtil.h"
+#include "LoaderCommon.h"
+
+using namespace pugi;
+
+inline aya::StringVector splitIndexDeclToIndex( aya::string target )
+{
+	CharVector splitters;
+	splitters.push_back( '[' );
+	splitters.push_back( ']' );
+
+	return split( target, splitters );
+}
 
 namespace LvEdEngine
 {
@@ -679,7 +691,7 @@ void CmdlModelFactory::ProcessInstance(Model3dBuilder * builder, xml_node* xmlIn
 
 
 // ------------------------------------------------------------------------------------------------
-void CmdlModelFactory::ProcessNode(Model3dBuilder * builder, xml_node* xmlNode, Node * parent)
+void CmdlModelFactory::ProcessNode(Model3dBuilder* pBuilder, xml_node* xmlNode, Node * parent)
 {
     // we only care about this node if it has either a mesh or child nodes
     xml_node* mesh = FindChildByName(xmlNode, "mesh");
@@ -695,7 +707,7 @@ void CmdlModelFactory::ProcessNode(Model3dBuilder * builder, xml_node* xmlNode, 
     if(mesh || hasJoint || hasNodeChildren || instanceNode || hasLodChildren)
     {
 		std::string fullNodeName = parent->name + std::string(":") + std::string(nodeName);
-        Node * node = builder->m_model->CreateNode(fullNodeName);
+        Node * node = pBuilder->m_model->CreateNode(fullNodeName);
         ProcessCustomDataAttributes(mesh, node);
         GetTransform(xmlNode, &node->transform);
         ParseFloatArray(xmlNode->first_node("thresholds"), &node->thresholds);
@@ -704,11 +716,11 @@ void CmdlModelFactory::ProcessNode(Model3dBuilder * builder, xml_node* xmlNode, 
         
 		if(mesh)
         {
-            ProcessMesh(builder, mesh, node);
+            ProcessMesh(pBuilder, mesh, node);
         }
         if(instanceNode)
         {
-            ProcessInstance(builder, instanceNode, node);
+            ProcessInstance(pBuilder, instanceNode, node);
         }
   
 		// child joint nodes
@@ -716,39 +728,42 @@ void CmdlModelFactory::ProcessNode(Model3dBuilder * builder, xml_node* xmlNode, 
         {
             // used for debug. Can be added to a watch for quick reference...  GJL
 			//const char * childName = GetAttributeText(xmlChild, "name", true);
-			ProcessNode(builder, xmlChild, node);
+			ProcessNode(pBuilder, xmlChild, node);
         }
         // child nodes
         for(xml_node* xmlChild = FindChildByName(xmlNode, "node"); xmlChild!=NULL; xmlChild=FindNextByName(xmlChild, "node"))
         {
             // used for debug. Can be added to a watch for quick reference...  GJL
 			//const char * childName = GetAttributeText(xmlChild, "name", true);
-			ProcessNode(builder, xmlChild, node);
+			ProcessNode(pBuilder, xmlChild, node);
         }
         // child lodgroups - treat them the same as nodes.
         for(xml_node* xmlChild = FindChildByName(xmlNode, "lodgroup"); xmlChild!=NULL; xmlChild=FindNextByName(xmlChild, "lodgroup"))
         {
-            ProcessNode(builder, xmlChild, node);
+            ProcessNode(pBuilder, xmlChild, node);
         }
     }
 }
 
-void CmdlModelFactory::ProcessModel( Model3dBuilder* builder, const pugi::xpath_node& modelNode )
+void CmdlModelFactory::ProcessModel( Model3dBuilder* pBuilder, const pugi::xpath_node& modelNode )
 {
 	pugi::xpath_node_set nodeSet;
 
 	// Materials
 	nodeSet = evaluateXpathQuery( modelNode, "Materials/MaterialCtr" );
 	for( auto node : nodeSet ) {
-		ProcessMaterial( builder, node );
+		ProcessMaterial( pBuilder, node );
 	}
-	/*const int materialNum = nodeSetMaterial.size();
-	for( int i = 0; i < materialNum; ++i ) {
-		_loadMaterial( cmdl, nodeSetMaterial[i] );
-	}*/
+
+	// Meshes
+	nodeSet = evaluateXpathQuery( modelNode, "Meshes/Mesh" );
+	xpath_node_set shapesNodeSet = evaluateXpathQuery( modelNode, "Shapes/SeparateDataShapeCtr" );
+	for( auto node : nodeSet ) {
+		ProcessMesh( pBuilder, node, shapesNodeSet );
+	}
 }
 
-void CmdlModelFactory::ProcessMaterial( Model3dBuilder * builder, const pugi::xpath_node& materialNode )
+void CmdlModelFactory::ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xpath_node& materialNode )
 {
 	// Material name
 	const char* name = getAttributeString( materialNode.node(), "Name" );
@@ -756,10 +771,12 @@ void CmdlModelFactory::ProcessMaterial( Model3dBuilder * builder, const pugi::xp
 		name = "!missing-name!";
 	}
 
-	Material* material = builder->m_model->CreateMaterial( name );
+	Material* material = pBuilder->m_model->CreateMaterial( name );
 
 	// Textures
 	pugi::xpath_node_set nodeSet = evaluateXpathQuery( materialNode, "TextureMappers/PixelBasedTextureMapperCtr" );
+
+	// TODO: use only one texture currently. because can't decide witch texture is witch purpose
 	//for( auto textureNode : nodeSet ) 
 	{
 		auto textureNode = nodeSet.first();
@@ -768,14 +785,121 @@ void CmdlModelFactory::ProcessMaterial( Model3dBuilder * builder, const pugi::xp
 		aya::string textureRefName = split( nodeSetTextureRef.first().node().text().as_string(), "\"" ).at( 1 );
 
 		// TODO: correct path
-		Model3dBuilder::MaterialData& materialData = builder->m_material;
+		Model3dBuilder::MaterialData& materialData = pBuilder->m_material;
 		const char* pTextureRefName = textureRefName.c_str();
-		if( materialData.image2file.find( pTextureRefName ) != materialData.image2file.end() ) {
+		if( materialData.image2file.find( pTextureRefName ) == materialData.image2file.end() ) {
 			materialData.image2file[pTextureRefName] = pTextureRefName;
 		}
 		
 		material->texNames[0] = pTextureRefName;
 	}
+}
+
+void CmdlModelFactory::ProcessMesh( Model3dBuilder* pBuilder, const pugi::xpath_node& meshNode, const pugi::xpath_node_set& shapesNodeSet )
+{
+	const char* name = getAttributeString( meshNode.node(), "MeshNodeName" );
+	if( name == NULL ) {
+		name = "!missing-name!";
+	}
+
+	Node* pNode = new Node();
+	pNode->name = name;
+
+	// TODO: should handle custom data?
+	//ProcessCustomDataAttributes()
+	
+	// Shape reference index
+	pugi::xpath_node nodeShapeRef = evaluateXpathQuery( meshNode, "SeparateShapeReference" ).first();
+	aya::string shapeRefIndex( nodeShapeRef.node().text().as_string() ); // formatted like "Shapes\[[0-9]+\]"
+	int index = atoi( splitIndexDeclToIndex( shapeRefIndex ).at( 1 ).c_str() );
+	
+	// Material reference name
+	pugi::xpath_node nodeMaterialRef = evaluateXpathQuery( meshNode, "MaterialReference" ).first();
+	aya::string materialRefName( nodeMaterialRef.node().text().as_string() ); // formatted like "Materials\[\"*****\"\]"
+	materialRefName = split( materialRefName, "\"" ).at( 1 );
+
+	// ...and get its material
+	Material* pMat = pBuilder->m_model->GetMaterial( materialRefName );
+
+	ProcessShape( pBuilder, pNode, pMat, shapesNodeSet[index] );
+	pBuilder->AddInstance( pNode );
+}
+
+void CmdlModelFactory::ProcessShape( Model3dBuilder* pBuilder, Node* pNode, Material* pMaterial, const pugi::xpath_node& shapeNode )
+{
+	// reset before initialize
+	pBuilder->Mesh_Reset();
+
+	// Vertices
+	pugi::xpath_node verticesNode = evaluateXpathQuery( shapeNode, "VertexAttributes" ).first();
+	ProcessVertexAttributes( pBuilder, verticesNode );
+
+	// Primitives (Indices)
+	pugi::xpath_node_set primitivesNodeSet = evaluateXpathQuery( shapeNode, "PrimitiveSets/PrimitiveSetCtr" );
+	for( auto node : primitivesNodeSet ) {
+		ProcessPrimitive( pBuilder, pNode, pMaterial, node );
+	}
+}
+
+void CmdlModelFactory::ProcessVertexAttributes( Model3dBuilder* pBuilder, const pugi::xpath_node& verticesNode )
+{
+	// verticesNode points <VertexAttributes> tag.
+
+	pugi::xml_node child = verticesNode.node().first_child();
+	while( !child.empty() ) {
+		const char* pUsage = getAttributeString( child, "Usage" );
+
+		// These three types can be supported currently.
+		if( compare( pUsage, "Position" ) ) {
+			ProcessVertexStream( &pBuilder->m_mesh.source.pos, child );
+		}
+		else if( compare( pUsage, "Normal" ) ) {
+			ProcessVertexStream( &pBuilder->m_mesh.source.nor, child );
+		}
+		else if( compare( pUsage, "TextureCoordinate0" ) ) {
+			ProcessVertexStream( &pBuilder->m_mesh.source.tex, child );
+		}
+
+		child = child.next_sibling();
+	}
+}
+
+template <typename T>
+void CmdlModelFactory::ProcessVertexStream( std::vector<T>* pos, const pugi::xml_node& child )
+{
+	uint32_t columnNum = LoaderCommon::checkVectorColumnNum( child.name() );
+	uint32_t verticesNum = child.attribute( "VertexSize" ).as_uint();
+
+	assert( compare( child.attribute("QuantizedMode").as_string(), "Float" ) ); // Should be float
+
+	uint32_t arraySize = verticesNum * columnNum;
+	float* p = new float[arraySize];
+	LoaderCommon::loadFloatStream( p, child.text().as_string(), arraySize );
+
+	pos->resize( verticesNum );
+	for( uint32_t row = 0; row < verticesNum; ++row ) {
+		float* pHeadOfVector = &pos->at( row ).x;
+		for( uint32_t col = 0; col < columnNum; ++col ) {
+			pHeadOfVector[col] = p[( row * columnNum ) + col];
+		}
+	}
+
+	SAFE_DELETE_ARRAY( p );
+}
+
+void CmdlModelFactory::ProcessPrimitive( Model3dBuilder* pBuilder, Node* pNode, Material* pMaterial, const pugi::xpath_node& node )
+{
+	// Create geometry
+	aya::string geoName = pNode->name + pMaterial->name;
+
+	// avoid non-unique name
+	while( pBuilder->m_model->GetGeometry( geoName ) != NULL ) {
+		geoName += "_dup";
+	}
+	Geometry* pGeometry = pBuilder->m_model->CreateGeometry( geoName );
+	
+	pGeometry->material = pMaterial;
+	pNode->geometries.push_back( pGeometry );
 }
 
 }; // namespace LvEdEngine

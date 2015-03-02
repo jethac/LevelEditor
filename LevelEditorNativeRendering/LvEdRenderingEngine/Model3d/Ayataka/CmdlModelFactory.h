@@ -36,7 +36,14 @@ namespace LvEdEngine
         void ProcessInstance(Model3dBuilder * builder, xml_node* xmlInstance, Node * node);
         void ProcessNode(Model3dBuilder * builder, xml_node* xmlNode, Node * parent);
 
-		void ProcessModel( Model3dBuilder* builder, const pugi::xpath_node& modelNode );
-		void ProcessMaterial( Model3dBuilder * builder, const pugi::xpath_node& materialNode );
+		void ProcessModel( Model3dBuilder* pBuilder, const pugi::xpath_node& modelNode );
+		void ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xpath_node& materialNode );
+		void ProcessMesh( Model3dBuilder* pBuilder, const pugi::xpath_node& meshNodeconst, const pugi::xpath_node_set& shapesNodeSet );
+		void ProcessShape( Model3dBuilder* pBuilder, Node* pNode, Material* pMaterial, const pugi::xpath_node& shapeNode );
+		void ProcessVertexAttributes( Model3dBuilder* pBuilder, const pugi::xpath_node& verticesNode );
+
+		template <typename T>
+		void ProcessVertexStream( std::vector<T>* pos, const pugi::xml_node& child );
+		void ProcessPrimitive( Model3dBuilder* pBuilder, Node* pNode, Material* pMaterial, const pugi::xpath_node& node );
 	};
 };
