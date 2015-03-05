@@ -33,6 +33,20 @@ bool isSingleVertex( const pugi::xml_node& node )
 	return endsWith( node.name(), "AttributeCtr" );
 }
 
+int getShapeRefIndex( const pugi::xpath_node& meshNode )
+{
+	pugi::xpath_node nodeShapeRef = evaluateXpathQuery( meshNode, "SeparateShapeReference" ).first();
+	aya::string shapeRefIndex( nodeShapeRef.node().text().as_string() ); // formatted like "Shapes\[[0-9]+\]"
+	return atoi( splitIndexDeclToIndex( shapeRefIndex ).at( 1 ).c_str() );
+}
+
+int getBoneRefIndex( const pugi::xpath_node& shapeNode )
+{
+	pugi::xpath_node_set nodeSet = evaluateXpathQuery( shapeNode, "PrimitiveSets[1]/PrimitiveSetCtr/BoneIndexTable" );
+	assert( nodeSet.size() > 0 );
+	return atoi( nodeSet.first().node().text().as_string() );
+}
+
 namespace LvEdEngine
 {
 CmdlModelFactory::CmdlModelFactory(ID3D11Device* device) : m_device(device)
@@ -167,11 +181,11 @@ void CmdlModelFactory::ProcessHierarchy( Model3dBuilder* pBuilder, Node* pRoot, 
 	// Can find <Skeleton> tag ?
 	pugi::xpath_node_set skeletonNodeSet = evaluateXpathQuery( modelNode, "Skeleton" );
 	
-	//if( skeletonNodeSet.size() == 0 ) {
+	if( skeletonNodeSet.size() == 0 ) {
 		// No skeleton. Flat hierarchy under pRoot.
 		pugi::xpath_node_set nodeSet = evaluateXpathQuery( modelNode, "Meshes/Mesh" );
 		std::string todoName( "todo" );
-		xpath_node_set shapesNodeSet = evaluateXpathQuery( modelNode, "Shapes/SeparateDataShapeCtr" );
+		pugi::xpath_node_set shapesNodeSet = evaluateXpathQuery( modelNode, "Shapes/SeparateDataShapeCtr" );
 		for( auto meshNode : nodeSet ) {
 
 			Node* pNode = pBuilder->m_model->CreateNode( todoName );
@@ -181,15 +195,60 @@ void CmdlModelFactory::ProcessHierarchy( Model3dBuilder* pBuilder, Node* pRoot, 
 
 			ProcessMesh( pBuilder, pNode, meshNode, shapesNodeSet );
 		}
-	//}
-	//else {
-	//	ProcessSkeleton( pBuilder, pRoot, modelNode, skeletonNodeSet.first() );
-	//}
+	}
+	else {
+		ProcessSkeleton( pBuilder, pRoot, modelNode, skeletonNodeSet.first() );
+	}
 }
 
 void CmdlModelFactory::ProcessSkeleton( Model3dBuilder* pBuilder, Node* pRoot, const pugi::xpath_node& modelNode, const pugi::xpath_node& skeletonNode )
 {
+	// Create root node of hierarchy
+	Node* pSkeletonRoot = pBuilder->m_model->CreateNode( "SkeletonRoot" );
+	pSkeletonRoot->parent = pRoot;
+	pRoot->children.push_back( pSkeletonRoot );
 
+	// Meshes and Shapes
+	pugi::xpath_node_set meshes = evaluateXpathQuery( modelNode, "Meshes/Mesh" );
+	xpath_node_set shapes = evaluateXpathQuery( modelNode, "Shapes/SeparateDataShapeCtr" );
+
+	size_t boneIndex = 0;
+	pugi::xpath_node_set bones = evaluateXpathQuery( skeletonNode, "Bones/Bone" );
+	for( auto boneNode : bones ) {
+		pugi::xml_node bone = boneNode.node();
+		const char* pName = getAttributeString( bone, "Name" );
+		const char* pParentName = getAttributeString( bone, "ParentBoneName" );
+
+		Node* pNewNode = pBuilder->m_model->CreateNode( pName );
+		Node* pParentNode = NULL;
+
+		// Who is my parent?
+		if( pParentName[0] == '\0' ) {
+			// This is the ROOT bone
+			pParentNode = pSkeletonRoot;
+		}
+		else {
+			// Search my parent
+			pParentNode = pBuilder->m_model->GetNode( pParentName );
+		}
+		assert( pParentNode );
+		pNewNode->parent = pParentNode;
+		pParentNode->children.push_back( pNewNode );
+
+		// Search the target <Mesh> tag
+		for( auto meshNode : meshes ) {
+			int shapeRefIndex = getShapeRefIndex( meshNode );
+			
+			auto shapeNode = shapes[shapeRefIndex];
+			int boneRefIndex = getBoneRefIndex( shapeNode );
+
+			if( boneRefIndex == boneIndex ) {
+				ProcessMesh( pBuilder, pNewNode, meshNode, shapes );
+			}
+		}
+
+		++boneIndex;
+	}
 }
 
 void CmdlModelFactory::ProcessMesh( Model3dBuilder* pBuilder, Node* pNode, const pugi::xpath_node& meshNode, const pugi::xpath_node_set& shapesNodeSet )
@@ -205,9 +264,7 @@ void CmdlModelFactory::ProcessMesh( Model3dBuilder* pBuilder, Node* pNode, const
 	//ProcessCustomDataAttributes()
 	
 	// Shape reference index
-	pugi::xpath_node nodeShapeRef = evaluateXpathQuery( meshNode, "SeparateShapeReference" ).first();
-	aya::string shapeRefIndex( nodeShapeRef.node().text().as_string() ); // formatted like "Shapes\[[0-9]+\]"
-	int index = atoi( splitIndexDeclToIndex( shapeRefIndex ).at( 1 ).c_str() );
+	int index = getShapeRefIndex( meshNode );
 	
 	// Material reference name
 	pugi::xpath_node nodeMaterialRef = evaluateXpathQuery( meshNode, "MaterialReference" ).first();
