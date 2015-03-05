@@ -28,6 +28,11 @@ inline aya::StringVector splitIndexDeclToIndex( aya::string target )
 	return split( target, splitters );
 }
 
+bool isSingleVertex( const pugi::xml_node& node )
+{
+	return endsWith( node.name(), "AttributeCtr" );
+}
+
 namespace LvEdEngine
 {
 CmdlModelFactory::CmdlModelFactory(ID3D11Device* device) : m_device(device)
@@ -55,69 +60,32 @@ bool CmdlModelFactory::LoadResource( Resource* resource, const WCHAR * filename 
 	char charName[MAX_PATH];
 	WideCharToMultiByte( 0, 0, filename, -1, charName, MAX_PATH, NULL, NULL );
 
-	bool succeeded = true;
-
 	Model3dBuilder builder;
 	builder.m_model = model;
 
-	
 	pugi::xml_document doc;
 	if( !doc.load_file( filename ) ) {
 		return false;
 	}
 
+	bool succeeded = false;
+	m_parseErrors = 0;
+
 	builder.Begin();
-
 	ProcessXml( &builder, doc );
-
 	builder.End();
 	
-	model->Construct( m_device, ResourceManager::Inst() );
-	
-#if 0
-	xml_document doc;
-
-	try {
-		doc.parse<0>( (char*)data );
-
-		m_parseErrors = 0;
-
-		builder.Begin();
-
-		ProcessXml( doc.first_node(), &builder );
-
-		builder.End();
-
-		if( m_parseErrors > 0 ) {
-			Logger::Log( OutputMessageType::Error, L"%d errors occured while parsing, '%s'\n",
-						 m_parseErrors, filename );
-		}
-		else {
-			// this will create the D3D vertex/index buffers as well
-			// as trigger the loading of the textures.
-			model->Construct( m_device, ResourceManager::Inst() );
-		}
-
+	if( m_parseErrors > 0 ) {
+		Logger::Log( OutputMessageType::Error, L"%d errors occured while parsing, '%s'\n", m_parseErrors, filename );
+	}
+	else {
 		succeeded = true;
-	}
-	catch( rapidxml::parse_error& error ) {
-		Logger::Log( OutputMessageType::Error, "Parse exception: '%s' while processing '%s'\n", error.what(), charName );
-	}
-	catch( std::runtime_error& error ) {
-		Logger::Log( OutputMessageType::Error, "Processing exception: '%s' while processing '%s'\n", error.what(), charName );
-	}
-	catch( ... ) {
-		Logger::Log( OutputMessageType::Error, L"Generic exception while processing '%s'\n", filename );
+		model->Construct( m_device, ResourceManager::Inst() );
 	}
 
 	if( !succeeded ) {
-		// clean up model (remove all geometry), but don't free memory because there
-		// are other references to this model from 
 		model->Destroy();
 	}
-
-	SAFE_DELETE_ARRAY( data );
-#endif
 
 	return succeeded;
 }
@@ -132,6 +100,15 @@ void CmdlModelFactory::ProcessXml( Model3dBuilder* builder, const pugi::xpath_no
 	assert( nodeSet.size() > 0 );
 
 	ProcessModel( builder, nodeSet.first() );
+}
+
+void CmdlModelFactory::ParseError( const char * fmt, ... )
+{
+	va_list args;
+	va_start( args, fmt );
+	Logger::LogVA( OutputMessageType::Error, fmt, args );
+	va_end( args );
+	m_parseErrors++;
 }
 
 void CmdlModelFactory::ProcessModel( Model3dBuilder* pBuilder, const pugi::xpath_node& modelNode )
@@ -149,18 +126,7 @@ void CmdlModelFactory::ProcessModel( Model3dBuilder* pBuilder, const pugi::xpath
 	pBuilder->m_model->SetRoot( pSceneNode );
 
 	// Meshes
-	nodeSet = evaluateXpathQuery( modelNode, "Meshes/Mesh" );
-	std::string todoName( "todo" );
-	xpath_node_set shapesNodeSet = evaluateXpathQuery( modelNode, "Shapes/SeparateDataShapeCtr" );
-	for( auto meshNode : nodeSet ) {
-
-		Node* pNode = pBuilder->m_model->CreateNode( todoName );
-		todoName += "_todo";
-		pNode->parent = pSceneNode;
-		pSceneNode->children.push_back( pNode );
-
-		ProcessMesh( pBuilder, pNode, meshNode, shapesNodeSet );
-	}
+	ProcessHierarchy( pBuilder, pSceneNode, modelNode );
 }
 
 void CmdlModelFactory::ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xpath_node& materialNode )
@@ -194,6 +160,36 @@ void CmdlModelFactory::ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xp
 		
 		material->texNames[0] = pTextureRefName;
 	}
+}
+
+void CmdlModelFactory::ProcessHierarchy( Model3dBuilder* pBuilder, Node* pRoot, const pugi::xpath_node& modelNode )
+{
+	// Can find <Skeleton> tag ?
+	pugi::xpath_node_set skeletonNodeSet = evaluateXpathQuery( modelNode, "Skeleton" );
+	
+	//if( skeletonNodeSet.size() == 0 ) {
+		// No skeleton. Flat hierarchy under pRoot.
+		pugi::xpath_node_set nodeSet = evaluateXpathQuery( modelNode, "Meshes/Mesh" );
+		std::string todoName( "todo" );
+		xpath_node_set shapesNodeSet = evaluateXpathQuery( modelNode, "Shapes/SeparateDataShapeCtr" );
+		for( auto meshNode : nodeSet ) {
+
+			Node* pNode = pBuilder->m_model->CreateNode( todoName );
+			todoName += "_todo";
+			pNode->parent = pRoot;
+			pRoot->children.push_back( pNode );
+
+			ProcessMesh( pBuilder, pNode, meshNode, shapesNodeSet );
+		}
+	//}
+	//else {
+	//	ProcessSkeleton( pBuilder, pRoot, modelNode, skeletonNodeSet.first() );
+	//}
+}
+
+void CmdlModelFactory::ProcessSkeleton( Model3dBuilder* pBuilder, Node* pRoot, const pugi::xpath_node& modelNode, const pugi::xpath_node& skeletonNode )
+{
+
 }
 
 void CmdlModelFactory::ProcessMesh( Model3dBuilder* pBuilder, Node* pNode, const pugi::xpath_node& meshNode, const pugi::xpath_node_set& shapesNodeSet )
@@ -249,20 +245,31 @@ void CmdlModelFactory::ProcessVertexAttributes( Model3dBuilder* pBuilder, const 
 	pugi::xml_node child = verticesNode.node().first_child();
 	while( !child.empty() ) {
 		const char* pUsage = getAttributeString( child, "Usage" );
+		Model3dBuilder::MeshSourceData& meshSource = pBuilder->m_mesh.source;
 
 		// These three types can be supported currently.
 		if( compare( pUsage, "Position" ) ) {
-			ProcessVertexStream( &pBuilder->m_mesh.source.pos, child );
+			ProcessVertexStream( &meshSource.pos, child );
 
 			pBuilder->m_mesh.poly.hasPos = true;
 		}
 		else if( compare( pUsage, "Normal" ) ) {
-			ProcessVertexStream( &pBuilder->m_mesh.source.nor, child );
+			if( isSingleVertex( child ) ) {
+				ProcessSingleVertex( &meshSource.nor, child, (uint32_t)meshSource.pos.size() );
+			}
+			else {
+				ProcessVertexStream( &meshSource.nor, child );
+			}
 
 			pBuilder->m_mesh.poly.hasNor = true;
 		}
 		else if( compare( pUsage, "TextureCoordinate0" ) ) {
-			ProcessVertexStream( &pBuilder->m_mesh.source.tex, child );
+			if( isSingleVertex( child ) ) {
+				ProcessSingleVertex( &meshSource.tex, child, (uint32_t)meshSource.pos.size() );
+			}
+			else {
+				ProcessVertexStream( &meshSource.tex, child );
+			}
 
 			pBuilder->m_mesh.poly.hasTex = true;
 		}
@@ -290,6 +297,27 @@ void CmdlModelFactory::ProcessVertexStream( std::vector<T>* out, const pugi::xml
 		float* pHeadOfVector = &out->at( row ).x;
 		for( uint32_t col = 0; col < columnNum; ++col ) {
 			pHeadOfVector[col] = p[( row * columnNum ) + col];
+		}
+	}
+
+	SAFE_DELETE_ARRAY( p );
+}
+
+template <typename T>
+void CmdlModelFactory::ProcessSingleVertex( std::vector<T>* out, const pugi::xml_node& node, uint32_t num )
+{
+	uint32_t columnNum = LoaderCommon::checkVectorColumnNum( node.name() );
+	uint32_t verticesNum = num;
+
+	float* p = new float[columnNum];
+	LoaderCommon::loadFloatStream( p, node.text().as_string(), columnNum );
+
+	// Copy single vertex to each vertices
+	out->resize( verticesNum );
+	for( uint32_t row = 0; row < verticesNum; ++row ) {
+		float* pHeadOfVector = &out->at( row ).x;
+		for( uint32_t col = 0; col < columnNum; ++col ) {
+			pHeadOfVector[col] = p[col];
 		}
 	}
 
