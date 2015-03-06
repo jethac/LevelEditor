@@ -49,6 +49,27 @@ int getBoneRefIndex( const pugi::xpath_node& shapeNode )
 
 namespace LvEdEngine
 {
+float3 GetVector3( pugi::xml_node node )
+{
+	return float3( node.attribute( "X" ).as_float(), node.attribute( "Y" ).as_float(), node.attribute( "Z" ).as_float() );
+}
+
+void CalcTransform( LvEdEngine::Matrix* pOut, const pugi::xml_node& transformNode )
+{
+	float3 scale = GetVector3( transformNode.child( "Scale" ) );
+	float3 rotate = GetVector3( transformNode.child( "Rotate" ) );
+	float3 translate = GetVector3( transformNode.child( "Translate" ) );
+
+	Matrix scaleMatrix = Matrix::CreateScale( scale );
+	Matrix rotateXMatrix = Matrix::CreateRotationX( rotate.x );
+	Matrix rotateYMatrix = Matrix::CreateRotationX( rotate.y );
+	Matrix rotateZMatrix = Matrix::CreateRotationX( rotate.z );
+	Matrix translateMatrix = Matrix::CreateTranslation( translate );
+
+	Matrix id;
+	*pOut = id * scaleMatrix * rotateXMatrix * rotateYMatrix * rotateZMatrix * translateMatrix;
+}
+
 CmdlModelFactory::CmdlModelFactory(ID3D11Device* device) : m_device(device)
 {
 }
@@ -234,6 +255,9 @@ void CmdlModelFactory::ProcessSkeleton( Model3dBuilder* pBuilder, Node* pRoot, c
 		assert( pParentNode );
 		pNewNode->parent = pParentNode;
 		pParentNode->children.push_back( pNewNode );
+
+		// Calculate transform
+		CalcTransform( &pNewNode->transform, bone.child( "Transform" ) );
 
 		// Search the target <Mesh> tag
 		for( auto meshNode : meshes ) {
