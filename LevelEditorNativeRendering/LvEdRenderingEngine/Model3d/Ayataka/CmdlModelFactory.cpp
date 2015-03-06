@@ -177,13 +177,12 @@ void CmdlModelFactory::ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xp
 	// Textures
 	pugi::xpath_node_set nodeSet = evaluateXpathQuery( materialNode, "TextureMappers/PixelBasedTextureMapperCtr" );
 
-	// TODO: use only one texture currently. because can't decide witch texture is witch purpose
-	//for( auto textureNode : nodeSet ) 
-	{
-		auto textureNode = nodeSet.first();
-
+	for( auto textureNode : nodeSet ) {
 		pugi::xpath_node_set nodeSetTextureRef = evaluateXpathQuery( textureNode, "TextureReference" );
 		aya::string textureRefName = split( nodeSetTextureRef.first().node().text().as_string(), "\"" ).at( 1 );
+		if( textureRefName.compare( "shadowmap" ) == 0 ) {
+			continue;
+		}
 		textureRefName += ".tga";
 
 		// TODO: correct path
@@ -194,6 +193,9 @@ void CmdlModelFactory::ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xp
 		}
 		
 		material->texNames[0] = pTextureRefName;
+
+		// TODO: use only one texture currently. because can't decide witch texture is witch purpose
+		break;
 	}
 }
 
