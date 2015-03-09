@@ -92,7 +92,7 @@ public:
   float power;
   std::string texNames[TextureType::MAX];
   Texture* textures[TextureType::MAX];
-
+  Matrix textureTransform;
   Material();
 
   static Material * MissingMaterial();

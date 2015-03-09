@@ -65,6 +65,7 @@ namespace LvEdEngine
                 renderNode.specPower = mat->power;
                 renderNode.SetFlag( RenderableNode::kShadowCaster, GetCastsShadows() );
                 renderNode.SetFlag( RenderableNode::kShadowReceiver, GetReceivesShadows() );
+                renderNode.TextureXForm = mat->textureTransform;
 
                 LightingState::Inst()->UpdateLightEnvironment(renderNode);
 

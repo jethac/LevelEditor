@@ -176,8 +176,12 @@ void CmdlModelFactory::ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xp
 
 	// Textures
 	pugi::xpath_node_set nodeSet = evaluateXpathQuery( materialNode, "TextureMappers/PixelBasedTextureMapperCtr" );
-
+	pugi::xpath_node_set texCoordinators = evaluateXpathQuery( materialNode, "TextureCoordinators/TextureCoordinatorCtr" );
+	
+	int index = 0;
 	for( auto textureNode : nodeSet ) {
+		pugi::xpath_node coordinator = texCoordinators[index++];
+
 		pugi::xpath_node_set nodeSetTextureRef = evaluateXpathQuery( textureNode, "TextureReference" );
 		aya::string textureRefName = split( nodeSetTextureRef.first().node().text().as_string(), "\"" ).at( 1 );
 		if( textureRefName.compare( "shadowmap" ) == 0 ) {
@@ -193,6 +197,15 @@ void CmdlModelFactory::ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xp
 		}
 		
 		material->texNames[0] = pTextureRefName;
+
+		// Texture matrix
+		float scaleS = coordinator.node().attribute( "ScaleS" ).as_float();
+		float scaleT = coordinator.node().attribute( "ScaleT" ).as_float();
+		float rotate = coordinator.node().attribute( "Rotate" ).as_float();
+		float transS = coordinator.node().attribute( "TranslateS" ).as_float();
+		float transT = coordinator.node().attribute( "TranslateT" ).as_float();
+		Matrix texMtx;
+		material->textureTransform = texMtx * Matrix::CreateScale( scaleS, scaleT, 1.0f ) * Matrix::CreateRotationZ( rotate ) * Matrix::CreateTranslation( transS, transT, 0.0 );;
 
 		// TODO: use only one texture currently. because can't decide witch texture is witch purpose
 		break;
