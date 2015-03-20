@@ -384,6 +384,9 @@
     <ClInclude Include="Model3d\Ayataka\CmdlModelFactory.h">
       <Filter>Model3d\Ayataka</Filter>
     </ClInclude>
+    <ClInclude Include="GobSystem\Tank\StandardBaseGob.h">
+      <Filter>GobSystem\Tank</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -697,6 +700,9 @@
     <ClCompile Include="Model3d\Ayataka\templib\pugixml.cpp">
       <Filter>Model3d\Ayataka\templib</Filter>
     </ClCompile>
+    <ClCompile Include="GobSystem\Tank\StandardBaseGob.cpp">
+      <Filter>GobSystem\Tank</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GobSystem">
@@ -749,6 +755,9 @@
     </Filter>
     <Filter Include="Model3d\Ayataka\templib">
       <UniqueIdentifier>{774f6fd8-a2d6-48b8-8693-d23750f796cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GobSystem\Tank">
+      <UniqueIdentifier>{d9130219-b768-4bb1-ae51-5e45b2a143c9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

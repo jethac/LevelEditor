@@ -901,6 +901,39 @@ void OrcGob_Children_Remove(ObjectGUID parentId, ObjectGUID childId)
 }
 
 //-----------------------------------------------------------------------------
+//StandardBaseGob
+//-----------------------------------------------------------------------------
+Object* StandardBaseGob_Create(ObjectTypeGUID tid, void* data, int size)
+{
+    return new StandardBaseGob();
+}
+
+//-----------------------------------------------------------------------------
+void StandardBaseGob_Life_Set(ObjectGUID instanceId, void* data, int size)
+{
+    assert((data && size > 0) || (!data && size == 0));
+    StandardBaseGob* instance = reinterpret_cast<StandardBaseGob*>(instanceId);
+    int localData = *reinterpret_cast<int*>(data);
+    instance->SetLife(localData);
+}
+
+//-----------------------------------------------------------------------------
+void StandardBaseGob_Geometry_Add(ObjectGUID parentId, ObjectGUID childId, int index)
+{
+    StandardBaseGob* parent = reinterpret_cast<StandardBaseGob*>(parentId);
+    ResourceReference* child = reinterpret_cast<ResourceReference*>(childId);
+    parent->AddGeometry(child, index);
+}
+
+//-----------------------------------------------------------------------------
+void StandardBaseGob_Geometry_Remove(ObjectGUID parentId, ObjectGUID childId)
+{
+    StandardBaseGob* parent = reinterpret_cast<StandardBaseGob*>(parentId);
+    ResourceReference* child = reinterpret_cast<ResourceReference*>(childId);
+    parent->RemoveGeometry(child);
+}
+
+//-----------------------------------------------------------------------------
 //TerrainMap
 //-----------------------------------------------------------------------------
 Object* TerrainMap_Create(ObjectTypeGUID tid, void* data, int size)
@@ -1235,6 +1268,10 @@ void InitGobBridge(GobBridge& bridge)
   bridge.RegisterChildList( "OrcGob", "Target", &OrcGob_Target_Add, &OrcGob_Target_Remove);
   bridge.RegisterChildList( "OrcGob", "Friends", &OrcGob_Friends_Add, &OrcGob_Friends_Remove);
   bridge.RegisterChildList( "OrcGob", "Children", &OrcGob_Children_Add, &OrcGob_Children_Remove);
+
+  bridge.RegisterObject( "StandardBaseGob", &StandardBaseGob_Create );
+  bridge.RegisterProperty( "StandardBaseGob", "Life", &StandardBaseGob_Life_Set, NULL );
+  bridge.RegisterChildList( "StandardBaseGob", "Geometry", &StandardBaseGob_Geometry_Add, &StandardBaseGob_Geometry_Remove);
 
   bridge.RegisterObject( "TerrainMap", &TerrainMap_Create );
   bridge.RegisterProperty( "TerrainMap", "Name", &TerrainMap_Name_Set, NULL );

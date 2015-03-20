@@ -30,6 +30,9 @@
 #include "../GobSystem/Terrain/LayerMap.h"
 #include "../GobSystem/Terrain/DecorationMap.h"
 
+// Tank
+#include "../GobSystem/Tank/StandardBaseGob.h"
+
 #include "../Renderer/Resource.h"
 
 

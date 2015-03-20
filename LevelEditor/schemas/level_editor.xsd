@@ -464,7 +464,28 @@
     </xs:complexContent>
   </xs:complexType>
 
-  
+  <xs:complexType name="standardBaseType">
+    <xs:annotation>
+      <xs:appinfo>
+        <LeGe.NativeType nativeName="StandardBaseGob"/>
+        <LeGe.NativeElement name="geometry" nativeName="Geometry" nativeType="ResourceReference" />
+        <LeGe.NativeProperty name="life" nativeName="Life" nativeType="int" access="set"/>
+
+        <scea.dom.editors name="StandardBase" category="Tank" menuText="Game Objects/Standard Base" description="Standard base"/>
+        <scea.dom.editors.attribute name="name" displayName="Name" category="General" description="Name of Orc"/>
+        <scea.dom.editors.attribute name="life" displayName="Life" description="Life-point of Base"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="gameObjectType">
+        <xs:sequence>
+          <xs:element name="geometry" type="modelReferenceType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="life" type="xs:int" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- terrain related types  -->
 
   <xs:complexType name="terrainMapType" abstract="true">

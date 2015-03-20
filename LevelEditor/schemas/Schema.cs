@@ -529,6 +529,19 @@ namespace LevelEditor
             orcType.friendsChild = orcType.Type.GetChildInfo("friends");
             orcType.childrenChild = orcType.Type.GetChildInfo("children");
 
+            standardBaseType.Type = getNodeType("gap", "standardBaseType");
+            standardBaseType.transformAttribute = standardBaseType.Type.GetAttributeInfo("transform");
+            standardBaseType.translateAttribute = standardBaseType.Type.GetAttributeInfo("translate");
+            standardBaseType.rotateAttribute = standardBaseType.Type.GetAttributeInfo("rotate");
+            standardBaseType.scaleAttribute = standardBaseType.Type.GetAttributeInfo("scale");
+            standardBaseType.pivotAttribute = standardBaseType.Type.GetAttributeInfo("pivot");
+            standardBaseType.nameAttribute = standardBaseType.Type.GetAttributeInfo("name");
+            standardBaseType.visibleAttribute = standardBaseType.Type.GetAttributeInfo("visible");
+            standardBaseType.lockedAttribute = standardBaseType.Type.GetAttributeInfo("locked");
+            standardBaseType.transformationTypeAttribute = standardBaseType.Type.GetAttributeInfo("transformationType");
+            standardBaseType.lifeAttribute = standardBaseType.Type.GetAttributeInfo("life");
+            standardBaseType.geometryChild = standardBaseType.Type.GetChildInfo("geometry");
+
             terrainMapType.Type = getNodeType("gap", "terrainMapType");
             terrainMapType.nameAttribute = terrainMapType.Type.GetAttributeInfo("name");
             terrainMapType.visibleAttribute = terrainMapType.Type.GetAttributeInfo("visible");
@@ -1234,6 +1247,22 @@ namespace LevelEditor
             public static ChildInfo targetChild;
             public static ChildInfo friendsChild;
             public static ChildInfo childrenChild;
+        }
+
+        public static class standardBaseType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo transformAttribute;
+            public static AttributeInfo translateAttribute;
+            public static AttributeInfo rotateAttribute;
+            public static AttributeInfo scaleAttribute;
+            public static AttributeInfo pivotAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo visibleAttribute;
+            public static AttributeInfo lockedAttribute;
+            public static AttributeInfo transformationTypeAttribute;
+            public static AttributeInfo lifeAttribute;
+            public static ChildInfo geometryChild;
         }
 
         public static class terrainMapType

@@ -185,6 +185,7 @@
     <ClInclude Include="GobSystem\SkyDome.h" />
     <ClInclude Include="GobSystem\SphereGob.h" />
     <ClInclude Include="GobSystem\SpinnerComponent.h" />
+    <ClInclude Include="GobSystem\Tank\StandardBaseGob.h" />
     <ClInclude Include="GobSystem\Terrain\DecorationMap.h" />
     <ClInclude Include="GobSystem\Terrain\LayerMap.h" />
     <ClInclude Include="GobSystem\Terrain\TerrainGob.h" />
@@ -309,6 +310,7 @@
     <ClCompile Include="GobSystem\SkyDome.cpp" />
     <ClCompile Include="GobSystem\SphereGob.cpp" />
     <ClCompile Include="GobSystem\SpinnerComponent.cpp" />
+    <ClCompile Include="GobSystem\Tank\StandardBaseGob.cpp" />
     <ClCompile Include="GobSystem\Terrain\DecorationMap.cpp" />
     <ClCompile Include="GobSystem\Terrain\LayerMap.cpp" />
     <ClCompile Include="GobSystem\Terrain\TerrainGob.cpp" />
