@@ -21,8 +21,8 @@ namespace LvEdEngine
 		// functions
 		void SetLife( int life );
 
-		void AddGeometry( ResourceReference * ref, int index );
-		void RemoveGeometry( ResourceReference * ref );
+		void AddResource( ResourceReference * ref, int index );
+		void RemoveResource( ResourceReference * ref );
 
 	protected:
 		void BuildRenderables();

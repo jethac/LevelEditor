@@ -918,19 +918,19 @@ void StandardBaseGob_Life_Set(ObjectGUID instanceId, void* data, int size)
 }
 
 //-----------------------------------------------------------------------------
-void StandardBaseGob_Geometry_Add(ObjectGUID parentId, ObjectGUID childId, int index)
+void StandardBaseGob_Resource_Add(ObjectGUID parentId, ObjectGUID childId, int index)
 {
     StandardBaseGob* parent = reinterpret_cast<StandardBaseGob*>(parentId);
     ResourceReference* child = reinterpret_cast<ResourceReference*>(childId);
-    parent->AddGeometry(child, index);
+    parent->AddResource(child, index);
 }
 
 //-----------------------------------------------------------------------------
-void StandardBaseGob_Geometry_Remove(ObjectGUID parentId, ObjectGUID childId)
+void StandardBaseGob_Resource_Remove(ObjectGUID parentId, ObjectGUID childId)
 {
     StandardBaseGob* parent = reinterpret_cast<StandardBaseGob*>(parentId);
     ResourceReference* child = reinterpret_cast<ResourceReference*>(childId);
-    parent->RemoveGeometry(child);
+    parent->RemoveResource(child);
 }
 
 //-----------------------------------------------------------------------------
@@ -1271,7 +1271,7 @@ void InitGobBridge(GobBridge& bridge)
 
   bridge.RegisterObject( "StandardBaseGob", &StandardBaseGob_Create );
   bridge.RegisterProperty( "StandardBaseGob", "Life", &StandardBaseGob_Life_Set, NULL );
-  bridge.RegisterChildList( "StandardBaseGob", "Geometry", &StandardBaseGob_Geometry_Add, &StandardBaseGob_Geometry_Remove);
+  bridge.RegisterChildList( "StandardBaseGob", "Resource", &StandardBaseGob_Resource_Add, &StandardBaseGob_Resource_Remove);
 
   bridge.RegisterObject( "TerrainMap", &TerrainMap_Create );
   bridge.RegisterProperty( "TerrainMap", "Name", &TerrainMap_Name_Set, NULL );

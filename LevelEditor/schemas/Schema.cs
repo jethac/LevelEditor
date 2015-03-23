@@ -540,7 +540,7 @@ namespace LevelEditor
             standardBaseType.lockedAttribute = standardBaseType.Type.GetAttributeInfo("locked");
             standardBaseType.transformationTypeAttribute = standardBaseType.Type.GetAttributeInfo("transformationType");
             standardBaseType.lifeAttribute = standardBaseType.Type.GetAttributeInfo("life");
-            standardBaseType.geometryChild = standardBaseType.Type.GetChildInfo("geometry");
+            standardBaseType.resourceChild = standardBaseType.Type.GetChildInfo("resource");
 
             terrainMapType.Type = getNodeType("gap", "terrainMapType");
             terrainMapType.nameAttribute = terrainMapType.Type.GetAttributeInfo("name");
@@ -1262,7 +1262,7 @@ namespace LevelEditor
             public static AttributeInfo lockedAttribute;
             public static AttributeInfo transformationTypeAttribute;
             public static AttributeInfo lifeAttribute;
-            public static ChildInfo geometryChild;
+            public static ChildInfo resourceChild;
         }
 
         public static class terrainMapType

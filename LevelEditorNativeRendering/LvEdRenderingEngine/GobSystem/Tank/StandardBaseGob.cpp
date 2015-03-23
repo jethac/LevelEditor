@@ -19,7 +19,7 @@ void StandardBaseGob::SetLife(int life)
 }
 
 // ----------------------------------------------------------------------------------
-void StandardBaseGob::AddGeometry(ResourceReference* ref, int /*index*/)
+void StandardBaseGob::AddResource(ResourceReference* ref, int /*index*/)
 {
     m_geometry = ref;
     m_modelTransforms.clear();
@@ -29,9 +29,9 @@ void StandardBaseGob::AddGeometry(ResourceReference* ref, int /*index*/)
 }
 
 // ----------------------------------------------------------------------------------
-void StandardBaseGob::RemoveGeometry(ResourceReference* /*ref*/)
+void StandardBaseGob::RemoveResource(ResourceReference* /*ref*/)
 {
-    AddGeometry(NULL, -1);
+    AddResource(NULL, -1);
 }
 
 // ----------------------------------------------------------------------------------

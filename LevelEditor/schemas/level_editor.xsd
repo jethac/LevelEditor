@@ -468,7 +468,7 @@
     <xs:annotation>
       <xs:appinfo>
         <LeGe.NativeType nativeName="StandardBaseGob"/>
-        <LeGe.NativeElement name="geometry" nativeName="Geometry" nativeType="ResourceReference" />
+        <LeGe.NativeElement name="resource" nativeName="Resource" nativeType="ResourceReference" />
         <LeGe.NativeProperty name="life" nativeName="Life" nativeType="int" access="set"/>
 
         <scea.dom.editors name="StandardBase" category="Tank" menuText="Game Objects/Standard Base" description="Standard base"/>
@@ -479,9 +479,9 @@
     <xs:complexContent>
       <xs:extension base="gameObjectType">
         <xs:sequence>
-          <xs:element name="geometry" type="modelReferenceType" minOccurs="0" maxOccurs="1" />
+          <xs:element name="resource" type="modelReferenceType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
-        <xs:attribute name="life" type="xs:int" />
+        <xs:attribute name="life" type="xs:int" default="100" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
