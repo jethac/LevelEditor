@@ -427,7 +427,8 @@ void CmdlModelFactory::ProcessPrimitive( Model3dBuilder* pBuilder, Node* pNode, 
 	aya::string geoName = pNode->name + pMaterial->name;
 
 	// avoid non-unique name
-	while( pBuilder->m_model->GetGeometry( geoName ) != NULL ) {
+	const GeometryDict& geos = pBuilder->m_model->Geometries();
+	while( geos.find( geoName ) != geos.end() ) {
 		geoName += "_dup";
 	}
 	Geometry* pGeometry = pBuilder->m_model->CreateGeometry( geoName );
