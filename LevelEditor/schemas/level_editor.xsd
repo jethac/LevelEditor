@@ -472,7 +472,7 @@
         <LeGe.NativeProperty name="life" nativeName="Life" nativeType="int" access="set"/>
 
         <scea.dom.editors name="StandardBase" category="Tank" menuText="Game Objects/Standard Base" description="Standard base"/>
-        <scea.dom.editors.attribute name="name" displayName="Name" category="General" description="Name of Orc"/>
+        <scea.dom.editors.attribute name="name" displayName="Name" category="General" description="Name of Base"/>
         <scea.dom.editors.attribute name="life" displayName="Life" description="Life-point of Base"/>
       </xs:appinfo>
     </xs:annotation>
