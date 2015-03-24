@@ -189,7 +189,8 @@ void CmdlModelFactory::ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xp
 		}
 		textureRefName += ".tga";
 
-		// TODO: correct path
+		// Textures should locate under 'tga' directory
+		textureRefName = "tga/" + textureRefName;
 		Model3dBuilder::MaterialData& materialData = pBuilder->m_material;
 		const char* pTextureRefName = textureRefName.c_str();
 		if( materialData.image2file.find( pTextureRefName ) == materialData.image2file.end() ) {
