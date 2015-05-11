@@ -387,6 +387,12 @@
     <ClInclude Include="GobSystem\Tank\StandardBaseGob.h">
       <Filter>GobSystem\Tank</Filter>
     </ClInclude>
+    <ClInclude Include="Model3d\Ayataka\CmdlModel.h">
+      <Filter>Model3d\Ayataka</Filter>
+    </ClInclude>
+    <ClInclude Include="Model3d\Ayataka\EntityModelFactory.h">
+      <Filter>Model3d\Ayataka</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -702,6 +708,12 @@
     </ClCompile>
     <ClCompile Include="GobSystem\Tank\StandardBaseGob.cpp">
       <Filter>GobSystem\Tank</Filter>
+    </ClCompile>
+    <ClCompile Include="Model3d\Ayataka\CmdlModel.cpp">
+      <Filter>Model3d\Ayataka</Filter>
+    </ClCompile>
+    <ClCompile Include="Model3d\Ayataka\EntityModelFactory.cpp">
+      <Filter>Model3d\Ayataka</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
