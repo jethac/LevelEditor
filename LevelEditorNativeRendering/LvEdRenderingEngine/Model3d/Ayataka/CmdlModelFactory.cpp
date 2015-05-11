@@ -125,7 +125,7 @@ bool CmdlModelFactory::LoadResource( Resource* resource, const WCHAR * filename 
 	return succeeded;
 }
 
-void CmdlModelFactory::ProcessXml( Model3dBuilder* builder, const pugi::xpath_node& root )
+void ProcessXml( Model3dBuilder* builder, const pugi::xpath_node& root )
 {
 	const char* pRootString = "NintendoWareIntermediateFile/GraphicsContentCtr/Models/%s";
 	pugi::xpath_node_set nodeSet = evaluateXpathQuery( root, pRootString, "Model" );
@@ -146,7 +146,7 @@ void CmdlModelFactory::ParseError( const char * fmt, ... )
 	m_parseErrors++;
 }
 
-void CmdlModelFactory::ProcessModel( Model3dBuilder* pBuilder, const pugi::xpath_node& modelNode )
+void ProcessModel( Model3dBuilder* pBuilder, const pugi::xpath_node& modelNode )
 {
 	pugi::xpath_node_set nodeSet;
 
@@ -164,7 +164,7 @@ void CmdlModelFactory::ProcessModel( Model3dBuilder* pBuilder, const pugi::xpath
 	ProcessHierarchy( pBuilder, pSceneNode, modelNode );
 }
 
-void CmdlModelFactory::ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xpath_node& materialNode )
+void ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xpath_node& materialNode )
 {
 	// Material name
 	const char* name = getAttributeString( materialNode.node(), "Name" );
@@ -213,7 +213,7 @@ void CmdlModelFactory::ProcessMaterial( Model3dBuilder* pBuilder, const pugi::xp
 	}
 }
 
-void CmdlModelFactory::ProcessHierarchy( Model3dBuilder* pBuilder, Node* pRoot, const pugi::xpath_node& modelNode )
+void ProcessHierarchy( Model3dBuilder* pBuilder, Node* pRoot, const pugi::xpath_node& modelNode )
 {
 	// Can find <Skeleton> tag ?
 	pugi::xpath_node_set skeletonNodeSet = evaluateXpathQuery( modelNode, "Skeleton" );
@@ -238,7 +238,7 @@ void CmdlModelFactory::ProcessHierarchy( Model3dBuilder* pBuilder, Node* pRoot, 
 	}
 }
 
-void CmdlModelFactory::ProcessSkeleton( Model3dBuilder* pBuilder, Node* pRoot, const pugi::xpath_node& modelNode, const pugi::xpath_node& skeletonNode )
+void ProcessSkeleton( Model3dBuilder* pBuilder, Node* pRoot, const pugi::xpath_node& modelNode, const pugi::xpath_node& skeletonNode )
 {
 	// Create root node of hierarchy
 	Node* pSkeletonRoot = pBuilder->m_model->CreateNode( "SkeletonRoot" );
@@ -291,7 +291,7 @@ void CmdlModelFactory::ProcessSkeleton( Model3dBuilder* pBuilder, Node* pRoot, c
 	}
 }
 
-void CmdlModelFactory::ProcessMesh( Model3dBuilder* pBuilder, Node* pNode, const pugi::xpath_node& meshNode, const pugi::xpath_node_set& shapesNodeSet )
+void ProcessMesh( Model3dBuilder* pBuilder, Node* pNode, const pugi::xpath_node& meshNode, const pugi::xpath_node_set& shapesNodeSet )
 {
 	const char* name = getAttributeString( meshNode.node(), "MeshNodeName" );
 	if( name == NULL ) {
@@ -317,7 +317,7 @@ void CmdlModelFactory::ProcessMesh( Model3dBuilder* pBuilder, Node* pNode, const
 	ProcessShape( pBuilder, pNode, pMat, shapesNodeSet[index] );
 }
 
-void CmdlModelFactory::ProcessShape( Model3dBuilder* pBuilder, Node* pNode, Material* pMaterial, const pugi::xpath_node& shapeNode )
+void ProcessShape( Model3dBuilder* pBuilder, Node* pNode, Material* pMaterial, const pugi::xpath_node& shapeNode )
 {
 	// reset before initialize
 	pBuilder->Mesh_Reset();
@@ -333,7 +333,7 @@ void CmdlModelFactory::ProcessShape( Model3dBuilder* pBuilder, Node* pNode, Mate
 	}
 }
 
-void CmdlModelFactory::ProcessVertexAttributes( Model3dBuilder* pBuilder, const pugi::xpath_node& verticesNode )
+void ProcessVertexAttributes( Model3dBuilder* pBuilder, const pugi::xpath_node& verticesNode )
 {
 	// verticesNode points <VertexAttributes> tag.
 
@@ -378,7 +378,7 @@ void CmdlModelFactory::ProcessVertexAttributes( Model3dBuilder* pBuilder, const 
 }
 
 template <typename T>
-void CmdlModelFactory::ProcessVertexStream( std::vector<T>* out, const pugi::xml_node& node )
+void ProcessVertexStream( std::vector<T>* out, const pugi::xml_node& node )
 {
 	uint32_t columnNum = LoaderCommon::checkVectorColumnNum( node.name() );
 	uint32_t verticesNum = node.attribute( "VertexSize" ).as_uint();
@@ -401,7 +401,7 @@ void CmdlModelFactory::ProcessVertexStream( std::vector<T>* out, const pugi::xml
 }
 
 template <typename T>
-void CmdlModelFactory::ProcessSingleVertex( std::vector<T>* out, const pugi::xml_node& node, uint32_t num )
+void ProcessSingleVertex( std::vector<T>* out, const pugi::xml_node& node, uint32_t num )
 {
 	uint32_t columnNum = LoaderCommon::checkVectorColumnNum( node.name() );
 	uint32_t verticesNum = num;
@@ -421,7 +421,7 @@ void CmdlModelFactory::ProcessSingleVertex( std::vector<T>* out, const pugi::xml
 	SAFE_DELETE_ARRAY( p );
 }
 
-void CmdlModelFactory::ProcessPrimitive( Model3dBuilder* pBuilder, Node* pNode, Material* pMaterial, const pugi::xpath_node& node )
+void ProcessPrimitive( Model3dBuilder* pBuilder, Node* pNode, Material* pMaterial, const pugi::xpath_node& node )
 {
 	// Create geometry
 	aya::string geoName = pNode->name + pMaterial->name;
@@ -455,7 +455,7 @@ void CmdlModelFactory::ProcessPrimitive( Model3dBuilder* pBuilder, Node* pNode, 
 }
 
 template <typename T>
-void CmdlModelFactory::ProcessIndexStream( std::vector<T>* out, const pugi::xml_node& node )
+void ProcessIndexStream( std::vector<T>* out, const pugi::xml_node& node )
 {
 	assert( compare( node.attribute( "PrimitiveMode" ).as_string(), "Triangles" ) );
 	uint32_t indicesNum = node.attribute( "Size" ).as_uint();

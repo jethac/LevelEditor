@@ -36,7 +36,7 @@
 #include "Model3d/XmlModelFactory.h"
 #include "Model3d/AtgiModelFactory.h"
 #include "Model3d/ColladaModelFactory.h"
-#include "Model3d\Ayataka\CmdlModelFactory.h"
+#include "Model3d/Ayataka/CmdlModelFactory.h"
 #include "ResourceManager/TextureFactory.h"
 #include "GobSystem/GameLevel.h"
 #include "GobSystem/SkyDome.h"
