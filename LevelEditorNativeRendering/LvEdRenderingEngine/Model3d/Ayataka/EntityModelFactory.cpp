@@ -2,6 +2,8 @@
 #define NOMINMAX
 #endif
 
+#define ENABLE_PRINT_DEBUG 1
+
 #include "../../VectorMath/V3dMath.h"
 #include "../../VectorMath/CollisionPrimitives.h"
 #include "../../Renderer/Model.h"
@@ -27,16 +29,20 @@ bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filenam
 	GetEnvironmentVariable( L"USAGI_DIR", envUsagiDir, (DWORD)wcslen( envUsagiDir ) );
 
 	// Parse a YAML Entity file
-	FILE *fh = _wfopen( filename, L"r" );
-	assert( fh != NULL );
-
-	m_Depth = 0;
-	parseYaml( fh );
+	EntityYaml yamlParser;
+	yamlParser.parseYaml( filename );
 
 	return false;
 }
 
-void EntityModelFactory::parseYaml( FILE* fh )
+void EntityModelFactory::EntityYaml::parseYaml( const WCHAR* filename )
+{
+	FILE *fh = _wfopen( filename, L"r" );
+	assert( fh != NULL );
+	parseYaml( fh );
+}
+
+void EntityModelFactory::EntityYaml::parseYaml( FILE* fh )
 {
 	yaml_parser_t parser;
 
@@ -47,6 +53,15 @@ void EntityModelFactory::parseYaml( FILE* fh )
 	// Set input file
 	yaml_parser_set_input_file( &parser, fh );
 
+	mDepth = 0;
+	mStreamDepth = -1;
+	mDocumentDepth = -1;
+	mMappingDepth = -1;
+	mSequenceDepth = -1;
+
+	mCurrentKey.clear();
+	mCurrentKey.reserve( MAX_PATH );
+	assert( mEventStack_StartEnd.empty() );
 #if 1
 	yaml_event_t event;
 	do {
@@ -56,18 +71,58 @@ void EntityModelFactory::parseYaml( FILE* fh )
 		switch( event.type ) {
 			case YAML_NO_EVENT: break;
 				/* Stream start/end */
-			case YAML_STREAM_START_EVENT: yamlStreamStartEvent( event ); break;
-			case YAML_STREAM_END_EVENT: yamlStreamEndEvent( event );     break;
+			case YAML_STREAM_START_EVENT:
+				++mStreamDepth;
+				yamlStreamStartEvent( event );
+
+				mEventStack_StartEnd.push( event.type );
+				break;
+			case YAML_STREAM_END_EVENT:
+				yamlStreamEndEvent( event );
+				--mStreamDepth;
+
+				mEventStack_StartEnd.pop();
+				break;
 				/* Block delimeters */
-			case YAML_DOCUMENT_START_EVENT: yamlDocumentStartEvent( event ); break;
-			case YAML_DOCUMENT_END_EVENT: yamlDocumentEndEvent( event );     break;
-			case YAML_SEQUENCE_START_EVENT: yamlSequenceStartEvent( event ); break;
-			case YAML_SEQUENCE_END_EVENT: yamlSequenceEndEvent( event );     break;
-			case YAML_MAPPING_START_EVENT: yamlMappingStartEvent( event );   break;
-			case YAML_MAPPING_END_EVENT: yamlMappingEndEvent( event );       break;
+			case YAML_DOCUMENT_START_EVENT:
+				++mDocumentDepth;
+				yamlDocumentStartEvent( event );
+
+				mEventStack_StartEnd.push( event.type );
+				break;
+			case YAML_DOCUMENT_END_EVENT:
+				yamlDocumentEndEvent( event );
+				--mStreamDepth;
+
+				mEventStack_StartEnd.pop();
+				break;
+			case YAML_SEQUENCE_START_EVENT:
+				++mStreamDepth;
+				yamlSequenceStartEvent( event );
+
+				mEventStack_StartEnd.push( event.type );
+				break;
+			case YAML_SEQUENCE_END_EVENT:
+				yamlSequenceEndEvent( event );
+				--mSequenceDepth;
+				
+				mEventStack_StartEnd.pop();
+				break;
+			case YAML_MAPPING_START_EVENT:
+				++mMappingDepth;
+				yamlMappingStartEvent( event );
+
+				mEventStack_StartEnd.push( event.type );
+				break;
+			case YAML_MAPPING_END_EVENT:
+				yamlMappingEndEvent( event );
+				--mMappingDepth;
+				
+				mEventStack_StartEnd.pop();
+				break;
 				/* Data */
-			case YAML_ALIAS_EVENT: yamlAliasEvent( event );  /*wprintf( L"Got alias (anchor %s)\n", event.data.alias.anchor );*/ break;
-			case YAML_SCALAR_EVENT: yamlScalarEvent( event ); /*wprintf( L"Got scalar (value %s)\n", event.data.scalar.value );*/ break;
+			case YAML_ALIAS_EVENT: yamlAliasEvent( event );   break;
+			case YAML_SCALAR_EVENT: yamlScalarEvent( event ); break;
 		}
 		if( event.type != YAML_STREAM_END_EVENT )
 			yaml_event_delete( &event );
@@ -107,140 +162,219 @@ void EntityModelFactory::parseYaml( FILE* fh )
 	fclose( fh );
 }
 
-void outputSpaces( int num ) {
+void EntityModelFactory::EntityYaml::yamlStreamStartEvent( const yaml_event_t& event )
+{
+	outputSpaces( mDepth );
+	printDebugString( L"yamlStreamStartEvent\n" );
+	++mDepth;
+}
+
+void EntityModelFactory::EntityYaml::yamlStreamEndEvent( const yaml_event_t& event )
+{
+	--mDepth;
+	outputSpaces( mDepth );
+	printDebugString( L"yamlStreamEndEvent\n" );
+}
+
+void EntityModelFactory::EntityYaml::yamlDocumentStartEvent( const yaml_event_t& event )
+{
+	outputSpaces( mDepth );
+	printDebugString( L"yamlDocumentStartEvent\n" );
+	++mDepth;
+}
+
+void EntityModelFactory::EntityYaml::yamlDocumentEndEvent( const yaml_event_t& event )
+{
+	--mDepth;
+	outputSpaces( mDepth );
+	printDebugString( L"yamlDocumentEndEvent\n" );
+}
+
+void EntityModelFactory::EntityYaml::yamlSequenceStartEvent( const yaml_event_t& event )
+{
+	// Push the block key as a sequence starts. (sometimes blank)
+	mBlockKeyStack.push( mCurrentKey );
+	mCurrentKey.clear();
+
+	outputSpaces( mDepth );
+	printDebugString( L"yamlSequenceStartEvent\n" );
+	++mDepth;
+}
+
+void EntityModelFactory::EntityYaml::yamlSequenceEndEvent( const yaml_event_t& event )
+{
+	// Pop block key
+	mBlockKeyStack.pop();
+
+	--mDepth;
+	outputSpaces( mDepth );
+	printDebugString( L"yamlSequenceEndEvent\n" );
+}
+
+void EntityModelFactory::EntityYaml::yamlMappingStartEvent( const yaml_event_t& event )
+{
+	// Push the block key as a mapping starts. (sometimes blank)
+	mBlockKeyStack.push( mCurrentKey );
+	mCurrentKey.clear();
+
+	outputSpaces( mDepth );
+	printDebugString( L"yamlMappingStartEvent\n" );
+	++mDepth;
+}
+
+void EntityModelFactory::EntityYaml::yamlMappingEndEvent( const yaml_event_t& event )
+{
+	// Pop block key
+	mBlockKeyStack.pop();
+
+	--mDepth;
+	outputSpaces( mDepth );
+	printDebugString( L"yamlMappingEndEvent\n" );
+}
+
+void EntityModelFactory::EntityYaml::yamlAliasEvent( const yaml_event_t& event )
+{
+	outputSpaces( mDepth );
+	printDebugString( L"event:" );
+	outputMBChar( (char*)event.data.alias.anchor );
+	printDebugString( L"\n" );
+}
+
+void EntityModelFactory::EntityYaml::yamlScalarEvent( const yaml_event_t& event )
+{
+	outputSpaces( mDepth );
+	//printDebugString( "yamlScalarEvent\n" );
+	printDebugString( L"scalar:" );
+
+	const char* const value = (char*)event.data.scalar.value;
+	outputMBChar( value );
+
+	if( mEventStack_StartEnd.top() == YAML_SEQUENCE_START_EVENT ) {
+		catchValue( value );
+		printDebugString( L" !This is VALUE!" );
+		mCurrentKey.clear();
+	}
+	else if( mEventStack_StartEnd.top() == YAML_MAPPING_START_EVENT ) {
+		if( mCurrentKey.empty() ) {
+			mCurrentKey.assign( value );
+			printDebugString( L" !This is KEY!" );
+		}
+		else {
+			catchValue( value );
+			printDebugString( L" !This is VALUE!" );
+			mCurrentKey.clear();
+		}
+	}
+
+	printDebugString( L"\n" );
+}
+
+void EntityModelFactory::EntityYaml::outputSpaces( int num ) {
+#if ENABLE_PRINT_DEBUG == 1
 	for( int i = 0; i < num; i++ ) {
-		OutputDebugString( L"  " );
+		printDebugString( L"  " );
+	}
+#endif
+}
+
+void EntityModelFactory::EntityYaml::outputMBChar( const char* s ) {
+#if ENABLE_PRINT_DEBUG == 1
+	WCHAR hogera[MAX_PATH];
+	MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED,
+						 (char*)s, -1, hogera, (int)wcslen( hogera ) );
+	printDebugString( hogera );
+#endif
+}
+
+void EntityModelFactory::EntityYaml::printDebugString( WCHAR* s )
+{
+#if ENABLE_PRINT_DEBUG == 1
+	OutputDebugString( s );
+#endif
+}
+
+void EntityModelFactory::EntityYaml::catchValue( const char* value )
+{
+	// Process Key and Value data
+	if( mBlockKeyStack.top().compare( "ModelComponent" ) == 0 && mCurrentKey.compare( "m_name" ) == 0 ) {
+		printDebugString( L" !Model name!" );
 	}
 }
 
-void EntityModelFactory::yamlStreamStartToken( const yaml_token_t& token )
+#if 0
+void EntityModelFactory::EntityYaml::yamlStreamStartToken( const yaml_token_t& token )
 {
 	outputSpaces( m_Depth );
-	OutputDebugString( L"yamlStreamStartToken\n" );
+	printDebugString( L"yamlStreamStartToken\n" );
 	++m_Depth;
 }
 
-void EntityModelFactory::yamlStreamEndToken( const yaml_token_t& token )
+void EntityModelFactory::EntityYaml::yamlStreamEndToken( const yaml_token_t& token )
 {
 	--m_Depth;
 	outputSpaces( m_Depth );
-	OutputDebugString( L"yamlStreamEndToken\n" );
+	printDebugString( L"yamlStreamEndToken\n" );
 }
 
-void EntityModelFactory::yamlKeyToken( const yaml_token_t& token )
+void EntityModelFactory::EntityYaml::yamlKeyToken( const yaml_token_t& token )
 {
 	outputSpaces( m_Depth );
-	OutputDebugString( L"yamlKeyToken - " );
+	printDebugString( L"yamlKeyToken - " );
 }
 
-void EntityModelFactory::yamlValueToken( const yaml_token_t& token )
+void EntityModelFactory::EntityYaml::yamlValueToken( const yaml_token_t& token )
 {
 	outputSpaces( m_Depth );
-	OutputDebugString( L"yamlValueToken - " );
+	printDebugString( L"yamlValueToken - " );
 }
 
-void EntityModelFactory::yamlBlockSequenceStartToken( const yaml_token_t& token )
+void EntityModelFactory::EntityYaml::yamlBlockSequenceStartToken( const yaml_token_t& token )
 {
 	outputSpaces( m_Depth );
-	OutputDebugString( L"yamlBlockSequenceStartToken\n" );
+	printDebugString( L"yamlBlockSequenceStartToken\n" );
 	++m_Depth;
 }
 
-void EntityModelFactory::yamlBlockEntryToken( const yaml_token_t& token )
+void EntityModelFactory::EntityYaml::yamlBlockEntryToken( const yaml_token_t& token )
 {
 	outputSpaces( m_Depth );
-	OutputDebugString( L"yamlBlockEntryToken\n" );
+	printDebugString( L"yamlBlockEntryToken\n" );
 }
 
-void EntityModelFactory::yamlBlockEndToken( const yaml_token_t& token )
+void EntityModelFactory::EntityYaml::yamlBlockEndToken( const yaml_token_t& token )
 {
 	--m_Depth;
 	outputSpaces( m_Depth );
-	OutputDebugString( L"yamlBlockEndToken\n" );
+	printDebugString( L"yamlBlockEndToken\n" );
 }
 
-void EntityModelFactory::yamlFlowSequenceStartToken( const yaml_token_t& token )
+void EntityModelFactory::EntityYaml::yamlFlowSequenceStartToken( const yaml_token_t& token )
 {
 	outputSpaces( m_Depth );
-	OutputDebugString( L"yamlFlowSequenceStartToken\n" );
+	printDebugString( L"yamlFlowSequenceStartToken\n" );
 	++m_Depth;
 
 }
 
-void EntityModelFactory::yamlFlowSequenceEndToken( const yaml_token_t& token )
+void EntityModelFactory::EntityYaml::yamlFlowSequenceEndToken( const yaml_token_t& token )
 {
 	--m_Depth;
 	outputSpaces( m_Depth );
-	OutputDebugString( L"yamlFlowSequenceEndToken\n" );
+	printDebugString( L"yamlFlowSequenceEndToken\n" );
 }
 
-void EntityModelFactory::yamlBlockMappingStartToken( const yaml_token_t& token )
+void EntityModelFactory::EntityYaml::yamlBlockMappingStartToken( const yaml_token_t& token )
 {
 	outputSpaces( m_Depth );
-	OutputDebugString( L"[Block mapping]\n" );
+	printDebugString( L"[Block mapping]\n" );
 	++m_Depth;
 }
 
-void EntityModelFactory::yamlScalarToken( const yaml_token_t& token )
+void EntityModelFactory::EntityYaml::yamlScalarToken( const yaml_token_t& token )
 {
-	OutputDebugString( L"scalar:" );
-	WCHAR hogera[MAX_PATH];
-	MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED,
-						 (char*)token.data.scalar.value, -1, hogera, wcslen( hogera ) );
-	OutputDebugString( hogera );
-	OutputDebugString( L"\n" );
+	printDebugString( L"scalar:" );
+	outputMBChar( (char*)token.data.scalar.value );
+	printDebugString( L"\n" );
 }
-
-void EntityModelFactory::yamlStreamStartEvent( const yaml_event_t& event )
-{
-	throw std::logic_error( "The method or operation is not implemented." );
-}
-
-void EntityModelFactory::yamlStreamEndEvent( const yaml_event_t& event )
-{
-	throw std::logic_error( "The method or operation is not implemented." );
-}
-
-void EntityModelFactory::yamlDocumentStartEvent( const yaml_event_t& event )
-{
-	throw std::logic_error( "The method or operation is not implemented." );
-}
-
-void EntityModelFactory::yamlDocumentEndEvent( const yaml_event_t& event )
-{
-	throw std::logic_error( "The method or operation is not implemented." );
-}
-
-void EntityModelFactory::yamlSequenceStartEvent( const yaml_event_t& event )
-{
-	throw std::logic_error( "The method or operation is not implemented." );
-}
-
-void EntityModelFactory::yamlSequenceEndEvent( const yaml_event_t& event )
-{
-	throw std::logic_error( "The method or operation is not implemented." );
-}
-
-void EntityModelFactory::yamlMappingStartEvent( const yaml_event_t& event )
-{
-	throw std::logic_error( "The method or operation is not implemented." );
-}
-
-void EntityModelFactory::yamlMappingEndEvent( const yaml_event_t& event )
-{
-	throw std::logic_error( "The method or operation is not implemented." );
-}
-
-void EntityModelFactory::yamlAliasEvent( const yaml_event_t& event )
-{
-	throw std::logic_error( "The method or operation is not implemented." );
-}
-
-void EntityModelFactory::yamlScalarEvent( const yaml_event_t& event )
-{
-	throw std::logic_error( "The method or operation is not implemented." );
-}
-
+#endif
 }; // namespace LvEdEngine
-
-
