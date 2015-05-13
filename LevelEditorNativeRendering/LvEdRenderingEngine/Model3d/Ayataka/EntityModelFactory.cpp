@@ -30,11 +30,15 @@ void printMBString( const char* s ) {
 namespace LvEdEngine
 {
 
-bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filename )
+EntityModelFactory::EntityModelFactory( ID3D11Device* device ) : CmdlModelFactory( device )
 {
 	char envUsagiDir[MAX_PATH];
-	GetEnvironmentVariableA( "USAGI_DIR", envUsagiDir, (DWORD)strlen( envUsagiDir ) );
+	GetEnvironmentVariableA( "USAGI_DIR", envUsagiDir, MAX_PATH );
+	mEnvUsagiDir.assign( envUsagiDir );
+}
 
+bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filename )
+{
 	char filename_mb[MAX_PATH];
 	WideCharToMultiByte( 0, 0, filename, -1, filename_mb, MAX_PATH, NULL, NULL );
 
@@ -51,7 +55,7 @@ bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filenam
 		}
 		else {
 			modelName = yamlParser.mModelName;
-			yamlPath.assign( envUsagiDir );
+			yamlPath = mEnvUsagiDir;
 			yamlPath.append( "\\Data\\Entities\\" );
 			yamlPath.append( yamlParser.mInherits );
 			yamlPath.append( ".yml" );
@@ -70,7 +74,7 @@ bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filenam
 	replace( modelName, "/", "\\" );
 
 	// Make a path full
-	std::string modelPath( envUsagiDir );
+	std::string modelPath = mEnvUsagiDir;
 	modelPath.append( "\\Data\\Models\\" );
 	modelPath.append( modelName );
 	WCHAR modelPathW[MAX_PATH];
