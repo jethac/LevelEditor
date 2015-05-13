@@ -14,16 +14,19 @@ namespace LvEdEngine
 	class EntityModelFactory : public CmdlModelFactory
 	{
 	public:
-		typedef std::stack<yaml_event_type_t> EventStack;
-		typedef std::stack<std::string> KeyStack;
 		EntityModelFactory(ID3D11Device* device) : CmdlModelFactory(device) {}
 		virtual ~EntityModelFactory() {}
 
 		virtual bool LoadResource( Resource* resource, const WCHAR * filename );
+		bool LoadModel( Model* model, const WCHAR* filepath );
 
+	private:
 		class EntityYaml
 		{
 		public:
+			typedef std::stack<yaml_event_type_t> EventStack;
+			typedef std::stack<std::string> KeyStack;
+
 			EntityYaml() {
 				mDepth = 0;
 
@@ -34,10 +37,11 @@ namespace LvEdEngine
 			}
 			~EntityYaml() {}
 
-			void parseYaml( const WCHAR* filename );
+			void parseYaml( const char* filename );
 			void parseYaml( FILE* fh );
 
-
+			std::string mModelName;
+			std::string mInherits;
 		private:
 			void yamlStreamStartEvent( const yaml_event_t& event );
 			void yamlStreamEndEvent( const yaml_event_t& event );
@@ -50,20 +54,8 @@ namespace LvEdEngine
 			void yamlAliasEvent( const yaml_event_t& event );
 			void yamlScalarEvent( const yaml_event_t& event );
 
-			void yamlStreamStartToken( const yaml_token_t& token );
-			void yamlStreamEndToken( const yaml_token_t& token );
-			void yamlKeyToken( const yaml_token_t& token );
-			void yamlValueToken( const yaml_token_t& token );
-			void yamlBlockSequenceStartToken( const yaml_token_t& token );
-			void yamlBlockEntryToken( const yaml_token_t& token );
-			void yamlBlockEndToken( const yaml_token_t& token );
-			void yamlFlowSequenceStartToken( const yaml_token_t& token );
-			void yamlFlowSequenceEndToken( const yaml_token_t& token );
-			void yamlScalarToken( const yaml_token_t& token );
-			void yamlBlockMappingStartToken( const yaml_token_t& token );
-
 			void outputSpaces( int num );
-			void outputMBChar( const char* s );
+			void printMBString( const char* s );
 			void printDebugString( WCHAR* s );
 
 			void catchValue( const char* value );

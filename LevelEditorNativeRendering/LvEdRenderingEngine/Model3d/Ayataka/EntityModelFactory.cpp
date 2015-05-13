@@ -2,7 +2,7 @@
 #define NOMINMAX
 #endif
 
-#define ENABLE_PRINT_DEBUG 1
+#define ENABLE_PRINT_DEBUG 0
 
 #include "../../VectorMath/V3dMath.h"
 #include "../../VectorMath/CollisionPrimitives.h"
@@ -20,24 +20,104 @@
 #include "LoaderCommon.h"
 #include "CmdlModel.h"
 
+void printMBString( const char* s ) {
+	WCHAR hogera[MAX_PATH];
+	MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED,
+						 (char*)s, -1, hogera, MAX_PATH );
+	OutputDebugString( hogera );
+}
+
 namespace LvEdEngine
 {
 
 bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filename )
 {
-	WCHAR envUsagiDir[MAX_PATH];
-	GetEnvironmentVariable( L"USAGI_DIR", envUsagiDir, (DWORD)wcslen( envUsagiDir ) );
+	char envUsagiDir[MAX_PATH];
+	GetEnvironmentVariableA( "USAGI_DIR", envUsagiDir, (DWORD)strlen( envUsagiDir ) );
+
+	char filename_mb[MAX_PATH];
+	WideCharToMultiByte( 0, 0, filename, -1, filename_mb, MAX_PATH, NULL, NULL );
 
 	// Parse a YAML Entity file
-	EntityYaml yamlParser;
-	yamlParser.parseYaml( filename );
+	std::string modelName;
+	std::string yamlPath( filename_mb );
+	do {
+		EntityYaml yamlParser;
+		yamlParser.parseYaml( yamlPath.c_str() );
 
-	return false;
+		// No interitance anymore
+		if( yamlParser.mInherits.empty() ) {
+			break;
+		}
+		else {
+			modelName = yamlParser.mModelName;
+			yamlPath.assign( envUsagiDir );
+			yamlPath.append( "\\Data\\Entities\\" );
+			yamlPath.append( yamlParser.mInherits );
+			yamlPath.append( ".yml" );
+		}
+	} while ( modelName.empty() );
+
+	size_t len = modelName.length();
+	if( len == 0 ) {
+		return false; // No model found
+	}
+
+	// Change an extention "vmdc" to "cmdl"
+	std::string::size_type dotPos = modelName.find_last_of( "." );
+	assert( dotPos != std::string::npos );
+	modelName = modelName.substr( 0, dotPos ) + std::string( ".cmdl" );
+	replace( modelName, "/", "\\" );
+
+	// Make a path full
+	std::string modelPath( envUsagiDir );
+	modelPath.append( "\\Data\\Models\\" );
+	modelPath.append( modelName );
+	WCHAR modelPathW[MAX_PATH];
+	MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED,
+						 modelPath.c_str(), -1, modelPathW, MAX_PATH );
+
+	Model * model = (Model*)resource;
+	return LoadModel( model, modelPathW );
 }
 
-void EntityModelFactory::EntityYaml::parseYaml( const WCHAR* filename )
+bool EntityModelFactory::LoadModel( Model* model, const WCHAR* filepath )
 {
-	FILE *fh = _wfopen( filename, L"r" );
+	model->SetSourceFileName( filepath );
+
+	Model3dBuilder builder;
+	builder.m_model = model;
+
+	pugi::xml_document doc;
+	if( !doc.load_file( filepath ) ) {
+		return false;
+	}
+
+	bool isSucceeded = false;
+	m_parseErrors = 0;
+
+	builder.Begin();
+	ProcessXml( &builder, doc );
+	builder.End();
+
+	if( m_parseErrors > 0 ) {
+		Logger::Log( OutputMessageType::Error, L"%d errors occured while parsing, '%s'\n", m_parseErrors, filepath );
+	}
+	else {
+		isSucceeded = true;
+		model->Construct( m_device, ResourceManager::Inst() );
+	}
+
+	if( !isSucceeded ) {
+		model->Destroy();
+	}
+
+	return isSucceeded;
+}
+
+void EntityModelFactory::EntityYaml::parseYaml( const char* filename )
+{
+	FILE *fh = fopen( filename, "r" );
 	assert( fh != NULL );
 	parseYaml( fh );
 }
@@ -62,7 +142,7 @@ void EntityModelFactory::EntityYaml::parseYaml( FILE* fh )
 	mCurrentKey.clear();
 	mCurrentKey.reserve( MAX_PATH );
 	assert( mEventStack_StartEnd.empty() );
-#if 1
+
 	yaml_event_t event;
 	do {
 		result = yaml_parser_parse( &parser, &event );
@@ -128,35 +208,7 @@ void EntityModelFactory::EntityYaml::parseYaml( FILE* fh )
 			yaml_event_delete( &event );
 	} while( event.type != YAML_STREAM_END_EVENT );
 	yaml_event_delete( &event );
-#else
-	yaml_token_t token;
-	do {
-		yaml_parser_scan( &parser, &token );
-		switch( token.type ) {
-			/* Stream start/end */
-			case YAML_STREAM_START_TOKEN: yamlStreamStartToken( token ); break;
-			case YAML_STREAM_END_TOKEN:   yamlStreamEndToken( token );   break;
-				/* Token types (read before actual token) */
-			case YAML_KEY_TOKEN:   yamlKeyToken( token );   break;
-			case YAML_VALUE_TOKEN: yamlValueToken( token ); break;
-				/* Block delimeters */
-			case YAML_BLOCK_SEQUENCE_START_TOKEN: yamlBlockSequenceStartToken( token ); break;
-			case YAML_BLOCK_ENTRY_TOKEN:          yamlBlockEntryToken( token );         break;
-			case YAML_BLOCK_END_TOKEN:            yamlBlockEndToken( token );           break;
-			case YAML_FLOW_SEQUENCE_START_TOKEN:  yamlFlowSequenceStartToken( token );  break;
-			case YAML_FLOW_SEQUENCE_END_TOKEN:    yamlFlowSequenceEndToken( token );    break;
-				/* Data */
-			case YAML_BLOCK_MAPPING_START_TOKEN:  yamlBlockMappingStartToken( token ); break;
-			case YAML_SCALAR_TOKEN:  yamlScalarToken( token ); break;
-				/* Others */
-			default:
-				printf( "Got token of type %d\n", token.type );
-		}
-		if( token.type != YAML_STREAM_END_TOKEN )
-			yaml_token_delete( &token );
-	} while( token.type != YAML_STREAM_END_TOKEN );
-	yaml_token_delete( &token );
-#endif
+
 	// Cleanup
 	yaml_parser_delete( &parser );
 	fclose( fh );
@@ -236,7 +288,7 @@ void EntityModelFactory::EntityYaml::yamlAliasEvent( const yaml_event_t& event )
 {
 	outputSpaces( mDepth );
 	printDebugString( L"event:" );
-	outputMBChar( (char*)event.data.alias.anchor );
+	printMBString( (char*)event.data.alias.anchor );
 	printDebugString( L"\n" );
 }
 
@@ -247,7 +299,7 @@ void EntityModelFactory::EntityYaml::yamlScalarEvent( const yaml_event_t& event 
 	printDebugString( L"scalar:" );
 
 	const char* const value = (char*)event.data.scalar.value;
-	outputMBChar( value );
+	printMBString( value );
 
 	if( mEventStack_StartEnd.top() == YAML_SEQUENCE_START_EVENT ) {
 		catchValue( value );
@@ -277,12 +329,9 @@ void EntityModelFactory::EntityYaml::outputSpaces( int num ) {
 #endif
 }
 
-void EntityModelFactory::EntityYaml::outputMBChar( const char* s ) {
+void EntityModelFactory::EntityYaml::printMBString( const char* s ) {
 #if ENABLE_PRINT_DEBUG == 1
-	WCHAR hogera[MAX_PATH];
-	MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED,
-						 (char*)s, -1, hogera, (int)wcslen( hogera ) );
-	printDebugString( hogera );
+	printMBString( s );
 #endif
 }
 
@@ -298,83 +347,11 @@ void EntityModelFactory::EntityYaml::catchValue( const char* value )
 	// Process Key and Value data
 	if( mBlockKeyStack.top().compare( "ModelComponent" ) == 0 && mCurrentKey.compare( "m_name" ) == 0 ) {
 		printDebugString( L" !Model name!" );
+		mModelName.assign( value );
+	}
+	else if( mBlockKeyStack.top().compare( "Inherits" ) == 0 ) {
+		mInherits.assign( value );
 	}
 }
 
-#if 0
-void EntityModelFactory::EntityYaml::yamlStreamStartToken( const yaml_token_t& token )
-{
-	outputSpaces( m_Depth );
-	printDebugString( L"yamlStreamStartToken\n" );
-	++m_Depth;
-}
-
-void EntityModelFactory::EntityYaml::yamlStreamEndToken( const yaml_token_t& token )
-{
-	--m_Depth;
-	outputSpaces( m_Depth );
-	printDebugString( L"yamlStreamEndToken\n" );
-}
-
-void EntityModelFactory::EntityYaml::yamlKeyToken( const yaml_token_t& token )
-{
-	outputSpaces( m_Depth );
-	printDebugString( L"yamlKeyToken - " );
-}
-
-void EntityModelFactory::EntityYaml::yamlValueToken( const yaml_token_t& token )
-{
-	outputSpaces( m_Depth );
-	printDebugString( L"yamlValueToken - " );
-}
-
-void EntityModelFactory::EntityYaml::yamlBlockSequenceStartToken( const yaml_token_t& token )
-{
-	outputSpaces( m_Depth );
-	printDebugString( L"yamlBlockSequenceStartToken\n" );
-	++m_Depth;
-}
-
-void EntityModelFactory::EntityYaml::yamlBlockEntryToken( const yaml_token_t& token )
-{
-	outputSpaces( m_Depth );
-	printDebugString( L"yamlBlockEntryToken\n" );
-}
-
-void EntityModelFactory::EntityYaml::yamlBlockEndToken( const yaml_token_t& token )
-{
-	--m_Depth;
-	outputSpaces( m_Depth );
-	printDebugString( L"yamlBlockEndToken\n" );
-}
-
-void EntityModelFactory::EntityYaml::yamlFlowSequenceStartToken( const yaml_token_t& token )
-{
-	outputSpaces( m_Depth );
-	printDebugString( L"yamlFlowSequenceStartToken\n" );
-	++m_Depth;
-
-}
-
-void EntityModelFactory::EntityYaml::yamlFlowSequenceEndToken( const yaml_token_t& token )
-{
-	--m_Depth;
-	outputSpaces( m_Depth );
-	printDebugString( L"yamlFlowSequenceEndToken\n" );
-}
-
-void EntityModelFactory::EntityYaml::yamlBlockMappingStartToken( const yaml_token_t& token )
-{
-	outputSpaces( m_Depth );
-	printDebugString( L"[Block mapping]\n" );
-	++m_Depth;
-}
-
-void EntityModelFactory::EntityYaml::yamlScalarToken( const yaml_token_t& token )
-{
-	printDebugString( L"scalar:" );
-	outputMBChar( (char*)token.data.scalar.value );
-	printDebugString( L"\n" );
-}
-#endif
 }; // namespace LvEdEngine
