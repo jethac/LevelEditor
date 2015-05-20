@@ -188,6 +188,7 @@
     <ClInclude Include="GobSystem\SphereGob.h" />
     <ClInclude Include="GobSystem\SpinnerComponent.h" />
     <ClInclude Include="GobSystem\Tank\StandardBaseGob.h" />
+    <ClInclude Include="GobSystem\Tank\StaticModelGob.h" />
     <ClInclude Include="GobSystem\Terrain\DecorationMap.h" />
     <ClInclude Include="GobSystem\Terrain\LayerMap.h" />
     <ClInclude Include="GobSystem\Terrain\TerrainGob.h" />
@@ -248,6 +249,7 @@
     <ClInclude Include="ResourceManager\TextureFactory.h" />
     <ClInclude Include="Renderer\ShaderLib.h" />
     <ClInclude Include="Renderer\SkyDomeShader.h" />
+    <ClInclude Include="Usagi\UsagiUtil.h" />
     <ClInclude Include="VectorMath\Camera.h" />
     <ClInclude Include="VectorMath\CollisionPrimitives.h" />
     <ClInclude Include="VectorMath\MeshUtil.h" />
@@ -315,6 +317,7 @@
     <ClCompile Include="GobSystem\SphereGob.cpp" />
     <ClCompile Include="GobSystem\SpinnerComponent.cpp" />
     <ClCompile Include="GobSystem\Tank\StandardBaseGob.cpp" />
+    <ClCompile Include="GobSystem\Tank\StaticModelGob.cpp" />
     <ClCompile Include="GobSystem\Terrain\DecorationMap.cpp" />
     <ClCompile Include="GobSystem\Terrain\LayerMap.cpp" />
     <ClCompile Include="GobSystem\Terrain\TerrainGob.cpp" />

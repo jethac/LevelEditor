@@ -464,6 +464,7 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- Tank related types -->
   <xs:complexType name="standardBaseType">
     <xs:annotation>
       <xs:appinfo>
@@ -483,6 +484,29 @@
         </xs:sequence>
         <xs:attribute name="life" type="xs:int" default="100" />
       </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="staticModelType" abstract="true">
+    <xs:annotation>
+      <xs:appinfo>
+        <LeGe.NativeType nativeName="StaticModelGob"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+        <xs:extension base="gameObjectType" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="itemPopPointType">
+    <xs:annotation>
+      <xs:appinfo>
+        <LeGe.NativeType nativeName="ItemPopPointGob"/>
+        <scea.dom.editors name="ItemPopPoint" category="Tank" menuText="Game Objects/Item Pop Point" description="Item pop point"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+        <xs:extension base="staticModelType" />
     </xs:complexContent>
   </xs:complexType>
 

@@ -934,6 +934,23 @@ void StandardBaseGob_Resource_Remove(ObjectGUID parentId, ObjectGUID childId)
 }
 
 //-----------------------------------------------------------------------------
+//StaticModelGob
+//-----------------------------------------------------------------------------
+Object* StaticModelGob_Create(ObjectTypeGUID tid, void* data, int size)
+{
+    assert(0); // class StaticModelGob is defined as abstract.
+    return NULL;
+}
+
+//-----------------------------------------------------------------------------
+//ItemPopPointGob
+//-----------------------------------------------------------------------------
+Object* ItemPopPointGob_Create(ObjectTypeGUID tid, void* data, int size)
+{
+    return new ItemPopPointGob();
+}
+
+//-----------------------------------------------------------------------------
 //TerrainMap
 //-----------------------------------------------------------------------------
 Object* TerrainMap_Create(ObjectTypeGUID tid, void* data, int size)
@@ -1272,6 +1289,10 @@ void InitGobBridge(GobBridge& bridge)
   bridge.RegisterObject( "StandardBaseGob", &StandardBaseGob_Create );
   bridge.RegisterProperty( "StandardBaseGob", "Life", &StandardBaseGob_Life_Set, NULL );
   bridge.RegisterChildList( "StandardBaseGob", "Resource", &StandardBaseGob_Resource_Add, &StandardBaseGob_Resource_Remove);
+
+  bridge.RegisterObject( "StaticModelGob", &StaticModelGob_Create );
+
+  bridge.RegisterObject( "ItemPopPointGob", &ItemPopPointGob_Create );
 
   bridge.RegisterObject( "TerrainMap", &TerrainMap_Create );
   bridge.RegisterProperty( "TerrainMap", "Name", &TerrainMap_Name_Set, NULL );

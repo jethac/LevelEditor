@@ -542,6 +542,28 @@ namespace LevelEditor
             standardBaseType.lifeAttribute = standardBaseType.Type.GetAttributeInfo("life");
             standardBaseType.resourceChild = standardBaseType.Type.GetChildInfo("resource");
 
+            staticModelType.Type = getNodeType("gap", "staticModelType");
+            staticModelType.transformAttribute = staticModelType.Type.GetAttributeInfo("transform");
+            staticModelType.translateAttribute = staticModelType.Type.GetAttributeInfo("translate");
+            staticModelType.rotateAttribute = staticModelType.Type.GetAttributeInfo("rotate");
+            staticModelType.scaleAttribute = staticModelType.Type.GetAttributeInfo("scale");
+            staticModelType.pivotAttribute = staticModelType.Type.GetAttributeInfo("pivot");
+            staticModelType.nameAttribute = staticModelType.Type.GetAttributeInfo("name");
+            staticModelType.visibleAttribute = staticModelType.Type.GetAttributeInfo("visible");
+            staticModelType.lockedAttribute = staticModelType.Type.GetAttributeInfo("locked");
+            staticModelType.transformationTypeAttribute = staticModelType.Type.GetAttributeInfo("transformationType");
+
+            itemPopPointType.Type = getNodeType("gap", "itemPopPointType");
+            itemPopPointType.transformAttribute = itemPopPointType.Type.GetAttributeInfo("transform");
+            itemPopPointType.translateAttribute = itemPopPointType.Type.GetAttributeInfo("translate");
+            itemPopPointType.rotateAttribute = itemPopPointType.Type.GetAttributeInfo("rotate");
+            itemPopPointType.scaleAttribute = itemPopPointType.Type.GetAttributeInfo("scale");
+            itemPopPointType.pivotAttribute = itemPopPointType.Type.GetAttributeInfo("pivot");
+            itemPopPointType.nameAttribute = itemPopPointType.Type.GetAttributeInfo("name");
+            itemPopPointType.visibleAttribute = itemPopPointType.Type.GetAttributeInfo("visible");
+            itemPopPointType.lockedAttribute = itemPopPointType.Type.GetAttributeInfo("locked");
+            itemPopPointType.transformationTypeAttribute = itemPopPointType.Type.GetAttributeInfo("transformationType");
+
             terrainMapType.Type = getNodeType("gap", "terrainMapType");
             terrainMapType.nameAttribute = terrainMapType.Type.GetAttributeInfo("name");
             terrainMapType.visibleAttribute = terrainMapType.Type.GetAttributeInfo("visible");
@@ -1263,6 +1285,34 @@ namespace LevelEditor
             public static AttributeInfo transformationTypeAttribute;
             public static AttributeInfo lifeAttribute;
             public static ChildInfo resourceChild;
+        }
+
+        public static class staticModelType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo transformAttribute;
+            public static AttributeInfo translateAttribute;
+            public static AttributeInfo rotateAttribute;
+            public static AttributeInfo scaleAttribute;
+            public static AttributeInfo pivotAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo visibleAttribute;
+            public static AttributeInfo lockedAttribute;
+            public static AttributeInfo transformationTypeAttribute;
+        }
+
+        public static class itemPopPointType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo transformAttribute;
+            public static AttributeInfo translateAttribute;
+            public static AttributeInfo rotateAttribute;
+            public static AttributeInfo scaleAttribute;
+            public static AttributeInfo pivotAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo visibleAttribute;
+            public static AttributeInfo lockedAttribute;
+            public static AttributeInfo transformationTypeAttribute;
         }
 
         public static class terrainMapType
