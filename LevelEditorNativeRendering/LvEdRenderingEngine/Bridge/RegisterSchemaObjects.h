@@ -33,6 +33,7 @@
 // Tank
 #include "../GobSystem/Tank/StandardBaseGob.h"
 #include "../GobSystem/Tank/StaticModelGob.h"
+#include "../GobSystem/Tank/SpawnPointGob.h"
 
 #include "../Renderer/Resource.h"
 

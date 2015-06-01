@@ -564,6 +564,25 @@ namespace LevelEditor
             itemPopPointType.lockedAttribute = itemPopPointType.Type.GetAttributeInfo("locked");
             itemPopPointType.transformationTypeAttribute = itemPopPointType.Type.GetAttributeInfo("transformationType");
 
+            spawnPointType.Type = getNodeType("gap", "spawnPointType");
+            spawnPointType.transformAttribute = spawnPointType.Type.GetAttributeInfo("transform");
+            spawnPointType.translateAttribute = spawnPointType.Type.GetAttributeInfo("translate");
+            spawnPointType.rotateAttribute = spawnPointType.Type.GetAttributeInfo("rotate");
+            spawnPointType.scaleAttribute = spawnPointType.Type.GetAttributeInfo("scale");
+            spawnPointType.pivotAttribute = spawnPointType.Type.GetAttributeInfo("pivot");
+            spawnPointType.nameAttribute = spawnPointType.Type.GetAttributeInfo("name");
+            spawnPointType.visibleAttribute = spawnPointType.Type.GetAttributeInfo("visible");
+            spawnPointType.lockedAttribute = spawnPointType.Type.GetAttributeInfo("locked");
+            spawnPointType.transformationTypeAttribute = spawnPointType.Type.GetAttributeInfo("transformationType");
+            spawnPointType.colorAttribute = spawnPointType.Type.GetAttributeInfo("color");
+            spawnPointType.emissiveAttribute = spawnPointType.Type.GetAttributeInfo("emissive");
+            spawnPointType.specularAttribute = spawnPointType.Type.GetAttributeInfo("specular");
+            spawnPointType.specularPowerAttribute = spawnPointType.Type.GetAttributeInfo("specularPower");
+            spawnPointType.diffuseAttribute = spawnPointType.Type.GetAttributeInfo("diffuse");
+            spawnPointType.normalAttribute = spawnPointType.Type.GetAttributeInfo("normal");
+            spawnPointType.textureTransformAttribute = spawnPointType.Type.GetAttributeInfo("textureTransform");
+            spawnPointType.teamAttribute = spawnPointType.Type.GetAttributeInfo("team");
+
             terrainMapType.Type = getNodeType("gap", "terrainMapType");
             terrainMapType.nameAttribute = terrainMapType.Type.GetAttributeInfo("name");
             terrainMapType.visibleAttribute = terrainMapType.Type.GetAttributeInfo("visible");
@@ -1313,6 +1332,28 @@ namespace LevelEditor
             public static AttributeInfo visibleAttribute;
             public static AttributeInfo lockedAttribute;
             public static AttributeInfo transformationTypeAttribute;
+        }
+
+        public static class spawnPointType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo transformAttribute;
+            public static AttributeInfo translateAttribute;
+            public static AttributeInfo rotateAttribute;
+            public static AttributeInfo scaleAttribute;
+            public static AttributeInfo pivotAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo visibleAttribute;
+            public static AttributeInfo lockedAttribute;
+            public static AttributeInfo transformationTypeAttribute;
+            public static AttributeInfo colorAttribute;
+            public static AttributeInfo emissiveAttribute;
+            public static AttributeInfo specularAttribute;
+            public static AttributeInfo specularPowerAttribute;
+            public static AttributeInfo diffuseAttribute;
+            public static AttributeInfo normalAttribute;
+            public static AttributeInfo textureTransformAttribute;
+            public static AttributeInfo teamAttribute;
         }
 
         public static class terrainMapType

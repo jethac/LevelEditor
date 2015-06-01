@@ -951,6 +951,23 @@ Object* ItemPopPointGob_Create(ObjectTypeGUID tid, void* data, int size)
 }
 
 //-----------------------------------------------------------------------------
+//SpawnPointGob
+//-----------------------------------------------------------------------------
+Object* SpawnPointGob_Create(ObjectTypeGUID tid, void* data, int size)
+{
+    return new SpawnPointGob();
+}
+
+//-----------------------------------------------------------------------------
+void SpawnPointGob_Team_Set(ObjectGUID instanceId, void* data, int size)
+{
+    assert((data && size > 0) || (!data && size == 0));
+    SpawnPointGob* instance = reinterpret_cast<SpawnPointGob*>(instanceId);
+    int localData = *reinterpret_cast<int*>(data);
+    instance->SetTeam(localData);
+}
+
+//-----------------------------------------------------------------------------
 //TerrainMap
 //-----------------------------------------------------------------------------
 Object* TerrainMap_Create(ObjectTypeGUID tid, void* data, int size)
@@ -1293,6 +1310,9 @@ void InitGobBridge(GobBridge& bridge)
   bridge.RegisterObject( "StaticModelGob", &StaticModelGob_Create );
 
   bridge.RegisterObject( "ItemPopPointGob", &ItemPopPointGob_Create );
+
+  bridge.RegisterObject( "SpawnPointGob", &SpawnPointGob_Create );
+  bridge.RegisterProperty( "SpawnPointGob", "Team", &SpawnPointGob_Team_Set, NULL );
 
   bridge.RegisterObject( "TerrainMap", &TerrainMap_Create );
   bridge.RegisterProperty( "TerrainMap", "Name", &TerrainMap_Name_Set, NULL );

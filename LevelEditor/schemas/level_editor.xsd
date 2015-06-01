@@ -510,6 +510,23 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="spawnPointType">
+    <xs:annotation>
+      <xs:appinfo>
+        <LeGe.NativeType nativeName="SpawnPointGob"/>
+        <LeGe.NativeProperty name="team" nativeName="Team" nativeType="int" access="set"/>
+
+        <scea.dom.editors name="SpawnPoint" category="Tank" menuText="Game Objects/Spawn Point" description="Spawn point"/>
+        <scea.dom.editors.attribute name="team" displayName="Team" description="Number of the team"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+        <xs:extension base="coneTestType">
+          <xs:attribute name="team" type="xs:int" default="0" />
+        </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- terrain related types  -->
 
   <xs:complexType name="terrainMapType" abstract="true">

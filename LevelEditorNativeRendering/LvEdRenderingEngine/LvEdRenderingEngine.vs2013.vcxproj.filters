@@ -399,6 +399,9 @@
     <ClInclude Include="Usagi\UsagiUtil.h">
       <Filter>Usagi</Filter>
     </ClInclude>
+    <ClInclude Include="GobSystem\Tank\SpawnPointGob.h">
+      <Filter>GobSystem\Tank</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -722,6 +725,9 @@
       <Filter>Model3d\Ayataka</Filter>
     </ClCompile>
     <ClCompile Include="GobSystem\Tank\StaticModelGob.cpp">
+      <Filter>GobSystem\Tank</Filter>
+    </ClCompile>
+    <ClCompile Include="GobSystem\Tank\SpawnPointGob.cpp">
       <Filter>GobSystem\Tank</Filter>
     </ClCompile>
   </ItemGroup>
