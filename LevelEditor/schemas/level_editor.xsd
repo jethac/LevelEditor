@@ -517,7 +517,7 @@
         <LeGe.NativeProperty name="team" nativeName="Team" nativeType="int" access="set"/>
 
         <scea.dom.editors name="SpawnPoint" category="Tank" menuText="Game Objects/Spawn Point" description="Spawn point"/>
-        <scea.dom.editors.attribute name="team" displayName="Team" description="Number of the team"/>
+        <scea.dom.editors.attribute name="team" category="Tank" displayName="Team" description="Number of the team"/>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>

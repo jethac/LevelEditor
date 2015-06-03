@@ -81,13 +81,13 @@ namespace LevelEditor
             //
             // lblCopyright
             //
-            this.lblCopyright = new System.Windows.Forms.Label();
-            this.lblCopyright.BackColor = System.Drawing.Color.Transparent;
-            this.lblCopyright.ForeColor = Color.LightGray;
-            this.lblCopyright.Font = new System.Drawing.Font("Trebuchet MS", 10.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCopyright.Name = "lblCopyright";
-            this.lblCopyright.Text = copyright;
-            this.lblCopyright.Width = 500;
+            //this.lblCopyright = new System.Windows.Forms.Label();
+            //this.lblCopyright.BackColor = System.Drawing.Color.Transparent;
+            //this.lblCopyright.ForeColor = Color.LightGray;
+            //this.lblCopyright.Font = new System.Drawing.Font("Trebuchet MS", 10.0f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            //this.lblCopyright.Name = "lblCopyright";
+            //this.lblCopyright.Text = copyright;
+            //this.lblCopyright.Width = 500;
             this.AutoSize = true;
             
 
@@ -99,7 +99,7 @@ namespace LevelEditor
             this.ControlBox = false;
             this.Controls.Add(this.lblATFVer);
             this.Controls.Add(this.lblAppVer);
-            this.Controls.Add(this.lblCopyright);
+            //this.Controls.Add(this.lblCopyright);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
@@ -124,9 +124,9 @@ namespace LevelEditor
                 {
                     // Reposition labels.                  
                     const int x = 10;
-                    int y = Height - lblCopyright.Height - 6;
+                    int y = Height /*- lblCopyright.Height*/ - 6;
 
-                    lblCopyright.Location = new Point(x, y);
+                    //lblCopyright.Location = new Point(x, y);
 
                     y -= lblATFVer.Height;
                     lblATFVer.Location = new Point(x, y);
@@ -171,7 +171,7 @@ namespace LevelEditor
 
         private Label lblAppVer;
         private Label lblATFVer;
-        private Label lblCopyright;
+        //private Label lblCopyright;
 
         /// <summary>
         /// The only splashForm instance.
