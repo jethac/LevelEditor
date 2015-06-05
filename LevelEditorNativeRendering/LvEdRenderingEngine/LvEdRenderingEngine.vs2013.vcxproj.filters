@@ -402,6 +402,12 @@
     <ClInclude Include="GobSystem\Tank\SpawnPointGob.h">
       <Filter>GobSystem\Tank</Filter>
     </ClInclude>
+    <ClInclude Include="GobSystem\Tank\AI\AIWaypointGob.h">
+      <Filter>GobSystem\Tank\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="GobSystem\Tank\AI\AIBlockingAreaGob.h">
+      <Filter>GobSystem\Tank\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -730,6 +736,12 @@
     <ClCompile Include="GobSystem\Tank\SpawnPointGob.cpp">
       <Filter>GobSystem\Tank</Filter>
     </ClCompile>
+    <ClCompile Include="GobSystem\Tank\AI\AIWaypointGob.cpp">
+      <Filter>GobSystem\Tank\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="GobSystem\Tank\AI\AIBlockingAreaGob.cpp">
+      <Filter>GobSystem\Tank\AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GobSystem">
@@ -788,6 +800,9 @@
     </Filter>
     <Filter Include="Usagi">
       <UniqueIdentifier>{e6ba14f2-4c0f-40a0-839c-0292d4509840}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GobSystem\Tank\AI">
+      <UniqueIdentifier>{a1c176bf-11e0-4514-abfb-a92947ade204}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

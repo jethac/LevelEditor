@@ -968,6 +968,22 @@ void SpawnPointGob_Team_Set(ObjectGUID instanceId, void* data, int size)
 }
 
 //-----------------------------------------------------------------------------
+//AIWaypointGob
+//-----------------------------------------------------------------------------
+Object* AIWaypointGob_Create(ObjectTypeGUID tid, void* data, int size)
+{
+    return new AIWaypointGob();
+}
+
+//-----------------------------------------------------------------------------
+//AIBlockingAreaGob
+//-----------------------------------------------------------------------------
+Object* AIBlockingAreaGob_Create(ObjectTypeGUID tid, void* data, int size)
+{
+    return new AIBlockingAreaGob();
+}
+
+//-----------------------------------------------------------------------------
 //TerrainMap
 //-----------------------------------------------------------------------------
 Object* TerrainMap_Create(ObjectTypeGUID tid, void* data, int size)
@@ -1313,6 +1329,10 @@ void InitGobBridge(GobBridge& bridge)
 
   bridge.RegisterObject( "SpawnPointGob", &SpawnPointGob_Create );
   bridge.RegisterProperty( "SpawnPointGob", "Team", &SpawnPointGob_Team_Set, NULL );
+
+  bridge.RegisterObject( "AIWaypointGob", &AIWaypointGob_Create );
+
+  bridge.RegisterObject( "AIBlockingAreaGob", &AIBlockingAreaGob_Create );
 
   bridge.RegisterObject( "TerrainMap", &TerrainMap_Create );
   bridge.RegisterProperty( "TerrainMap", "Name", &TerrainMap_Name_Set, NULL );

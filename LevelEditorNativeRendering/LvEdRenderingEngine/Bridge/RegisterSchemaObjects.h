@@ -34,6 +34,8 @@
 #include "../GobSystem/Tank/StandardBaseGob.h"
 #include "../GobSystem/Tank/StaticModelGob.h"
 #include "../GobSystem/Tank/SpawnPointGob.h"
+#include "../GobSystem/Tank/AI/AIWaypointGob.h"
+#include "../GobSystem/Tank/AI/AIBlockingAreaGob.h"
 
 #include "../Renderer/Resource.h"
 

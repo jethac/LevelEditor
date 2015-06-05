@@ -583,6 +583,42 @@ namespace LevelEditor
             spawnPointType.textureTransformAttribute = spawnPointType.Type.GetAttributeInfo("textureTransform");
             spawnPointType.teamAttribute = spawnPointType.Type.GetAttributeInfo("team");
 
+            aiWaypointType.Type = getNodeType("gap", "aiWaypointType");
+            aiWaypointType.transformAttribute = aiWaypointType.Type.GetAttributeInfo("transform");
+            aiWaypointType.translateAttribute = aiWaypointType.Type.GetAttributeInfo("translate");
+            aiWaypointType.rotateAttribute = aiWaypointType.Type.GetAttributeInfo("rotate");
+            aiWaypointType.scaleAttribute = aiWaypointType.Type.GetAttributeInfo("scale");
+            aiWaypointType.pivotAttribute = aiWaypointType.Type.GetAttributeInfo("pivot");
+            aiWaypointType.nameAttribute = aiWaypointType.Type.GetAttributeInfo("name");
+            aiWaypointType.visibleAttribute = aiWaypointType.Type.GetAttributeInfo("visible");
+            aiWaypointType.lockedAttribute = aiWaypointType.Type.GetAttributeInfo("locked");
+            aiWaypointType.transformationTypeAttribute = aiWaypointType.Type.GetAttributeInfo("transformationType");
+            aiWaypointType.colorAttribute = aiWaypointType.Type.GetAttributeInfo("color");
+            aiWaypointType.emissiveAttribute = aiWaypointType.Type.GetAttributeInfo("emissive");
+            aiWaypointType.specularAttribute = aiWaypointType.Type.GetAttributeInfo("specular");
+            aiWaypointType.specularPowerAttribute = aiWaypointType.Type.GetAttributeInfo("specularPower");
+            aiWaypointType.diffuseAttribute = aiWaypointType.Type.GetAttributeInfo("diffuse");
+            aiWaypointType.normalAttribute = aiWaypointType.Type.GetAttributeInfo("normal");
+            aiWaypointType.textureTransformAttribute = aiWaypointType.Type.GetAttributeInfo("textureTransform");
+
+            aiBlockingAreaType.Type = getNodeType("gap", "aiBlockingAreaType");
+            aiBlockingAreaType.transformAttribute = aiBlockingAreaType.Type.GetAttributeInfo("transform");
+            aiBlockingAreaType.translateAttribute = aiBlockingAreaType.Type.GetAttributeInfo("translate");
+            aiBlockingAreaType.rotateAttribute = aiBlockingAreaType.Type.GetAttributeInfo("rotate");
+            aiBlockingAreaType.scaleAttribute = aiBlockingAreaType.Type.GetAttributeInfo("scale");
+            aiBlockingAreaType.pivotAttribute = aiBlockingAreaType.Type.GetAttributeInfo("pivot");
+            aiBlockingAreaType.nameAttribute = aiBlockingAreaType.Type.GetAttributeInfo("name");
+            aiBlockingAreaType.visibleAttribute = aiBlockingAreaType.Type.GetAttributeInfo("visible");
+            aiBlockingAreaType.lockedAttribute = aiBlockingAreaType.Type.GetAttributeInfo("locked");
+            aiBlockingAreaType.transformationTypeAttribute = aiBlockingAreaType.Type.GetAttributeInfo("transformationType");
+            aiBlockingAreaType.colorAttribute = aiBlockingAreaType.Type.GetAttributeInfo("color");
+            aiBlockingAreaType.emissiveAttribute = aiBlockingAreaType.Type.GetAttributeInfo("emissive");
+            aiBlockingAreaType.specularAttribute = aiBlockingAreaType.Type.GetAttributeInfo("specular");
+            aiBlockingAreaType.specularPowerAttribute = aiBlockingAreaType.Type.GetAttributeInfo("specularPower");
+            aiBlockingAreaType.diffuseAttribute = aiBlockingAreaType.Type.GetAttributeInfo("diffuse");
+            aiBlockingAreaType.normalAttribute = aiBlockingAreaType.Type.GetAttributeInfo("normal");
+            aiBlockingAreaType.textureTransformAttribute = aiBlockingAreaType.Type.GetAttributeInfo("textureTransform");
+
             terrainMapType.Type = getNodeType("gap", "terrainMapType");
             terrainMapType.nameAttribute = terrainMapType.Type.GetAttributeInfo("name");
             terrainMapType.visibleAttribute = terrainMapType.Type.GetAttributeInfo("visible");
@@ -1354,6 +1390,48 @@ namespace LevelEditor
             public static AttributeInfo normalAttribute;
             public static AttributeInfo textureTransformAttribute;
             public static AttributeInfo teamAttribute;
+        }
+
+        public static class aiWaypointType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo transformAttribute;
+            public static AttributeInfo translateAttribute;
+            public static AttributeInfo rotateAttribute;
+            public static AttributeInfo scaleAttribute;
+            public static AttributeInfo pivotAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo visibleAttribute;
+            public static AttributeInfo lockedAttribute;
+            public static AttributeInfo transformationTypeAttribute;
+            public static AttributeInfo colorAttribute;
+            public static AttributeInfo emissiveAttribute;
+            public static AttributeInfo specularAttribute;
+            public static AttributeInfo specularPowerAttribute;
+            public static AttributeInfo diffuseAttribute;
+            public static AttributeInfo normalAttribute;
+            public static AttributeInfo textureTransformAttribute;
+        }
+
+        public static class aiBlockingAreaType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo transformAttribute;
+            public static AttributeInfo translateAttribute;
+            public static AttributeInfo rotateAttribute;
+            public static AttributeInfo scaleAttribute;
+            public static AttributeInfo pivotAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo visibleAttribute;
+            public static AttributeInfo lockedAttribute;
+            public static AttributeInfo transformationTypeAttribute;
+            public static AttributeInfo colorAttribute;
+            public static AttributeInfo emissiveAttribute;
+            public static AttributeInfo specularAttribute;
+            public static AttributeInfo specularPowerAttribute;
+            public static AttributeInfo diffuseAttribute;
+            public static AttributeInfo normalAttribute;
+            public static AttributeInfo textureTransformAttribute;
         }
 
         public static class terrainMapType

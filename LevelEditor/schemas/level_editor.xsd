@@ -527,6 +527,33 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- AI types -->
+  <xs:complexType name="aiWaypointType">
+    <xs:annotation>
+      <xs:appinfo>
+        <LeGe.NativeType nativeName="AIWaypointGob"/>
+
+        <scea.dom.editors name="AIWaypoint" category="AI" menuText="Game Objects/AI Waypoint" description="AI waypoint"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+        <xs:extension base="coneTestType" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="aiBlockingAreaType">
+    <xs:annotation>
+      <xs:appinfo>
+        <LeGe.NativeType nativeName="AIBlockingAreaGob"/>
+
+        <scea.dom.editors name="AIBlockingArea" category="AI" menuText="Game Objects/AI Blocking Area" description="AI blocking area"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+        <xs:extension base="cubeTestType" />
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- terrain related types  -->
 
   <xs:complexType name="terrainMapType" abstract="true">
