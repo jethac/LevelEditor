@@ -16,6 +16,8 @@ namespace LvEdEngine
 
 		void SetTeam( int team );
 
+		virtual void SetupRenderable( RenderableNode* r, RenderContext* context );
+
 	private:
 		int mTeam;
 	};
