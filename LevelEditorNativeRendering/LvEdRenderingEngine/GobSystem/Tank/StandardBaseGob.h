@@ -15,7 +15,7 @@ namespace LvEdEngine
 		static const char* StaticClassName(){ return "StandardBaseGob"; }
 
 		// push Renderable nodes
-		virtual bool GetRenderables( RenderableNodeCollector* collector, RenderContext* context );
+		virtual void GetRenderables( RenderableNodeCollector* collector, RenderContext* context );
 		virtual void Update( float dt );
 
 		// functions

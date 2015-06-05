@@ -378,9 +378,6 @@
     <ClInclude Include="GobSystem\MeshComponent.h">
       <Filter>GobSystem</Filter>
     </ClInclude>
-    <ClInclude Include="GobSystem\SpinnerComponent.h">
-      <Filter>GobSystem</Filter>
-    </ClInclude>
     <ClInclude Include="Model3d\Ayataka\CmdlModelFactory.h">
       <Filter>Model3d\Ayataka</Filter>
     </ClInclude>
@@ -407,6 +404,9 @@
     </ClInclude>
     <ClInclude Include="GobSystem\Tank\AI\AIBlockingAreaGob.h">
       <Filter>GobSystem\Tank\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="GobSystem\SpinnerComponent.h">
+      <Filter>GobSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -712,9 +712,6 @@
     <ClCompile Include="GobSystem\MeshComponent.cpp">
       <Filter>GobSystem</Filter>
     </ClCompile>
-    <ClCompile Include="GobSystem\SpinnerComponent.cpp">
-      <Filter>GobSystem</Filter>
-    </ClCompile>
     <ClCompile Include="Model3d\Ayataka\CmdlModelFactory.cpp">
       <Filter>Model3d\Ayataka</Filter>
     </ClCompile>
@@ -741,6 +738,9 @@
     </ClCompile>
     <ClCompile Include="GobSystem\Tank\AI\AIBlockingAreaGob.cpp">
       <Filter>GobSystem\Tank\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="GobSystem\SpinnerComponent.cpp">
+      <Filter>GobSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

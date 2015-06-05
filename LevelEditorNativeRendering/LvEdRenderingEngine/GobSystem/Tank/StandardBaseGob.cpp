@@ -47,11 +47,11 @@ StandardBaseGob::~StandardBaseGob()
 }
 
 // ----------------------------------------------------------------------------------
-bool StandardBaseGob::GetRenderables(RenderableNodeCollector* collector, RenderContext* /*context*/)
+void StandardBaseGob::GetRenderables(RenderableNodeCollector* collector, RenderContext* /*context*/)
 {   
     if(!IsVisible())
     {
-        return false;
+        return;
     }
 
     
@@ -74,8 +74,6 @@ bool StandardBaseGob::GetRenderables(RenderableNodeCollector* collector, RenderC
         LightingState::Inst()->UpdateLightEnvironment(r);
         collector->Add(r, flags, Shaders::TexturedShader);
     }
-
-    return true;
 }
 
 // ----------------------------------------------------------------------------------

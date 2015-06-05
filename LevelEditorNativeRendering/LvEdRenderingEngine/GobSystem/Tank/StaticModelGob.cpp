@@ -23,15 +23,14 @@ StaticModelGob::~StaticModelGob()
 //---------------------------------------------------------------------------
 // push Renderable nodes
 //virtual 
-bool StaticModelGob::GetRenderables(RenderableNodeCollector* collector, RenderContext* context)
+void StaticModelGob::GetRenderables(RenderableNodeCollector* collector, RenderContext* context)
 {
 	if( !IsVisible( context->Cam().GetFrustum() ) ) {
-		return false;
+		return;
 	}
 
 	RenderFlagsEnum flags = (RenderFlagsEnum)( RenderFlags::Textured | RenderFlags::Lit );
 	collector->Add( mRenderables.begin(), mRenderables.end(), flags, Shaders::TexturedShader );
-	return true;
 }
 
 void StaticModelGob::SetupModel( const wchar_t* filename )

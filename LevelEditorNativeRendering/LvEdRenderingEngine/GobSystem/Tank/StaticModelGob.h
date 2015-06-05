@@ -21,7 +21,7 @@ namespace LvEdEngine
 		virtual void Update(float dt);
 	
 		// push Renderable nodes
-		virtual bool GetRenderables(RenderableNodeCollector* collector, RenderContext* context);
+		virtual void GetRenderables(RenderableNodeCollector* collector, RenderContext* context);
 
 		void SetupModel( const wchar_t* filename );
 	protected:
