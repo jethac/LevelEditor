@@ -121,65 +121,66 @@ PS_INPUT VSMain( VS_INPUT input )
 //--------------------------------------------------------------------------------------
 float4 PSMain( PS_INPUT input ) : SV_TARGET
 {
-   float4  matdiffuse  = cb_matDiffuse;
-   float4  matspecular = cb_matSpecular;
-   float4  fc = matdiffuse;
-   if(cb_textured)                                                        
-   {   
-      if(cb_hasDiffuseMap)
-	   {
-	      float4 texcolor = diffuseTex.Sample( diffuseSampler, input.tex0 );
-		  clip(texcolor.a - 0.5);
-		  matdiffuse *= texcolor;
-          fc = matdiffuse;
-	   }
-	  // if(cb_hasSpecularMap)
-	 //  {
-	 //     matspecular = specularTex.Sample( diffuseSampler, input.tex0 );
+	float4  matdiffuse  = cb_matDiffuse;
+	float4  matspecular = cb_matSpecular;
+	float4  fc = matdiffuse;
+	if(cb_textured)
+	{
+		if(cb_hasDiffuseMap)
+		{
+			float4 texcolor = diffuseTex.Sample( diffuseSampler, input.tex0 );
+			texcolor.a = 1.0; // Temporarily disable alpha channel as a Translucent
+			clip(texcolor.a - 0.5);
+			matdiffuse *= texcolor;
+			fc = matdiffuse;
+		}
+		// if(cb_hasSpecularMap)
+		//  {
+		//     matspecular = specularTex.Sample( diffuseSampler, input.tex0 );
 	//	  matspecular.a *= 255;
 	//   }
-   }
-   if(cb_lit)
-   {
+	}
+	if(cb_lit)
+	{
 
-        float3 norm = normalize(input.normW);
-        if( cb_hasNormalMap )
-        {         
-            float3 T = normalize(input.tanW - dot(input.tanW, norm) * norm);
-            float3 B = cross(norm,T);
-            float3 normalMap = normalTex.Sample(diffuseSampler, input.tex0).xyz;
-            // expand the range of the normal map from (0,1) to (-1,1)
-            normalMap = (( 2 * normalMap ) - 1);
+		float3 norm = normalize(input.normW);
+		if( cb_hasNormalMap )
+		{         
+			float3 T = normalize(input.tanW - dot(input.tanW, norm) * norm);
+			float3 B = cross(norm,T);
+			float3 normalMap = normalTex.Sample(diffuseSampler, input.tex0).xyz;
+			// expand the range of the normal map from (0,1) to (-1,1)
+			normalMap = (( 2 * normalMap ) - 1);
 
-            float3x3 TBN = float3x3(T, B, norm);
-            // Transform from tangent space to world space.
-            norm = normalize(mul(normalMap, TBN));
-        }
+			float3x3 TBN = float3x3(T, B, norm);
+			// Transform from tangent space to world space.
+			norm = normalize(mul(normalMap, TBN));
+		}
         
 		float ShadowFactor = 1.0;
 		if ( cb_shadowed )
-        {
-		   ShadowFactor = ComputeShadowFactor(shadowTex, shadowSamplerCmp, input.texShadow.xyz,cb_smTexelSize);		   
+		{
+			ShadowFactor = ComputeShadowFactor(shadowTex, shadowSamplerCmp, input.texShadow.xyz,cb_smTexelSize);		   
 		}
 		float3 A,D,S;
 		float specPower = max(1.0,matspecular.a);
 		
-        ComputeLighting(input.posW,
-		                       norm,
-							   cb_camPosW,
-							   specPower,
-							   ShadowFactor,
-							    cb_lightEnv, 
+		ComputeLighting(input.posW,
+								norm,
+								cb_camPosW,
+								specPower,
+								ShadowFactor,
+								cb_lightEnv, 
 								A,D,S);
 
 		fc.xyz = cb_matEmissive.xyz + matdiffuse.xyz * (A + D) + matspecular.xyz * S;
-    }
+	}
 
 	if(cb_fog.enabled)
 	{
-	   float dist = distance( cb_camPosW, input.posW  );	   
-	   float foglerp = ComputeFogFactor(cb_fog,dist);
-	   fc.xyz = lerp(cb_fog.color.xyz,fc.xyz , foglerp);	   	   
+		float dist = distance( cb_camPosW, input.posW  );	   
+		float foglerp = ComputeFogFactor(cb_fog,dist);
+		fc.xyz = lerp(cb_fog.color.xyz,fc.xyz , foglerp);	   	   
 	}	
 
     return fc;
