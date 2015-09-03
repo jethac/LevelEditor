@@ -189,6 +189,7 @@
     <ClInclude Include="GobSystem\SpinnerComponent.h" />
     <ClInclude Include="GobSystem\Tank\AI\AIBlockingAreaGob.h" />
     <ClInclude Include="GobSystem\Tank\AI\AIWaypointGob.h" />
+    <ClInclude Include="GobSystem\Tank\ItemPopPointGob.h" />
     <ClInclude Include="GobSystem\Tank\SpawnPointGob.h" />
     <ClInclude Include="GobSystem\Tank\StandardBaseGob.h" />
     <ClInclude Include="GobSystem\Tank\StaticModelGob.h" />
@@ -321,6 +322,7 @@
     <ClCompile Include="GobSystem\SpinnerComponent.cpp" />
     <ClCompile Include="GobSystem\Tank\AI\AIBlockingAreaGob.cpp" />
     <ClCompile Include="GobSystem\Tank\AI\AIWaypointGob.cpp" />
+    <ClCompile Include="GobSystem\Tank\ItemPopPointGob.cpp" />
     <ClCompile Include="GobSystem\Tank\SpawnPointGob.cpp" />
     <ClCompile Include="GobSystem\Tank\StandardBaseGob.cpp" />
     <ClCompile Include="GobSystem\Tank\StaticModelGob.cpp" />

@@ -15,14 +15,11 @@ namespace LvEdEngine
 	{
 	public:
 		EntityModelFactory(ID3D11Device* device);
-		virtual ~EntityModelFactory() {}
 
 		virtual bool LoadResource( Resource* resource, const WCHAR * filename );
 		bool LoadModel( Model* model, const WCHAR* filepath );
 
 	private:
-		std::string mEnvUsagiDir;
-
 		class EntityYaml
 		{
 		public:

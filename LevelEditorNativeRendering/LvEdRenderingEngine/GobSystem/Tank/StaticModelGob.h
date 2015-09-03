@@ -33,22 +33,4 @@ namespace LvEdEngine
 
 		wchar_t mPathPrefix[MAX_PATH/2];
 	};
-
-	class ItemPopPointGob : public StaticModelGob
-	{
-	public:
-		virtual const char* ClassName() const { return StaticClassName(); }
-		static const char* StaticClassName(){ return "ItemPopPointGob"; }
-
-		ItemPopPointGob() : StaticModelGob() {
-			GetUsagiDir( mPathPrefix, ARRAY_SIZE( mPathPrefix ) );
-			wcscat( mPathPrefix, L"\\Data\\" );
-			SetupModel( ModelPath() );
-		}
-		virtual ~ItemPopPointGob() {}
-		static const wchar_t* ModelPath() {
-			return L"Models\\t1obj_item_secretbox\\t1obj_item_secretbox.cmdl";
-		}
-
-	};
 }

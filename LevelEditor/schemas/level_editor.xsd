@@ -506,7 +506,7 @@
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
-        <xs:extension base="staticModelType" />
+        <xs:extension base="cubeTestType" />
     </xs:complexContent>
   </xs:complexType>
 

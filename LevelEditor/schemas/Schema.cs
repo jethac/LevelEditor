@@ -540,6 +540,7 @@ namespace LevelEditor
             standardBaseType.lockedAttribute = standardBaseType.Type.GetAttributeInfo("locked");
             standardBaseType.transformationTypeAttribute = standardBaseType.Type.GetAttributeInfo("transformationType");
             standardBaseType.lifeAttribute = standardBaseType.Type.GetAttributeInfo("life");
+            standardBaseType.componentChild = standardBaseType.Type.GetChildInfo("component");
             standardBaseType.resourceChild = standardBaseType.Type.GetChildInfo("resource");
 
             staticModelType.Type = getNodeType("gap", "staticModelType");
@@ -552,6 +553,7 @@ namespace LevelEditor
             staticModelType.visibleAttribute = staticModelType.Type.GetAttributeInfo("visible");
             staticModelType.lockedAttribute = staticModelType.Type.GetAttributeInfo("locked");
             staticModelType.transformationTypeAttribute = staticModelType.Type.GetAttributeInfo("transformationType");
+            staticModelType.componentChild = staticModelType.Type.GetChildInfo("component");
 
             itemPopPointType.Type = getNodeType("gap", "itemPopPointType");
             itemPopPointType.transformAttribute = itemPopPointType.Type.GetAttributeInfo("transform");
@@ -563,6 +565,14 @@ namespace LevelEditor
             itemPopPointType.visibleAttribute = itemPopPointType.Type.GetAttributeInfo("visible");
             itemPopPointType.lockedAttribute = itemPopPointType.Type.GetAttributeInfo("locked");
             itemPopPointType.transformationTypeAttribute = itemPopPointType.Type.GetAttributeInfo("transformationType");
+            itemPopPointType.colorAttribute = itemPopPointType.Type.GetAttributeInfo("color");
+            itemPopPointType.emissiveAttribute = itemPopPointType.Type.GetAttributeInfo("emissive");
+            itemPopPointType.specularAttribute = itemPopPointType.Type.GetAttributeInfo("specular");
+            itemPopPointType.specularPowerAttribute = itemPopPointType.Type.GetAttributeInfo("specularPower");
+            itemPopPointType.diffuseAttribute = itemPopPointType.Type.GetAttributeInfo("diffuse");
+            itemPopPointType.normalAttribute = itemPopPointType.Type.GetAttributeInfo("normal");
+            itemPopPointType.textureTransformAttribute = itemPopPointType.Type.GetAttributeInfo("textureTransform");
+            itemPopPointType.componentChild = itemPopPointType.Type.GetChildInfo("component");
 
             spawnPointType.Type = getNodeType("gap", "spawnPointType");
             spawnPointType.transformAttribute = spawnPointType.Type.GetAttributeInfo("transform");
@@ -582,6 +592,7 @@ namespace LevelEditor
             spawnPointType.normalAttribute = spawnPointType.Type.GetAttributeInfo("normal");
             spawnPointType.textureTransformAttribute = spawnPointType.Type.GetAttributeInfo("textureTransform");
             spawnPointType.teamAttribute = spawnPointType.Type.GetAttributeInfo("team");
+            spawnPointType.componentChild = spawnPointType.Type.GetChildInfo("component");
 
             aiWaypointType.Type = getNodeType("gap", "aiWaypointType");
             aiWaypointType.transformAttribute = aiWaypointType.Type.GetAttributeInfo("transform");
@@ -600,6 +611,7 @@ namespace LevelEditor
             aiWaypointType.diffuseAttribute = aiWaypointType.Type.GetAttributeInfo("diffuse");
             aiWaypointType.normalAttribute = aiWaypointType.Type.GetAttributeInfo("normal");
             aiWaypointType.textureTransformAttribute = aiWaypointType.Type.GetAttributeInfo("textureTransform");
+            aiWaypointType.componentChild = aiWaypointType.Type.GetChildInfo("component");
 
             aiBlockingAreaType.Type = getNodeType("gap", "aiBlockingAreaType");
             aiBlockingAreaType.transformAttribute = aiBlockingAreaType.Type.GetAttributeInfo("transform");
@@ -618,6 +630,7 @@ namespace LevelEditor
             aiBlockingAreaType.diffuseAttribute = aiBlockingAreaType.Type.GetAttributeInfo("diffuse");
             aiBlockingAreaType.normalAttribute = aiBlockingAreaType.Type.GetAttributeInfo("normal");
             aiBlockingAreaType.textureTransformAttribute = aiBlockingAreaType.Type.GetAttributeInfo("textureTransform");
+            aiBlockingAreaType.componentChild = aiBlockingAreaType.Type.GetChildInfo("component");
 
             terrainMapType.Type = getNodeType("gap", "terrainMapType");
             terrainMapType.nameAttribute = terrainMapType.Type.GetAttributeInfo("name");
@@ -1339,6 +1352,7 @@ namespace LevelEditor
             public static AttributeInfo lockedAttribute;
             public static AttributeInfo transformationTypeAttribute;
             public static AttributeInfo lifeAttribute;
+            public static ChildInfo componentChild;
             public static ChildInfo resourceChild;
         }
 
@@ -1354,6 +1368,7 @@ namespace LevelEditor
             public static AttributeInfo visibleAttribute;
             public static AttributeInfo lockedAttribute;
             public static AttributeInfo transformationTypeAttribute;
+            public static ChildInfo componentChild;
         }
 
         public static class itemPopPointType
@@ -1368,6 +1383,14 @@ namespace LevelEditor
             public static AttributeInfo visibleAttribute;
             public static AttributeInfo lockedAttribute;
             public static AttributeInfo transformationTypeAttribute;
+            public static AttributeInfo colorAttribute;
+            public static AttributeInfo emissiveAttribute;
+            public static AttributeInfo specularAttribute;
+            public static AttributeInfo specularPowerAttribute;
+            public static AttributeInfo diffuseAttribute;
+            public static AttributeInfo normalAttribute;
+            public static AttributeInfo textureTransformAttribute;
+            public static ChildInfo componentChild;
         }
 
         public static class spawnPointType
@@ -1390,6 +1413,7 @@ namespace LevelEditor
             public static AttributeInfo normalAttribute;
             public static AttributeInfo textureTransformAttribute;
             public static AttributeInfo teamAttribute;
+            public static ChildInfo componentChild;
         }
 
         public static class aiWaypointType
@@ -1411,6 +1435,7 @@ namespace LevelEditor
             public static AttributeInfo diffuseAttribute;
             public static AttributeInfo normalAttribute;
             public static AttributeInfo textureTransformAttribute;
+            public static ChildInfo componentChild;
         }
 
         public static class aiBlockingAreaType
@@ -1432,6 +1457,7 @@ namespace LevelEditor
             public static AttributeInfo diffuseAttribute;
             public static AttributeInfo normalAttribute;
             public static AttributeInfo textureTransformAttribute;
+            public static ChildInfo componentChild;
         }
 
         public static class terrainMapType
