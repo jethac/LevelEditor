@@ -18,7 +18,7 @@ namespace LvEdEngine
 
 		virtual bool LoadResource( Resource* resource, const WCHAR * filename );
 		bool LoadModel( Model* model, const WCHAR* filepath );
-
+		void CreateDummyCube( Model * model );
 	private:
 		class EntityYaml
 		{

@@ -8,6 +8,7 @@
 #include "../../VectorMath/CollisionPrimitives.h"
 #include "../../Renderer/Model.h"
 #include "../../Renderer/CustomDataAttribute.h"
+#include "../../Renderer/ShapeLib.h"
 #include "../../Core/Utils.h"
 #include "../../Core/Logger.h"
 #include "../../Core/FileUtils.h"
@@ -65,7 +66,10 @@ bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filenam
 
 	size_t len = modelName.length();
 	if( len == 0 ) {
-		return false; // No model found
+		Model * model = (Model*)resource;
+		CreateDummyCube( model );
+
+		return true;
 	}
 
 	// Change an extention "vmdc" to "cmdl"
@@ -118,6 +122,29 @@ bool EntityModelFactory::LoadModel( Model* model, const WCHAR* filepath )
 	}
 
 	return isSucceeded;
+}
+
+void EntityModelFactory::CreateDummyCube( Model * model )
+{
+	Mesh* mesh = model->CreateMesh( "DummyCube" );
+
+	CreateCube( 0.5f, 0.5f, 0.5f, &mesh->pos, &mesh->nor, &mesh->tex, &mesh->indices );
+	mesh->ComputeTangents();
+	mesh->Construct( m_device );
+	mesh->ComputeBound();
+
+	Material* pMat = model->CreateMaterial( "DummyCubeMaterial" );
+
+	Geometry* pGeo = model->CreateGeometry( "Geo" );
+	pGeo->material = pMat;
+	pGeo->mesh = mesh;
+
+	Node* root = model->CreateNode( "rootNode" );
+	model->SetRoot( root );
+
+	root->geometries.push_back( pGeo );
+
+	model->Construct( m_device, ResourceManager::Inst() );
 }
 
 void EntityModelFactory::EntityYaml::parseYaml( const char* filename )

@@ -62,15 +62,6 @@ static Mesh* s_meshes[RenderShape::MAX];
         std::vector<float2>* tex,
         std::vector<uint32_t>* indices);
 
-
-    static void CreateCube(float width, 
-        float height, 
-        float depth,
-        std::vector<float3>* pos,
-        std::vector<float3>* nor,
-        std::vector<float2>* tex,
-        std::vector<uint32_t>* indices);
-     
     static void CreateQuad(float width, 
         float height, 
         std::vector<float3>* pos,
@@ -659,7 +650,7 @@ static void CreateCylinder(float radius1, float radius2, float start, float heig
 }
 
 //---------------------------------------------------------------------------------------------
-static void CreateCube(float width, float height, float depth, 
+void CreateCube(float width, float height, float depth, 
     std::vector<float3>* pos, std::vector<float3>* nor, std::vector<float2>* tex, std::vector<uint32_t>* indices)
 {
     pos->reserve(24);

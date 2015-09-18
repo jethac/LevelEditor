@@ -46,4 +46,12 @@ namespace LvEdEngine
 
     // Get a mesh for one of the shape enum's.
     Mesh* ShapeLibGetMesh(RenderShapeEnum shape);    
+
+	void CreateCube( float width,
+					 float height,
+					 float depth,
+					 std::vector<float3>* pos,
+					 std::vector<float3>* nor,
+					 std::vector<float2>* tex,
+					 std::vector<uint32_t>* indices );
 };
