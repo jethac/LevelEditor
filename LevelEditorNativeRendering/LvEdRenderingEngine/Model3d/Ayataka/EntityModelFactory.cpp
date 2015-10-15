@@ -377,7 +377,20 @@ void EntityModelFactory::EntityYaml::printDebugString( WCHAR* s )
 void EntityModelFactory::EntityYaml::catchValue( const char* value )
 {
 	// Process Key and Value data
-	if( mBlockKeyStack.top().compare( "ModelComponent" ) == 0 && mCurrentKey.compare( "m_name" ) == 0 ) {
+
+	// Root-level ModelComponents will have a key stack of size 2, as this method
+	// will catch the child key/value pair within the component at m_name, i.e.
+	//
+	// ModelComponent:
+	//   m_name: "blah"
+	//
+	// This is necessitated because otherwise child model definitions will
+	// override parents!
+	bool bIsRootLevelModel = mBlockKeyStack.size() == 2;
+
+	if( mBlockKeyStack.top().compare( "ModelComponent" ) == 0 && mCurrentKey.compare( "m_name" ) == 0 && bIsRootLevelModel)
+	{
+		// @todo actual child support
 		printDebugString( L" !Model name!" );
 		mModelName.assign( value );
 	}
