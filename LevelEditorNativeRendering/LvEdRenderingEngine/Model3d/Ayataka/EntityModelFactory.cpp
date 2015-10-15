@@ -363,7 +363,7 @@ void EntityModelFactory::EntityYaml::outputSpaces( int num ) {
 
 void EntityModelFactory::EntityYaml::printMBString( const char* s ) {
 #if ENABLE_PRINT_DEBUG == 1
-	printMBString( s );
+	printf("%s\n", s);
 #endif
 }
 
