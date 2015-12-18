@@ -5,7 +5,7 @@
 #include "Renderable.h"
 #include "RenderableNodeCollector.h"
 #include "Shader.h"
-#include <map>
+#include <unordered_map>
 
 namespace LvEdEngine
 {
@@ -40,7 +40,7 @@ namespace LvEdEngine
         Bucket* GetBucket(uint32_t index);
 
     private:
-        typedef std::map<uint32_t,Bucket> BucketMap;
+        typedef std::unordered_map<uint32_t,Bucket> BucketMap;
         typedef std::vector<uint32_t> BucketKeys;
         BucketMap       m_buckets;
         BucketKeys      m_bucketKeys;

@@ -6,6 +6,7 @@
 #include "LvEdRenderingEngine.h"
 #include <stdio.h>
 #include <set>
+#include <unordered_set>
 #include <algorithm>
 #include <D3D11.h>
 #include "Core/Logger.h"
@@ -91,7 +92,7 @@ struct HitRecord
 
 
 
-// Used for sending all the required engine information 
+// Used for sending all the required engine information
 // to managed side (C# side).
 class EngineInfo : public NonCopyable
 {
@@ -146,7 +147,7 @@ public:
 
     GobBridge Bridge;
     RenderSurface* pRenderSurface;
-  
+
 
     // this is the root object of the scene.
     // all other game objects are descended from this object
@@ -155,24 +156,24 @@ public:
     // this is our basic renderer, it is used to service the C# application's
     // rendering needs.
     BasicRenderer* basicRenderer;
-      
+
     MyResourceListener resourceListener;
     std::vector<HitRecord> HitRecords;
     ShadowMapGen*        shadowMapShader;
     RenderableNodeSorter    renderableSorter;
-    RenderableNodeSet       pickCollector; 
+    RenderableNodeSet       pickCollector;
     Font* AxisFont;
-    
+
 };
 
 //---------------------------------------------------------------------------
 EngineData::EngineData( ID3D11Device* device )
-  : pRenderSurface( NULL ),  
+  : pRenderSurface( NULL ),
     GameLevel( NULL ),
-    basicRenderer( NULL ),    
-    shadowMapShader( NULL)    
+    basicRenderer( NULL ),
+    shadowMapShader( NULL)
 {
-    
+
     // Initialize the 'code generated' bridge.
     InitGobBridge(Bridge);
     RegisterRuntimeObjects(Bridge);
@@ -186,9 +187,9 @@ EngineData::EngineData( ID3D11Device* device )
 //---------------------------------------------------------------------------
 EngineData::~EngineData()
 {
-    SAFE_DELETE(basicRenderer);    
-    SAFE_DELETE(shadowMapShader); 
-    SAFE_DELETE(AxisFont);    
+    SAFE_DELETE(basicRenderer);
+    SAFE_DELETE(shadowMapShader);
+    SAFE_DELETE(AxisFont);
 }
 
 
@@ -197,9 +198,9 @@ static EngineData* s_engineData = NULL;
 
 //=============================================================================================
 void MyResourceListener::OnResourceLoaded(Resource* /*r*/)
-{    
+{
     RenderContext::Inst()->LightEnvDirty = true;
-    if(m_callback) m_callback();   
+    if(m_callback) m_callback();
 }
 
 //=============================================================================================
@@ -211,18 +212,18 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_Initialize(LogCallbackType logCallba
 {
     // Enable run-time memory check for debug builds.
 #if defined(DEBUG) || defined(_DEBUG)
-  //   _crtBreakAlloc = 925; //example break on alloc number 1027, change 
+  //   _crtBreakAlloc = 925; //example break on alloc number 1027, change
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
-    if(s_engineData) return;   
+    if(s_engineData) return;
     ErrorHandler::ClearError();
-    if(logCallback) 
+    if(logCallback)
         Logger::SetLogCallback(logCallback);
 
-    Logger::Log(OutputMessageType::Info, L"Initializing Rendering Engine\n");    
-    
-    
+    Logger::Log(OutputMessageType::Info, L"Initializing Rendering Engine\n");
+
+
     // note if you using game-engine
     // you don't need to use DeviceManager class.
     // the game-engine should provide
@@ -234,7 +235,7 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_Initialize(LogCallbackType logCallba
     ResourceManager::InitInstance();
     LineRenderer::InitInstance(gD3D11->GetDevice());
     ShadowMaps::InitInstance(gD3D11->GetDevice(),2048);
-   
+
     RenderContext::InitInstance(gD3D11->GetDevice());
     s_engineData = new EngineData( gD3D11->GetDevice() );
     s_engineData->resourceListener.SetCallback(invalidateCallback);
@@ -242,16 +243,16 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_Initialize(LogCallbackType logCallba
 
     ShaderLib::InitInstance(gD3D11->GetDevice());
     FontRenderer::InitInstance( gD3D11 );
-    
+
 
     // Register resource factories...
     ResourceManager * resMan = ResourceManager::Inst();
     AtgiModelFactory * atgiFactory = new AtgiModelFactory(gD3D11->GetDevice());
-    ColladaModelFactory * colladaFactory = new ColladaModelFactory(gD3D11->GetDevice());    
+    ColladaModelFactory * colladaFactory = new ColladaModelFactory(gD3D11->GetDevice());
     CmdlModelFactory* cmdlFactory = new CmdlModelFactory( gD3D11->GetDevice() );
     EntityModelFactory* entFactory = new EntityModelFactory( gD3D11->GetDevice() );
     TextureFactory * texFactory = new TextureFactory(gD3D11->GetDevice());
-    resMan->RegisterListener(&s_engineData->resourceListener);    
+    resMan->RegisterListener(&s_engineData->resourceListener);
     resMan->RegisterFactory(L".tga", texFactory);
     resMan->RegisterFactory(L".png", texFactory);
     resMan->RegisterFactory(L".jpg", texFactory);
@@ -281,9 +282,9 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_Shutdown(void)
     ShapeLibShutdown();
     TextureLib::DestroyInstance();
     LvEdFonts::FontRenderer::DestroyInstance();
-    ShaderLib::DestroyInstance();    
+    ShaderLib::DestroyInstance();
     LineRenderer::DestroyInstance();
-    RenderContext::DestroyInstance();    
+    RenderContext::DestroyInstance();
     ResourceManager::DestroyInstance();
     ShadowMaps::DestroyInstance();
     RSCache::DestroyInstance();
@@ -296,8 +297,8 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_Shutdown(void)
 LVEDRENDERINGENGINE_API void __stdcall LvEd_Clear()
 {
     ErrorHandler::ClearError();
-    Logger::Log(OutputMessageType::Info, "SceneReset\n");    
-    RenderContext::Inst()->selection.clear();        
+    Logger::Log(OutputMessageType::Info, "SceneReset\n");
+    RenderContext::Inst()->selection.clear();
     ResourceManager * rm = ResourceManager::Inst();
     rm->GarbageCollect();
 }
@@ -330,7 +331,7 @@ LVEDRENDERINGENGINE_API ObjectPropertyUID __stdcall LvEd_GetObjectChildListId(Ob
 LVEDRENDERINGENGINE_API ObjectGUID  __stdcall LvEd_CreateObject(ObjectTypeGUID typeId, void* data, int size)
 {
     ErrorHandler::ClearError();
-    ObjectGUID instanceId = s_engineData->Bridge.CreateObject(typeId, data, size);    
+    ObjectGUID instanceId = s_engineData->Bridge.CreateObject(typeId, data, size);
     return instanceId;
 }
 
@@ -361,12 +362,12 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_SetObjectProperty(ObjectTypeGUID typ
 {
     ErrorHandler::ClearError();
     s_engineData->Bridge.SetProperty(typeId,propId,instanceId,data,size);
-    
-    // for certain objects, we don't want to update lighting.    
+
+    // for certain objects, we don't want to update lighting.
     if(typeId == renderStateTypeId || typeId == swapchainTypeId)
         return;
 
-    RenderContext::Inst()->LightEnvDirty = true;   
+    RenderContext::Inst()->LightEnvDirty = true;
 }
 
 LVEDRENDERINGENGINE_API void __stdcall LvEd_GetObjectProperty(ObjectTypeGUID typeId, ObjectPropertyUID propId, ObjectGUID instanceId, void** data, int* size)
@@ -381,7 +382,7 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_ObjectAddChild(ObjectTypeGUID typeId
     ErrorHandler::ClearError();
     assert(listId != 0);
     assert(parentId != 0);
-    
+
     if(parentId == 0 || listId == 0 )
     {
         ErrorHandler::SetError(ErrorType::UnknownError,
@@ -400,13 +401,13 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_ObjectAddChild(ObjectTypeGUID typeId
      Object* obj = (Object*)childId;
      if(strcmp(obj->ClassName(),SkyDome::StaticClassName()) ==0)
      {
-         s_engineData->GameLevel->m_activeskyeDome =(SkyDome*)obj;         
+         s_engineData->GameLevel->m_activeskyeDome =(SkyDome*)obj;
      }
      else if(strcmp(obj->ClassName(),TerrainGob::StaticClassName()) ==0)
      {
-         s_engineData->GameLevel->Terrains.push_back((TerrainGob*)obj);         
+         s_engineData->GameLevel->Terrains.push_back((TerrainGob*)obj);
      }
-         
+
     RenderContext::Inst()->LightEnvDirty = true;
 }
 
@@ -415,7 +416,7 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_ObjectRemoveChild(ObjectTypeGUID typ
     ErrorHandler::ClearError();
     assert(listId != 0);
     assert(parentId != 0);
-    
+
     if(parentId == 0 || listId == 0 )
     {
         ErrorHandler::SetError(ErrorType::UnknownError,
@@ -434,19 +435,19 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_ObjectRemoveChild(ObjectTypeGUID typ
     if(s_engineData->GameLevel->m_activeskyeDome == obj)
     {
         FindGobsByType query(SkyDome::StaticClassName());
-        s_engineData->GameLevel->Query(query);       
-        size_t count = query.Gobs.size();        
-        s_engineData->GameLevel->m_activeskyeDome = 
+        s_engineData->GameLevel->Query(query);
+        size_t count = query.Gobs.size();
+        s_engineData->GameLevel->m_activeskyeDome =
             (count > 0)? (SkyDome*)query.Gobs[count-1] : NULL;
     }
     else if(strcmp(obj->ClassName(),TerrainGob::StaticClassName()) == 0)
     {
-        TerrainGob* terrain = (TerrainGob*)obj;        
+        TerrainGob* terrain = (TerrainGob*)obj;
         auto it = std::find(s_engineData->GameLevel->Terrains.begin(),s_engineData->GameLevel->Terrains.end(),terrain);
         if(it != s_engineData->GameLevel->Terrains.end())
         {
             s_engineData->GameLevel->Terrains.erase(it);
-        }                   
+        }
     }
 
     RenderContext::Inst()->LightEnvDirty = true;
@@ -489,7 +490,7 @@ LVEDRENDERINGENGINE_API bool __stdcall LvEd_RayPick(float viewxform[], float pro
     s_engineData->pickCollector.SetSkipSelected(skipSelected);
 
     s_engineData->GameLevel->GetRenderables(&s_engineData->pickCollector, RenderContext::Inst());
-    
+
 
     s_engineData->HitRecords.clear();
     for(auto it = s_engineData->pickCollector.GetList().begin(); it != s_engineData->pickCollector.GetList().end(); it++)
@@ -530,11 +531,11 @@ LVEDRENDERINGENGINE_API bool __stdcall LvEd_RayPick(float viewxform[], float pro
 
                     // ray in object space.
                     Ray lray;
-                    lray.pos = float3::Transform(ray.pos,invWorld);                    
+                    lray.pos = float3::Transform(ray.pos,invWorld);
                     lray.direction = normalize( float3::TransformNormal(ray.direction,invWorld) );
 
                     if(mesh->primitiveType == PrimitiveType::TriangleList)
-                    {                        
+                    {
                         // perform ray tri intersection and return
                         // the closest intersection distance a long lray.direction.
                         bool picked = MeshIntersects(lray,&mesh->pos[0],
@@ -574,7 +575,7 @@ LVEDRENDERINGENGINE_API bool __stdcall LvEd_RayPick(float viewxform[], float pro
 
                         uint32_t hitIndex = 0;
                         float distTo, distBetween;
-                        bool infront = DistanceRayToLineStrip(ray, &mesh->pos[0], (uint32_t)mesh->pos.size(),it->WorldXform,                                         
+                        bool infront = DistanceRayToLineStrip(ray, &mesh->pos[0], (uint32_t)mesh->pos.size(),it->WorldXform,
                                         &distTo, &distBetween, &p, &n, &hitIndex);
 
                         // we need to adjust distance for screen space calculations
@@ -609,7 +610,7 @@ LVEDRENDERINGENGINE_API bool __stdcall LvEd_RayPick(float viewxform[], float pro
         }
     }
 
-    
+
     for(auto it = s_engineData->GameLevel->Terrains.begin(); it != s_engineData->GameLevel->Terrains.end(); it++)
     {
         HitRecord hitrec;
@@ -619,7 +620,7 @@ LVEDRENDERINGENGINE_API bool __stdcall LvEd_RayPick(float viewxform[], float pro
             hitrec.objectId = (*it)->GetInstanceId();
             hitrec.distance = length(ray.pos - hitrec.hitPt);
             hitrec.hasNormal = true;
-            hitrec.hasNearestVertex = true;            
+            hitrec.hasNearestVertex = true;
             s_engineData->HitRecords.push_back(hitrec);
         }
     }
@@ -636,7 +637,7 @@ LVEDRENDERINGENGINE_API bool __stdcall LvEd_RayPick(float viewxform[], float pro
         *hits = 0;
         *count = 0;
     }
-  
+
     return *count > 0;
 
 }
@@ -659,22 +660,22 @@ LVEDRENDERINGENGINE_API bool __stdcall LvEd_FrustumPick(ObjectGUID renderSurface
     // init camera.
     Matrix view = viewxform;
     Matrix proj = projxform;
-    RenderContext::Inst()->Cam().SetViewProj(view,proj);  
-    
+    RenderContext::Inst()->Cam().SetViewProj(view,proj);
+
     // same code used for rendering.
     s_engineData->pickCollector.ClearLists();
     s_engineData->pickCollector.SetFlags( RenderContext::Inst()->State()->GetGlobalRenderFlags() );
 
     s_engineData->GameLevel->GetRenderables(&s_engineData->pickCollector, RenderContext::Inst());
-   
+
     RenderSurface* pRenderSurface = reinterpret_cast<RenderSurface*>(renderSurface);
 
     float3 corners[8];
     float x0 = rect[0];
     float y0 = rect[1];
     float x1 = x0 + w;
-    float y1 = y0 + h;       
-           
+    float y1 = y0 + h;
+
     Matrix viewProj = view * proj;
     Matrix invWVP; // inverse of world view projection matrix.
     s_engineData->HitRecords.clear();
@@ -701,26 +702,26 @@ LVEDRENDERINGENGINE_API bool __stdcall LvEd_FrustumPick(ObjectGUID renderSurface
         corners[7] = pRenderSurface->Unproject(float3(x0,y0,1),invWVP);
         fr.InitFromCorners(corners);
 
-        int test = FrustumAABBIntersect(fr,r.mesh->bounds);                
+        int test = FrustumAABBIntersect(fr,r.mesh->bounds);
         if(test)
         {
-            if(test == 1 
+            if(test == 1
                 && r.GetFlag(RenderableNode::kTestAgainstBBoxOnly) == false
-                && r.mesh != NULL 
+                && r.mesh != NULL
                 && r.mesh->primitiveType == PrimitiveType::TriangleList)
             {
                 Mesh* mesh = r.mesh;
-               
-                Triangle tr;                
-                bool triHit = FrustumMeshIntersect(fr, 
+
+                Triangle tr;
+                bool triHit = FrustumMeshIntersect(fr,
                      &mesh->pos[0],
                    (uint32_t)mesh->pos.size(),
                    &mesh->indices[0],
                    (uint32_t)mesh->indices.size());
-                
-                if( triHit == false) continue;               
+
+                if( triHit == false) continue;
             }
-            
+
             HitRecord hit;
             hit.objectId = r.objectId;
             hit.index = 0;
@@ -734,7 +735,7 @@ LVEDRENDERINGENGINE_API bool __stdcall LvEd_FrustumPick(ObjectGUID renderSurface
         }
     }
 
-    // return the results to the C#. 
+    // return the results to the C#.
     if(s_engineData->HitRecords.size() > 0)
     {
         *hits = &s_engineData->HitRecords[0];
@@ -761,7 +762,7 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_SetSelection(ObjectGUID*  instanceId
 LVEDRENDERINGENGINE_API void __stdcall LvEd_SetRenderState(ObjectGUID instId)
 {
     ErrorHandler::ClearError();
-    RenderState* renderState = reinterpret_cast<RenderState*>(instId);    
+    RenderState* renderState = reinterpret_cast<RenderState*>(instId);
     RenderContext::Inst()->SetState(renderState);
 }
 
@@ -791,16 +792,16 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_WaitForPendingResources()
 }
 
 LVEDRENDERINGENGINE_API void __stdcall LvEd_Update(FrameTime* ft, UpdateTypeEnum updateType)
-{    
-    ErrorHandler::ClearError();    
-    s_engineData->GameLevel->Update(*ft, updateType);  
+{
+    ErrorHandler::ClearError();
+    s_engineData->GameLevel->Update(*ft, updateType);
 	ShaderLib::Inst()->Update(*ft, updateType);
 }
 
 LVEDRENDERINGENGINE_API void __stdcall LvEd_Begin(ObjectGUID renderSurface, float viewxform[], float projxform[])
 {
     ErrorHandler::ClearError();
-    
+
     s_engineData->pRenderSurface = reinterpret_cast<RenderSurface*>(renderSurface);
 
     RenderContext* rc = RenderContext::Inst();
@@ -810,9 +811,9 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_Begin(ObjectGUID renderSurface, floa
     if(s_engineData->GameLevel)
     {
         fog = s_engineData->GameLevel->GetFog();
-    }            
+    }
     rc->SetFog(fog);
-    
+
     // set render target and depth buffer.
     rc->SetContext(gD3D11->GetImmediateContext());
     ID3D11DeviceContext* d3dcontext = rc->Context();
@@ -823,25 +824,25 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_Begin(ObjectGUID renderSurface, floa
     d3dcontext->OMSetRenderTargets(1,rt,s_engineData->pRenderSurface->GetDepthStencilView());
 
     // Setup the viewport
-    D3D11_VIEWPORT vp = s_engineData->pRenderSurface->GetViewPort();    
+    D3D11_VIEWPORT vp = s_engineData->pRenderSurface->GetViewPort();
     d3dcontext->RSSetViewports( 1, &vp );
     float4 vf(vp.Width,vp.Height,vp.TopLeftX,vp.TopLeftY);
     rc->SetViewPort(vf);
 
-    Matrix view(viewxform);    
+    Matrix view(viewxform);
     rc->Cam().SetViewProj(view, Matrix(projxform));
-    
+
     d3dcontext->RSSetState(NULL);
     d3dcontext->OMSetDepthStencilState(NULL,0);
     d3dcontext->OMSetBlendState( NULL, NULL, 0xFFFFFFFF );
 
     // setup default lighting.
     DirLight& light = *LightingState::Inst()->DefaultDirLight();
-    light.ambient = float3(0.05f,0.06f,0.07f);    
-    light.diffuse = float3(250.0f/255.0f, 245.0f/255.0f, 240.0f/255.0f);       
+    light.ambient = float3(0.05f,0.06f,0.07f);
+    light.diffuse = float3(250.0f/255.0f, 245.0f/255.0f, 240.0f/255.0f);
     light.specular = light.diffuse; // float3(0.4f,0.4f,0.4f);
     light.dir = float3(0.258819073f, -0.965925932f, 0.0f);
-    
+
     d3dcontext->ClearDepthStencilView( s_engineData->pRenderSurface->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0 );
     if(s_engineData->GameLevel->m_activeskyeDome && s_engineData->GameLevel->m_activeskyeDome->GetVisible())
     {
@@ -854,14 +855,14 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_Begin(ObjectGUID renderSurface, floa
     }
 
     //Level editor may perform some rendering before LvEd_RenderGame get called.
-    s_engineData->basicRenderer->Begin(RenderContext::Inst()->Context(), 
+    s_engineData->basicRenderer->Begin(RenderContext::Inst()->Context(),
         s_engineData->pRenderSurface,
         RenderContext::Inst()->Cam().View(),
         RenderContext::Inst()->Cam().Proj());
 }
 
 bool NodeSortGreater(const RenderableNode& n1, const RenderableNode& n2)
-{    
+{
     return n1.Distance > n2.Distance;
 }
 
@@ -869,8 +870,8 @@ bool NodeSortGreater(const RenderableNode& n1, const RenderableNode& n2)
 // ---------------------------------------------------------------------------------------------------------
 LVEDRENDERINGENGINE_API void __stdcall LvEd_RenderGame()
 {
-   
-    s_engineData->basicRenderer->End(); 
+
+    s_engineData->basicRenderer->End();
 
     ErrorHandler::ClearError();
     if(s_engineData->pRenderSurface == NULL || s_engineData->GameLevel == NULL)
@@ -880,63 +881,63 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_RenderGame()
                 __WFUNCTION__, s_engineData->pRenderSurface, s_engineData->GameLevel);
         return;
     }
-   
-    RenderState* renderState = RenderContext::Inst()->State();    
+
+    RenderState* renderState = RenderContext::Inst()->State();
 
     GlobalRenderFlagsEnum flags = renderState->GetGlobalRenderFlags();
 
     s_engineData->renderableSorter.SetFlags( flags );
     s_engineData->GameLevel->GetRenderables(&s_engineData->renderableSorter, RenderContext::Inst());
-   
+
     // sort semi-transparent objects back to front
      for(unsigned int i = 0; i < s_engineData->renderableSorter.GetBucketCount(); ++i)
      {
-         RenderableNodeSorter::Bucket& bucket = *s_engineData->renderableSorter.GetBucket(i);         
+         RenderableNodeSorter::Bucket& bucket = *s_engineData->renderableSorter.GetBucket(i);
          if (bucket.renderables.size() > 0  && (bucket.renderFlags & RenderFlags::AlphaBlend))
          {
-             // compute dist along camera's view vector.         
+             // compute dist along camera's view vector.
              float3 camLook  = RenderContext::Inst()->Cam().CamLook();
              float3 camPos   = RenderContext::Inst()->Cam().CamPos();
              for(auto it = bucket.renderables.begin(); it != bucket.renderables.end(); it++)
              {
                   RenderableNode& r = (*it);
                   float3 viewVec = r.bounds.GetCenter() - camPos;
-                  r.Distance =  dot(camLook, viewVec);                  
-             }             
-             std::sort(bucket.renderables.begin(),bucket.renderables.end(),NodeSortGreater);             
+                  r.Distance =  dot(camLook, viewVec);
+             }
+             std::sort(bucket.renderables.begin(),bucket.renderables.end(),NodeSortGreater);
          }
-     }          
+     }
      bool renderShadows = (flags & GlobalRenderFlags::Shadows) != 0;
      ShadowMaps::Inst()->SetEnabled(renderShadows);
-    //  Pre-Pass For Shadow Maps    
+    //  Pre-Pass For Shadow Maps
     if (renderShadows)
-    {           
-        s_engineData->shadowMapShader->Begin( RenderContext::Inst(), s_engineData->pRenderSurface, s_engineData->GameLevel->GetBounds() );        
+    {
+        s_engineData->shadowMapShader->Begin( RenderContext::Inst(), s_engineData->pRenderSurface, s_engineData->GameLevel->GetBounds() );
         for(unsigned int i = 0; i < s_engineData->renderableSorter.GetBucketCount(); ++i)
         {
             RenderableNodeSorter::Bucket& bucket = *s_engineData->renderableSorter.GetBucket(i);
             if (( bucket.shaderId == Shaders::TexturedShader ) &&
                 ( bucket.renderables.size() > 0 ))
-            {                     
+            {
                 s_engineData->shadowMapShader->DrawNodes( bucket.renderables);
             }
-        }            
+        }
         s_engineData->shadowMapShader->End();
     }
-   
+
     // render  opaque objects
     for(unsigned int i = 0; i < s_engineData->renderableSorter.GetBucketCount(); ++i)
     {
         RenderableNodeSorter::Bucket& bucket = *s_engineData->renderableSorter.GetBucket(i);
         if ( bucket.renderables.size() > 0 && (bucket.renderFlags & RenderFlags::AlphaBlend) == 0)
-        {            
+        {
             Shader* pShader = ShaderLib::Inst()->GetShader((ShadersEnum)bucket.shaderId);
             pShader->Begin( RenderContext::Inst());
             pShader->SetRenderFlag( bucket.renderFlags );   // call this *after* Begin()
             pShader->DrawNodes( bucket.renderables );
             pShader->End();
         }
-    }     
+    }
 
     auto terrainlist = &(s_engineData->GameLevel->Terrains);
     if(terrainlist->size() > 0)
@@ -946,23 +947,23 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_RenderGame()
         for(auto it = terrainlist->begin(); it != terrainlist->end(); it++)
         {
             tshader->RenderTerrain(*it);
-        }        
+        }
         tshader->End();
     }
-           
+
     // render semi-transparent objects
     for(unsigned int i = 0; i < s_engineData->renderableSorter.GetBucketCount(); ++i)
     {
         RenderableNodeSorter::Bucket& bucket = *s_engineData->renderableSorter.GetBucket(i);
         if ( bucket.renderables.size() > 0 && (bucket.renderFlags & RenderFlags::AlphaBlend))
-        {            
+        {
             Shader* pShader = ShaderLib::Inst()->GetShader((ShadersEnum)bucket.shaderId);
             pShader->Begin( RenderContext::Inst());
             pShader->SetRenderFlag( bucket.renderFlags );   // call this *after* Begin()
             pShader->DrawNodes( bucket.renderables );
             pShader->End();
         }
-    }       
+    }
 
 
     if ( flags & GlobalRenderFlags::RenderNormals )
@@ -973,14 +974,14 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_RenderGame()
         {
             RenderableNodeSorter::Bucket& bucket = *s_engineData->renderableSorter.GetBucket(i);
             if ( bucket.renderables.size() > 0 )
-            {   
+            {
                 normShader->DrawNodes( bucket.renderables);
             }
-        }            
+        }
         normShader->End();
     }
 
-    //Level editor may perform additional rendering before LvEd_End() is called 
+    //Level editor may perform additional rendering before LvEd_End() is called
     s_engineData->basicRenderer->Begin(RenderContext::Inst()->Context(),
         s_engineData->pRenderSurface,
         RenderContext::Inst()->Cam().View(),
@@ -994,17 +995,17 @@ static void RenderWorldAxis()
     RenderContext* rc = RenderContext::Inst();
     RenderSurface* surface = s_engineData->pRenderSurface;
     LineRenderer *lr = LineRenderer::Inst();
-    Camera& cam = rc->Cam();    
+    Camera& cam = rc->Cam();
     float margin = 36; // margin in pixels
     float xl = 28; // axis length in pixels.
     float vw = (float)surface->GetWidth();
     float vh = (float)surface->GetHeight();
-    Matrix view = cam.View();    
+    Matrix view = cam.View();
     view.M41 = -vw/2 + margin;
     view.M42 = -vh/2 + margin;
     view.M43 = -xl;
-    
-    float3 look = cam.CamLook();    
+
+    float3 look = cam.CamLook();
     bool perspective = !cam.IsOrtho();
 
     // for orthographic hide one of the axis depending on view-type
@@ -1012,29 +1013,29 @@ static void RenderWorldAxis()
     bool renderX = perspective || abs(look.x) < epsilon;
     bool renderY = perspective || abs(look.y) < epsilon;
     bool renderZ = perspective || abs(look.z) < epsilon;
-    
+
     Matrix proj = Matrix::CreateOrthographic(vw,vh,1,10000);
     cam.SetViewProj(view,proj);
 
     float3 centerV(0,0,0);
     // draw x,y,z
     if(renderX)
-        lr->DrawLine(centerV,float3(xl,0,0),float4(1,0,0,1));    
+        lr->DrawLine(centerV,float3(xl,0,0),float4(1,0,0,1));
     if(renderY)
-        lr->DrawLine(centerV,float3(0,xl,0),float4(0,1,0,1));    
+        lr->DrawLine(centerV,float3(0,xl,0),float4(0,1,0,1));
     if(renderZ)
-        lr->DrawLine(centerV,float3(0,0,xl),float4(0,0,1,1));       
+        lr->DrawLine(centerV,float3(0,0,xl),float4(0,0,1,1));
 
     lr->RenderAll(rc);
 
     Font* font = s_engineData->AxisFont;
     if(font)
-    {   
+    {
         float fh = font->GetFontSize();
         float fhh = fh /2.0f;
         FontRenderer* fr = LvEdFonts::FontRenderer::Inst();
         Matrix vp = view * proj;
-                
+
         // draw x,y,z
         if(renderX)
         {
@@ -1055,8 +1056,8 @@ static void RenderWorldAxis()
             fr->DrawText(font,L"Z",(int)zpos.x,ycoord,float4(0,0,1,1));
         }
         fr->FlushPrintRequests( rc );
-    }    
-    
+    }
+
 }
 // ---------------------------------------------------------------------------------------------------------
 LVEDRENDERINGENGINE_API void __stdcall LvEd_End()
@@ -1064,46 +1065,46 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_End()
     RenderContext* rc = RenderContext::Inst();
     RenderSurface* surface = s_engineData->pRenderSurface;
 
-    s_engineData->basicRenderer->End();    
+    s_engineData->basicRenderer->End();
     LineRenderer::Inst()->RenderAll(rc);
-    ErrorHandler::ClearError();    
+    ErrorHandler::ClearError();
     LvEdFonts::FontRenderer::Inst()->FlushPrintRequests( rc );
-    
+
     if(surface->GetType() == RenderSurface::kSwapChain)
-    {        
+    {
         RenderWorldAxis();
         SwapChain* swapchain = static_cast<SwapChain*>(surface);
         HRESULT hr = swapchain->GetDXGISwapChain()->Present(0,0);
         Logger::IsFailureLog(hr, L"presenting swapchain");
     }
 
-    s_engineData->renderableSorter.ClearLists();    
-    s_engineData->pRenderSurface = NULL;    
-    RenderContext::Inst()->LightEnvDirty = false; 
+    s_engineData->renderableSorter.ClearLists();
+    s_engineData->pRenderSurface = NULL;
+    RenderContext::Inst()->LightEnvDirty = false;
 }
 
 LVEDRENDERINGENGINE_API bool __stdcall LvEd_SaveRenderSurfaceToFile(ObjectGUID renderSurfaceId, wchar_t *fileName)
 {
     ErrorHandler::ClearError();
-       
+
     if(fileName == NULL || wcslen(fileName) == 0 )
     {
         ErrorHandler::SetError(ErrorType::UnknownError, L"%s: filename is empty", __WFUNCTION__);
         return false;
     }
 
-    DirectX::ScratchImage scratchImg; 
+    DirectX::ScratchImage scratchImg;
     RenderSurface* renderSurface = reinterpret_cast<RenderSurface*>(renderSurfaceId);
-    
+
     HRESULT hr = CaptureTexture(gD3D11->GetDevice(),::gD3D11->GetImmediateContext(),
         (ID3D11Resource*)renderSurface->GetColorBuffer()->GetTex(),scratchImg);
     if(FAILED(hr)) return false;
-        
+
     const DirectX::Image* img = scratchImg.GetImage(0,0,0);
 
     ImageData imgdata;
     imgdata.InitFrom(img);
-    imgdata.SaveToFile(fileName);   
+    imgdata.SaveToFile(fileName);
     return SUCCEEDED(hr);
 }
 
@@ -1143,7 +1144,7 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_DrawPrimitive(PrimitiveTypeEnum pt,
                                                     uint32_t StartVertex,
                                                     uint32_t vertexCount,
                                                     float* color,
-                                                    float* xform)                                                    
+                                                    float* xform)
 {
     ErrorHandler::ClearError();
     s_engineData->basicRenderer->DrawPrimitive(pt,vb,StartVertex, vertexCount,color,xform);
@@ -1182,7 +1183,7 @@ LVEDRENDERINGENGINE_API void __stdcall LvEd_DeleteFont(ObjectGUID font)
 LVEDRENDERINGENGINE_API void LvEd_DrawText2D(ObjectGUID font, WCHAR* text, int x, int y, int color)
 {
     ErrorHandler::ClearError();
-    using namespace LvEdFonts;    
+    using namespace LvEdFonts;
     Font* pFont = reinterpret_cast<Font*>(font);
 
     float4 colorRGBA;
@@ -1204,7 +1205,7 @@ LVEDRENDERINGENGINE_API int __stdcall LvEd_GetLastError(const wchar_t ** errorTe
 
 
 //==========================================
-// Create xml document to hold 
+// Create xml document to hold
 // Engine information.
 // The data is passed to C# side.
 //=========================================
@@ -1224,7 +1225,7 @@ void AddResNode(XmlDocument& doc,
     const wchar_t* name,
     const wchar_t* description,
     const wchar_t* fileExt)
-{   
+{
     XmlNode* resnode = doc.allocate_node(rapidxml::node_element,L"ResourceDescriptor");
     resnode->append_attribute(doc.allocate_attribute(L"Type", type));
     resnode->append_attribute(doc.allocate_attribute(L"Name", name));
@@ -1236,7 +1237,7 @@ void AddResNode(XmlDocument& doc,
 
 //using namespace rapidxml;
 EngineInfo::EngineInfo()
-{       
+{
     XmlDocument doc;
     XmlNode* decl = doc.allocate_node(rapidxml::node_declaration);
     decl->append_attribute(doc.allocate_attribute(L"version", L"1.0"));
@@ -1249,17 +1250,17 @@ EngineInfo::EngineInfo()
 
     XmlNode* resNodes = doc.allocate_node(rapidxml::node_element,L"SupportedResources");
     root->append_node(resNodes);
-        
+
     // add supported 3d models.
     const wchar_t* modeltype = ResourceType::ToWString(ResourceType::Model);
     AddResNode(doc,resNodes,modeltype,L"Model",L"3d model",L".atgi,.dae,.cmdl,.yml");
-        
+
     // add supported textures
     const wchar_t* textureType = ResourceType::ToWString(ResourceType::Texture);
     AddResNode(doc,resNodes,textureType,L"Texture",L"Texture file",L".dds,.bmp,.jpg,.png,.tga,.tif");
 
-    // Add any other engine information 
+    // Add any other engine information
 
     // print to string.
-    rapidxml::print(back_inserter(m_data), doc, 0);   
+    rapidxml::print(back_inserter(m_data), doc, 0);
 }

@@ -10,9 +10,9 @@
 #include <map>
 #include "Lights.h"
 #include "../VectorMath/Camera.h"
-#include <set>
+#include <unordered_set>
 
-typedef std::set<ObjectGUID> Selection;
+typedef std::unordered_set<ObjectGUID> Selection;
 
 namespace LvEdEngine
 {
@@ -33,7 +33,7 @@ namespace LvEdEngine
         void SetSelectionColor(const float4& color){ m_selectionColor= color;}
         const float4 GetSelectionColor() const {return m_selectionColor;}
 
-    private:                
+    private:
         GlobalRenderFlagsEnum m_renderflags;
         float4 m_wirecolor;
         float4 m_selectionColor;
@@ -49,7 +49,7 @@ namespace LvEdEngine
         static void              InitInstance(ID3D11Device* device);
         static void              DestroyInstance();
         static RSCache* Inst() { return s_inst; }
-        
+
         D3D11_RASTERIZER_DESC     GetDefaultRsDcr(){return m_defRsDcr;}
         D3D11_DEPTH_STENCIL_DESC  GetDefaultDpDcr(){return m_defDpDcr;}
         D3D11_BLEND_DESC          GetDefaultBsDcr(){return m_defBsDcr;}
@@ -59,7 +59,7 @@ namespace LvEdEngine
         ID3D11BlendState* GetBlendState(RenderFlagsEnum renderflag);
         ID3D11BlendState* GetAlphaToCoverageState() { return m_alphaToCoverage;}
 
-        //// render states accessors        
+        //// render states accessors
         //ID3D11BlendState*  Opaque() const;
         //ID3D11BlendState*  AlphaBlend() const;
         //ID3D11BlendState*  Additive() const;
@@ -72,7 +72,7 @@ namespace LvEdEngine
         ID3D11RasterizerState*  WireCullNone()  const { return m_wireCullNone; }
         ID3D11RasterizerState*  WireCullBack()  const { return m_wireCullBack; }
         ID3D11RasterizerState*  WireCullFront() const { return m_wireCullFront; }
-         
+
         // Depth state.
         ID3D11DepthStencilState*  DepthTestAndWrite() const { return m_depthTestAndWrite;  }
         ID3D11DepthStencilState*  DepthTestOnly() const { return m_depthTestOnly; }
@@ -87,18 +87,18 @@ namespace LvEdEngine
         ID3D11SamplerState* AnisotropicWrap() const { return m_anisotropicWrap; }
         ID3D11SamplerState* AnisotropicClamp() const { return m_anisotropicClamp; }
 
-    private:  
+    private:
 
         RSCache(ID3D11Device* device);
         ~RSCache();
         static RSCache* s_inst;
 
-        // list of all the resources.       
+        // list of all the resources.
         std::vector<IUnknown*> m_resources;
 
 
         std::map<uint32_t,ID3D11RasterizerState*> RasterStates;
-        std::map<uint32_t,ID3D11DepthStencilState*> DepthStencilStates;        
+        std::map<uint32_t,ID3D11DepthStencilState*> DepthStencilStates;
         std::map<uint32_t,ID3D11BlendState*> BlendStates;
         ID3D11BlendState*  m_alphaToCoverage;
         D3D11_RASTERIZER_DESC     m_defRsDcr;
@@ -113,13 +113,13 @@ namespace LvEdEngine
         ID3D11RasterizerState*  m_wireCullNone;
         ID3D11RasterizerState*  m_wireCullBack;
         ID3D11RasterizerState*  m_wireCullFront;
-        
+
         // Depth stencil states
         ID3D11DepthStencilState*  m_depthTestAndWrite;
         ID3D11DepthStencilState*  m_depthTestOnly;
         ID3D11DepthStencilState*  m_depthWriteOnly;
         ID3D11DepthStencilState*  m_depthNoTestNoWrite;
-        
+
         // Sampler states.
         ID3D11SamplerState* m_pointWrap;
         ID3D11SamplerState* m_pointClamp;
@@ -128,5 +128,5 @@ namespace LvEdEngine
         ID3D11SamplerState* m_anisotropicWrap;
         ID3D11SamplerState* m_anisotropicClamp;
     };
-         
+
 }; // namespace

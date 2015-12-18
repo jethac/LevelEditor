@@ -3,12 +3,12 @@
 #pragma once
 
 #include "Renderer\RenderableNodeSet.h"
-#include <set>
+#include <unordered_set>
 #include "Core/Object.h"
 
 using namespace LvEdEngine;
 
-typedef std::set<ObjectGUID> Selection;
+typedef std::unordered_set<ObjectGUID> Selection;
 typedef std::vector<Object*> ObjectList;
 
 class FindGobsByType : public QueryFunctor
@@ -27,6 +27,6 @@ public:
         return true;
     }
     ObjectList Gobs;
-    const char* m_typeName;    
+    const char* m_typeName;
 };
 

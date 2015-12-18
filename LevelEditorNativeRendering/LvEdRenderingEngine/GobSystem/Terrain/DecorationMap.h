@@ -6,7 +6,7 @@
 #include "../../VectorMath/CollisionPrimitives.h"
 #include "../../Core/Utils.h"
 #include <vector>
-#include <set>
+#include <unordered_set>
 
 namespace LvEdEngine
 {
@@ -25,13 +25,13 @@ public:
     void Invoke(wchar_t* fn, const void* arg, void** retVal);
 
     void SetUseBillboard(bool useBillboard){ m_useBillboard = useBillboard;}
-    void SetScale(float scale)  { m_scale = scale; }            
+    void SetScale(float scale)  { m_scale = scale; }
     void SetLodDistance(float lodDist) { m_lodDistance = lodDist;}
-    void SetNumOfDecorators(int numOfDecorators) 
+    void SetNumOfDecorators(int numOfDecorators)
     {
         m_numOfDecoratorsPerTexel = numOfDecorators;
-        m_genVB = true;        
-    }   
+        m_genVB = true;
+    }
 
     const VertexBuffer* GetVB(RenderContext* rc, uint32_t& vertCount);
     uint32_t GetVertexcount() const {return m_vertexcount;}
@@ -40,21 +40,21 @@ public:
         GenVBuffers();
         return m_listOfVBList;
     }
-    
+
     float GetScale() const { return m_scale;}
     float GetLodDistance() const {return m_lodDistance;}
     bool  GetUseBillboard() const { return m_useBillboard;}
-    
+
 private:
 
     bool  m_useBillboard;
     bool  m_genVB;
-    float m_scale;        
-    int32_t m_numOfDecoratorsPerTexel; // number of decorators will be created 
-                                   // for each ON texel in the mask. default is one.    
+    float m_scale;
+    int32_t m_numOfDecoratorsPerTexel; // number of decorators will be created
+                                   // for each ON texel in the mask. default is one.
     uint32_t m_vertexcount;            // total position count equivalent to total number of decorators.
     float  m_lodDistance;
-    ListOfVBList m_listOfVBList;  // list of all the decorators for each terrain patch.    
+    ListOfVBList m_listOfVBList;  // list of all the decorators for each terrain patch.
     void ReleaseResources();
     void GenVBuffers();
     void GenVBuffers(int32_t patchId);
@@ -62,8 +62,7 @@ private:
     VertexBuffer*  m_decoDynVB; // dynamic vertex buffer used for rendering decoration maps.
 
     // temp to holds terrain patch ids that need to be udpated.
-    std::set<int32_t> m_tmpPatchSet;
-    
+    std::unordered_set<int32_t> m_tmpPatchSet;
     static int32_t s_instId;
     int32_t m_instId;
 };
