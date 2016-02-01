@@ -388,7 +388,7 @@ void EntityModelFactory::EntityYaml::catchValue( const char* value )
 	// override parents!
 	bool bIsRootLevelModel = mBlockKeyStack.size() == 2;
 
-	if( mBlockKeyStack.top().compare( "ModelComponent" ) == 0 && mCurrentKey.compare( "m_name" ) == 0 && bIsRootLevelModel)
+	if( mBlockKeyStack.top().compare( "ModelComponent" ) == 0 && mCurrentKey.compare( "name" ) == 0 && bIsRootLevelModel)
 	{
 		// @todo actual child support
 		printDebugString( L" !Model name!" );
