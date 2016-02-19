@@ -322,7 +322,7 @@ void ProcessVertexStream( std::vector<T>* out, const pugi::xml_node& node )
 
 	uint32_t arraySize = verticesNum * columnNum;
 	float* p = new float[arraySize];
-	LoaderCommon::loadFloatStream( p, node.text().as_string(), arraySize );
+	LoaderCommon::loadNumberStream<float>( p, node.text().as_string(), arraySize );
 
 	out->resize( verticesNum );
 	for( uint32_t row = 0; row < verticesNum; ++row ) {
@@ -342,7 +342,7 @@ void ProcessSingleVertex( std::vector<T>* out, const pugi::xml_node& node, uint3
 	uint32_t verticesNum = num;
 
 	float* p = new float[columnNum];
-	LoaderCommon::loadFloatStream( p, node.text().as_string(), columnNum );
+	LoaderCommon::loadNumberStream<float>( p, node.text().as_string(), columnNum );
 
 	// Copy single vertex to each vertices
 	out->resize( verticesNum );
