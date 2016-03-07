@@ -21,6 +21,8 @@
 #include "LoaderCommon.h"
 #include "CmdlModel.h"
 
+#include "Shlwapi.h" // Windows shell utilities
+
 void printMBString( const char* s ) {
 	WCHAR hogera[MAX_PATH];
 	MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED,
@@ -38,18 +40,58 @@ EntityModelFactory::EntityModelFactory( ID3D11Device* device ) : CmdlModelFactor
 
 bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filename )
 {
-	char envUsagiDir[MAX_PATH];
-	GetEnvironmentVariableA( "USAGI_DIR", envUsagiDir, MAX_PATH );
+	static const std::string rubyPath = []() {
+		char _rubyPath[MAX_PATH];
+		SearchPathA(NULL, "ruby", ".exe", MAX_PATH, _rubyPath, NULL);
+		return std::string(_rubyPath);
+	}();
 
-	char filename_mb[MAX_PATH];
-	WideCharToMultiByte( 0, 0, filename, -1, filename_mb, MAX_PATH, NULL, NULL );
+	static const std::string envUsagiDir = []() {
+		char _envUsagiDir[MAX_PATH];
+		GetEnvironmentVariableA("USAGI_DIR", _envUsagiDir, MAX_PATH);
+		return std::string(_envUsagiDir);
+	}();
+
+	static const std::string expandedERBDir = envUsagiDir + "\\_build\\";
+	static const std::string erbExpanderPath = envUsagiDir + "\\Tools\\ruby\\expand_erb.rb";
+	static const std::string baseParameters = " " + erbExpanderPath + " -R _build/ruby ";
+
+	const std::string filenameRelative = [&]() {
+		char filename_mb[MAX_PATH], filenameRelative[MAX_PATH];
+		WideCharToMultiByte(0, 0, filename, -1, filename_mb, MAX_PATH, NULL, NULL);
+		PathRelativePathToA(filenameRelative, envUsagiDir.c_str(), FILE_ATTRIBUTE_DIRECTORY, filename_mb, FILE_ATTRIBUTE_NORMAL);
+		return std::string(filenameRelative);
+	}();
 
 	// Parse a YAML Entity file
 	std::string modelName;
-	std::string yamlPath( filename_mb );
+	std::string yamlPath( filenameRelative );
 	do {
+		// First generate the expanded file using ERB
+		const std::string expandedYaml = expandedERBDir + yamlPath;
+		{
+			const std::string parameters = baseParameters + "-o " + expandedYaml + " " + yamlPath + "";
+
+			// Annoyingly we have to copy to a mutable string for CreateProcessA() which may
+			// modify the input string..?!
+			const std::string commandLine = rubyPath + parameters;
+			char *commandLineC = new char[commandLine.length() + 1];
+			strcpy(commandLineC, commandLine.c_str());
+
+			// Spawn the process
+			STARTUPINFOA startupInfo;
+			ZeroMemory(&startupInfo, sizeof(startupInfo));
+			startupInfo.cb = sizeof(startupInfo);
+			PROCESS_INFORMATION procInfo;
+			ZeroMemory(&procInfo, sizeof(procInfo));
+			CreateProcessA(rubyPath.c_str(), commandLineC, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, envUsagiDir.c_str(), &startupInfo, &procInfo);
+			delete[] commandLineC;
+			WaitForSingleObject(procInfo.hProcess, 5000);
+		}
+
+		// Now parse the resulting YAML
 		EntityYaml yamlParser;
-		yamlParser.parseYaml( yamlPath.c_str() );
+		yamlParser.parseYaml( expandedYaml.c_str() );
 
 		// No interitance anymore
 		if( yamlParser.mInherits.empty() ) {
@@ -57,8 +99,7 @@ bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filenam
 		}
 		else {
 			modelName = yamlParser.mModelName;
-			yamlPath = envUsagiDir;
-			yamlPath.append( "\\Data\\Entities\\" );
+			yamlPath = ".\\Data\\Entities\\";
 			yamlPath.append( yamlParser.mInherits );
 			yamlPath.append( ".yml" );
 		}
