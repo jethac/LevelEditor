@@ -38,6 +38,45 @@ EntityModelFactory::EntityModelFactory( ID3D11Device* device ) : CmdlModelFactor
 	
 }
 
+bool EntityModelFactory::NeedsRubyExpansion(const std::string& filePath)
+{
+	bool bContainsRuby = false;
+	bool bInherits = false;
+	bool bOverrides = false;
+
+	FILE* fp = fopen(filePath.c_str(), "r");
+	assert(fp != NULL);
+
+	fseek(fp, 0, SEEK_END);
+	long size = ftell(fp);
+	rewind(fp);
+
+	char* buffer = (char*)calloc(size, sizeof(char));
+	size_t result = fread(buffer, sizeof(char), size, fp);
+	if (result != size)
+	{
+		fprintf(stderr, "Error reading: %s\n", filePath.c_str());
+		exit(3);
+	}
+	fclose(fp);
+
+	std::string s(buffer);
+	std::smatch m;
+	std::regex e("<%.*%>");
+
+	bContainsRuby = std::regex_search(s, m, e);
+
+	std::regex e2("Inherits");
+	bInherits = std::regex_search(s, m, e2);
+
+	std::regex e3("Overrides");
+	bOverrides = std::regex_search(s, m, e3);
+
+	free(buffer);
+
+	return bContainsRuby || bInherits || bOverrides;
+}
+
 bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filename )
 {
 	static const std::string rubyPath = []() {
@@ -56,8 +95,10 @@ bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filenam
 	static const std::string erbExpanderPath = envUsagiDir + "\\Tools\\ruby\\expand_erb.rb";
 	static const std::string baseParameters = " " + erbExpanderPath + " -R _build/ruby ";
 
+	char filename_mb[MAX_PATH];
+
 	const std::string filenameRelative = [&]() {
-		char filename_mb[MAX_PATH], filenameRelative[MAX_PATH];
+		char filenameRelative[MAX_PATH];
 		WideCharToMultiByte(0, 0, filename, -1, filename_mb, MAX_PATH, NULL, NULL);
 		PathRelativePathToA(filenameRelative, envUsagiDir.c_str(), FILE_ATTRIBUTE_DIRECTORY, filename_mb, FILE_ATTRIBUTE_NORMAL);
 		return std::string(filenameRelative);
@@ -67,33 +108,44 @@ bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filenam
 	std::string modelName;
 	std::string yamlPath( filenameRelative );
 	do {
-		// First generate the expanded file using ERB
-		const std::string expandedYaml = expandedERBDir + yamlPath;
+		EntityYaml yamlParser;
+
+		// Wait! Let's see whether we have any escaped ruby in the file first.
+		bool bNeedsExpansion = NeedsRubyExpansion(filename_mb);
+
+		if (bNeedsExpansion)
 		{
-			const std::string parameters = baseParameters + "-o " + expandedYaml + " " + yamlPath + "";
+			// First generate the expanded file using ERB
+			const std::string expandedYaml = expandedERBDir + yamlPath;
+			{
+				const std::string parameters = baseParameters + "-o " + expandedYaml + " " + yamlPath + "";
 
-			// Annoyingly we have to copy to a mutable string for CreateProcessA() which may
-			// modify the input string..?!
-			const std::string commandLine = rubyPath + parameters;
-			char *commandLineC = new char[commandLine.length() + 1];
-			strcpy(commandLineC, commandLine.c_str());
+				// Annoyingly we have to copy to a mutable string for CreateProcessA() which may
+				// modify the input string..?!
+				const std::string commandLine = rubyPath + parameters;
+				char *commandLineC = new char[commandLine.length() + 1];
+				strcpy(commandLineC, commandLine.c_str());
 
-			// Spawn the process
-			STARTUPINFOA startupInfo;
-			ZeroMemory(&startupInfo, sizeof(startupInfo));
-			startupInfo.cb = sizeof(startupInfo);
-			PROCESS_INFORMATION procInfo;
-			ZeroMemory(&procInfo, sizeof(procInfo));
-			CreateProcessA(rubyPath.c_str(), commandLineC, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, envUsagiDir.c_str(), &startupInfo, &procInfo);
-			delete[] commandLineC;
-			WaitForSingleObject(procInfo.hProcess, 5000);
+				// Spawn the process
+				STARTUPINFOA startupInfo;
+				ZeroMemory(&startupInfo, sizeof(startupInfo));
+				startupInfo.cb = sizeof(startupInfo);
+				PROCESS_INFORMATION procInfo;
+				ZeroMemory(&procInfo, sizeof(procInfo));
+				CreateProcessA(rubyPath.c_str(), commandLineC, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, envUsagiDir.c_str(), &startupInfo, &procInfo);
+				delete[] commandLineC;
+				WaitForSingleObject(procInfo.hProcess, 5000);
+			}
+
+			// Now parse the resulting YAML
+			yamlParser.parseYaml(expandedYaml.c_str());
+		}
+		else
+		{
+			yamlParser.parseYaml(filename_mb);
 		}
 
-		// Now parse the resulting YAML
-		EntityYaml yamlParser;
-		yamlParser.parseYaml( expandedYaml.c_str() );
-
-		// No interitance anymore
+		// No inheritance anymore.
 		if( yamlParser.mInherits.empty() ) {
 			break;
 		}

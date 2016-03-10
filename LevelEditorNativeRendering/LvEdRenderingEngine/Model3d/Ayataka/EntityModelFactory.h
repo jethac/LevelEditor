@@ -2,6 +2,7 @@
 #pragma once
 #include <stack>
 #include <string>
+#include <regex>
 
 #include "CmdlModelFactory.h"
 #include "yaml.h"
@@ -16,7 +17,8 @@ namespace LvEdEngine
 	public:
 		EntityModelFactory(ID3D11Device* device);
 
-		virtual bool LoadResource( Resource* resource, const WCHAR * filename );
+		virtual bool LoadResource(Resource* resource, const WCHAR * filename);
+		bool NeedsRubyExpansion(const std::string& filePath);
 		bool LoadModel( Model* model, const WCHAR* filepath );
 		void CreateDummyCube( Model * model );
 	private:
@@ -42,6 +44,7 @@ namespace LvEdEngine
 			std::string mModelName;
 			std::string mInherits;
 		private:
+
 			void yamlStreamStartEvent( const yaml_event_t& event );
 			void yamlStreamEndEvent( const yaml_event_t& event );
 			void yamlDocumentStartEvent( const yaml_event_t& event );
