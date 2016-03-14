@@ -378,9 +378,37 @@
     <ClInclude Include="GobSystem\MeshComponent.h">
       <Filter>GobSystem</Filter>
     </ClInclude>
+    <ClInclude Include="Model3d\Ayataka\CmdlModelFactory.h">
+      <Filter>Model3d\Ayataka</Filter>
+    </ClInclude>
+    <ClInclude Include="GobSystem\Tank\StandardBaseGob.h">
+      <Filter>GobSystem\Tank</Filter>
+    </ClInclude>
+    <ClInclude Include="Model3d\Ayataka\CmdlModel.h">
+      <Filter>Model3d\Ayataka</Filter>
+    </ClInclude>
+    <ClInclude Include="Model3d\Ayataka\EntityModelFactory.h">
+      <Filter>Model3d\Ayataka</Filter>
+    </ClInclude>
+    <ClInclude Include="GobSystem\Tank\StaticModelGob.h">
+      <Filter>GobSystem\Tank</Filter>
+    </ClInclude>
+    <ClInclude Include="Usagi\UsagiUtil.h">
+      <Filter>Usagi</Filter>
+    </ClInclude>
+    <ClInclude Include="GobSystem\Tank\SpawnPointGob.h">
+      <Filter>GobSystem\Tank</Filter>
+    </ClInclude>
+    <ClInclude Include="GobSystem\Tank\AI\AIWaypointGob.h">
+      <Filter>GobSystem\Tank\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="GobSystem\Tank\AI\AIBlockingAreaGob.h">
+      <Filter>GobSystem\Tank\AI</Filter>
+    </ClInclude>
     <ClInclude Include="GobSystem\SpinnerComponent.h">
       <Filter>GobSystem</Filter>
     </ClInclude>
+    <ClInclude Include="GobSystem\Tank\ItemPopPointGob.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -685,9 +713,37 @@
     <ClCompile Include="GobSystem\MeshComponent.cpp">
       <Filter>GobSystem</Filter>
     </ClCompile>
+    <ClCompile Include="Model3d\Ayataka\CmdlModelFactory.cpp">
+      <Filter>Model3d\Ayataka</Filter>
+    </ClCompile>
+    <ClCompile Include="Model3d\Ayataka\templib\pugixml.cpp">
+      <Filter>Model3d\Ayataka\templib</Filter>
+    </ClCompile>
+    <ClCompile Include="GobSystem\Tank\StandardBaseGob.cpp">
+      <Filter>GobSystem\Tank</Filter>
+    </ClCompile>
+    <ClCompile Include="Model3d\Ayataka\CmdlModel.cpp">
+      <Filter>Model3d\Ayataka</Filter>
+    </ClCompile>
+    <ClCompile Include="Model3d\Ayataka\EntityModelFactory.cpp">
+      <Filter>Model3d\Ayataka</Filter>
+    </ClCompile>
+    <ClCompile Include="GobSystem\Tank\StaticModelGob.cpp">
+      <Filter>GobSystem\Tank</Filter>
+    </ClCompile>
+    <ClCompile Include="GobSystem\Tank\SpawnPointGob.cpp">
+      <Filter>GobSystem\Tank</Filter>
+    </ClCompile>
+    <ClCompile Include="GobSystem\Tank\AI\AIWaypointGob.cpp">
+      <Filter>GobSystem\Tank\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="GobSystem\Tank\AI\AIBlockingAreaGob.cpp">
+      <Filter>GobSystem\Tank\AI</Filter>
+    </ClCompile>
     <ClCompile Include="GobSystem\SpinnerComponent.cpp">
       <Filter>GobSystem</Filter>
     </ClCompile>
+    <ClCompile Include="GobSystem\Tank\ItemPopPointGob.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GobSystem">
@@ -734,6 +790,21 @@
     </Filter>
     <Filter Include="GobSystem\Terrain">
       <UniqueIdentifier>{1ab0b10e-56aa-40bd-a684-d2f80ce18c59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model3d\Ayataka">
+      <UniqueIdentifier>{030a9016-1950-4e49-9e20-461d772d77fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model3d\Ayataka\templib">
+      <UniqueIdentifier>{774f6fd8-a2d6-48b8-8693-d23750f796cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GobSystem\Tank">
+      <UniqueIdentifier>{d9130219-b768-4bb1-ae51-5e45b2a143c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Usagi">
+      <UniqueIdentifier>{e6ba14f2-4c0f-40a0-839c-0292d4509840}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GobSystem\Tank\AI">
+      <UniqueIdentifier>{a1c176bf-11e0-4514-abfb-a92947ade204}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

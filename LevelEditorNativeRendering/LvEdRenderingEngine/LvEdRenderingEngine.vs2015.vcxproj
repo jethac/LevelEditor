@@ -34,9 +34,11 @@
   <ImportGroup Label="ExtensionSettings"></ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Model3d\Ayataka\Ayataka.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Model3d\Ayataka\Ayataka.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -66,8 +68,8 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;_DEBUG;_WINDOWS;_USRDLL;LVEDRENDERINGENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\DirectX\XNAMath</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;_DEBUG;_WINDOWS;_USRDLL;LVEDRENDERINGENGINE_EXPORTS;YAML_DECLARE_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\DirectX\XNAMath;.\libyaml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
       <PrecompiledHeaderFile></PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile></PrecompiledHeaderOutputFile>
@@ -75,7 +77,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;DXGI.lib;dxguid.lib;winmm.lib;comctl32.lib;gdiplus.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;d3d11.lib;d3dcompiler.lib;DXGI.lib;dxguid.lib;winmm.lib;comctl32.lib;gdiplus.lib;yaml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)libyaml\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(WindowsSdkDir)Redist\D3D\x64\d3dcompiler*.dll" "$(TargetDir)..\..\" /D  /Y</Command>
@@ -92,8 +95,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;NDEBUG;_WINDOWS;_USRDLL;LVEDRENDERINGENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\DirectX\XNAMath</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;NDEBUG;_WINDOWS;_USRDLL;LVEDRENDERINGENGINE_EXPORTS;YAML_DECLARE_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\DirectX\XNAMath;.\libyaml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -101,7 +104,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;DXGI.lib;dxguid.lib;winmm.lib;comctl32.lib;gdiplus.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;d3d11.lib;d3dcompiler.lib;DXGI.lib;dxguid.lib;winmm.lib;comctl32.lib;gdiplus.lib;yaml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)libyaml\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(WindowsSdkDir)Redist\D3D\x64\d3dcompiler*.dll" "$(TargetDir)..\..\" /D  /Y</Command>
@@ -180,12 +184,21 @@
     <ClInclude Include="GobSystem\SkyDome.h" />
     <ClInclude Include="GobSystem\SphereGob.h" />
     <ClInclude Include="GobSystem\SpinnerComponent.h" />
+    <ClInclude Include="GobSystem\Tank\AI\AIBlockingAreaGob.h" />
+    <ClInclude Include="GobSystem\Tank\AI\AIWaypointGob.h" />
+    <ClInclude Include="GobSystem\Tank\ItemPopPointGob.h" />
+    <ClInclude Include="GobSystem\Tank\SpawnPointGob.h" />
+    <ClInclude Include="GobSystem\Tank\StandardBaseGob.h" />
+    <ClInclude Include="GobSystem\Tank\StaticModelGob.h" />
     <ClInclude Include="GobSystem\Terrain\DecorationMap.h" />
     <ClInclude Include="GobSystem\Terrain\LayerMap.h" />
     <ClInclude Include="GobSystem\Terrain\TerrainGob.h" />
     <ClInclude Include="GobSystem\Terrain\TerrainMap.h" />
     <ClInclude Include="GobSystem\TorusGob.h" />
     <ClInclude Include="Model3d\AtgiModelFactory.h" />
+    <ClInclude Include="Model3d\Ayataka\CmdlModel.h" />
+    <ClInclude Include="Model3d\Ayataka\CmdlModelFactory.h" />
+    <ClInclude Include="Model3d\Ayataka\EntityModelFactory.h" />
     <ClInclude Include="Model3d\ColladaModelFactory.h" />
     <ClInclude Include="Model3d\XmlModelFactory.h" />
     <ClInclude Include="Renderer\BasicRenderer.h" />
@@ -237,6 +250,7 @@
     <ClInclude Include="ResourceManager\TextureFactory.h" />
     <ClInclude Include="Renderer\ShaderLib.h" />
     <ClInclude Include="Renderer\SkyDomeShader.h" />
+    <ClInclude Include="Usagi\UsagiUtil.h" />
     <ClInclude Include="VectorMath\Camera.h" />
     <ClInclude Include="VectorMath\CollisionPrimitives.h" />
     <ClInclude Include="VectorMath\MeshUtil.h" />
@@ -301,6 +315,12 @@
     <ClCompile Include="GobSystem\SkyDome.cpp" />
     <ClCompile Include="GobSystem\SphereGob.cpp" />
     <ClCompile Include="GobSystem\SpinnerComponent.cpp" />
+    <ClCompile Include="GobSystem\Tank\AI\AIBlockingAreaGob.cpp" />
+    <ClCompile Include="GobSystem\Tank\AI\AIWaypointGob.cpp" />
+    <ClCompile Include="GobSystem\Tank\ItemPopPointGob.cpp" />
+    <ClCompile Include="GobSystem\Tank\SpawnPointGob.cpp" />
+    <ClCompile Include="GobSystem\Tank\StandardBaseGob.cpp" />
+    <ClCompile Include="GobSystem\Tank\StaticModelGob.cpp" />
     <ClCompile Include="GobSystem\Terrain\DecorationMap.cpp" />
     <ClCompile Include="GobSystem\Terrain\LayerMap.cpp" />
     <ClCompile Include="GobSystem\Terrain\TerrainGob.cpp" />
@@ -308,6 +328,10 @@
     <ClCompile Include="GobSystem\TorusGob.cpp" />
     <ClCompile Include="LvEdRenderingEngine.cpp" />
     <ClCompile Include="Model3d\AtgiModelFactory.cpp" />
+    <ClCompile Include="Model3d\Ayataka\CmdlModel.cpp" />
+    <ClCompile Include="Model3d\Ayataka\CmdlModelFactory.cpp" />
+    <ClCompile Include="Model3d\Ayataka\EntityModelFactory.cpp" />
+    <ClCompile Include="Model3d\Ayataka\templib\pugixml.cpp" />
     <ClCompile Include="Model3d\ColladaModelFactory.cpp" />
     <ClCompile Include="Model3d\Model3dBuilder.cpp" />
     <ClCompile Include="Model3d\XmlModelFactory.cpp" />
