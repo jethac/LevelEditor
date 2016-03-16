@@ -163,14 +163,19 @@ namespace LevelEditor
                 typeof(RenderingInterop.TextureThumbnailResolver)
                 );
 
-            
+
+            TypeCatalog usagiCatalog = new TypeCatalog(
+                typeof(Vitei.RenderingInteropUsagi.EntityResolver),
+                typeof(Vitei.RenderingInteropUsagi.EntityResourceConverter)
+            );
+
             List<ComposablePartCatalog> catalogs = new List<ComposablePartCatalog>();
             catalogs.Add(AtfCatalog);            
             catalogs.Add(LECoreCatalog);
             catalogs.Add(renderingInteropCatalog);
             catalogs.Add(thisAssemCatalog);
-            
-                        
+            catalogs.Add(usagiCatalog);
+
             // temp solution, look for statemachine plugin by name.
             string pluginDir = Application.StartupPath;
             string stmPlg = pluginDir + "\\StateMachinePlugin.dll";
