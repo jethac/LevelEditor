@@ -155,7 +155,8 @@ namespace ResourceType
         Unknown,
         Model,
         Texture,
-        Material
+        Material,
+        UsagiEntity
     };
 
     inline const wchar_t* ToWString(ResourceType restype)
@@ -164,8 +165,9 @@ namespace ResourceType
         {
         case Unknown : return L"Unknown";
         case Model : return L"Model";
-        case Texture : return L"Texture";
-        case Material : return L"Material";
+        case Texture: return L"Texture";
+        case Material: return L"Material";
+        case UsagiEntity: return L"UsagiEntity";
         default: return L"";
         }
     }
