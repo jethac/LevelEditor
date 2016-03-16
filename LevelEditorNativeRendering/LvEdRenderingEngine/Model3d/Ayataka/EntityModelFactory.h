@@ -39,6 +39,8 @@ namespace LvEdEngine
 				mDocumentDepth = 0;
 				mMappingDepth = 0;
 				mSequenceDepth = 0;
+
+				mResource = nullptr;
 			}
 			~EntityYaml() {}
 
@@ -47,6 +49,8 @@ namespace LvEdEngine
 
 			std::string mModelName;
 			std::string mInherits;
+
+			Resource* mResource;
 		private:
 
 			void yamlStreamStartEvent( const yaml_event_t& event );

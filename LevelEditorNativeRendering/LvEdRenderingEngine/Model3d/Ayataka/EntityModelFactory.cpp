@@ -111,7 +111,11 @@ bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filenam
 		return std::string(filenameRelative);
 	}();
 
-	// Parse a YAML Entity file
+	// Set source filename.
+	UsagiEntity* entity = (UsagiEntity*)resource;
+	entity->SetSourceFileName(filename);
+
+	// Parse a YAML Entity file.
 	std::string modelName;
 	std::string yamlPath( filenameRelative );
 	do {
@@ -186,8 +190,6 @@ bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filenam
 	MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED,
 						 modelPath.c_str(), -1, modelPathW, MAX_PATH );
 
-	UsagiEntity* entity = (UsagiEntity*)resource;
-	entity->SetSourceFileName(filename);
 	return true;
 }
 
@@ -257,6 +259,8 @@ bool EntityModelFactory::LoadEntity(UsagiEntity* entity, const WCHAR* filepath)
 
 void EntityModelFactory::EntityYaml::parseYaml(const char* filename)
 {
+	assert( mResource != nullptr );
+
 	FILE *fh = fopen( filename, "r" );
 	assert( fh != NULL );
 	parseYaml( fh );
@@ -264,6 +268,8 @@ void EntityModelFactory::EntityYaml::parseYaml(const char* filename)
 
 void EntityModelFactory::EntityYaml::parseYaml( FILE* fh )
 {
+	assert(mResource != nullptr);
+
 	yaml_parser_t parser;
 
 	// Initialize parser
