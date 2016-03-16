@@ -202,6 +202,7 @@
     <ClInclude Include="Model3d\Ayataka\CmdlModel.h" />
     <ClInclude Include="Model3d\Ayataka\CmdlModelFactory.h" />
     <ClInclude Include="Model3d\Ayataka\EntityModelFactory.h" />
+    <ClInclude Include="Model3d\Ayataka\UsagiEntity.h" />
     <ClInclude Include="Model3d\ColladaModelFactory.h" />
     <ClInclude Include="Model3d\XmlModelFactory.h" />
     <ClInclude Include="Renderer\BasicRenderer.h" />
@@ -337,6 +338,7 @@
     <ClCompile Include="Model3d\Ayataka\CmdlModelFactory.cpp" />
     <ClCompile Include="Model3d\Ayataka\EntityModelFactory.cpp" />
     <ClCompile Include="Model3d\Ayataka\templib\pugixml.cpp" />
+    <ClCompile Include="Model3d\Ayataka\UsagiEntity.cpp" />
     <ClCompile Include="Model3d\ColladaModelFactory.cpp" />
     <ClCompile Include="Model3d\Model3dBuilder.cpp" />
     <ClCompile Include="Model3d\XmlModelFactory.cpp" />

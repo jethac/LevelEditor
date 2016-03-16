@@ -419,6 +419,9 @@
     </ClInclude>
     <ClInclude Include="GobSystem\Tank\ItemPopPointGob.h">
       <Filter>GobSystem\Tank</Filter>
+    </ClCompile>
+    <ClInclude Include="Model3d\Ayataka\UsagiEntity.h">
+      <Filter>Model3d\Ayataka</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -756,6 +759,9 @@
     </ClCompile>
     <ClCompile Include="GobSystem\Tank\ItemPopPointGob.cpp">
       <Filter>GobSystem\Tank</Filter>
+    </ClCompile>
+    <ClCompile Include="Model3d\Ayataka\UsagiEntity.cpp">
+      <Filter>Model3d\Ayataka</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
