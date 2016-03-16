@@ -6,6 +6,7 @@
 
 #include "CmdlModelFactory.h"
 #include "yaml.h"
+#include "UsagiEntity.h"
 
 namespace LvEdEngine
 {
@@ -17,10 +18,13 @@ namespace LvEdEngine
 	public:
 		EntityModelFactory(ID3D11Device* device);
 
+		virtual Resource* CreateResource(Resource* def);
+
 		virtual bool LoadResource(Resource* resource, const WCHAR * filename);
 		bool NeedsRubyExpansion(const std::string& filePath);
 		bool LoadModel( Model* model, const WCHAR* filepath );
 		void CreateDummyCube( Model * model );
+		bool LoadEntity(UsagiEntity* entity, const WCHAR* filepath);
 	private:
 		class EntityYaml
 		{

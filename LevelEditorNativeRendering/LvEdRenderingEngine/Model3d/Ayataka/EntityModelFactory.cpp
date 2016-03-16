@@ -20,6 +20,7 @@
 #include "StringUtil.h"
 #include "LoaderCommon.h"
 #include "CmdlModel.h"
+#include "UsagiEntity.h"
 
 #include "Shlwapi.h" // Windows shell utilities
 
@@ -36,6 +37,12 @@ namespace LvEdEngine
 EntityModelFactory::EntityModelFactory( ID3D11Device* device ) : CmdlModelFactory( device )
 {
 	
+}
+
+LvEdEngine::Resource* EntityModelFactory::CreateResource(Resource* def)
+{
+	UNREFERENCED_VARIABLE(def);
+	return new UsagiEntity();
 }
 
 bool EntityModelFactory::NeedsRubyExpansion(const std::string& filePath)
@@ -179,8 +186,9 @@ bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filenam
 	MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED,
 						 modelPath.c_str(), -1, modelPathW, MAX_PATH );
 
-	Model * model = (Model*)resource;
-	return LoadModel( model, modelPathW );
+	UsagiEntity* entity = (UsagiEntity*)resource;
+	entity->SetSourceFileName(filename);
+	return true;
 }
 
 bool EntityModelFactory::LoadModel( Model* model, const WCHAR* filepath )
@@ -240,7 +248,14 @@ void EntityModelFactory::CreateDummyCube( Model * model )
 	model->Construct( m_device, ResourceManager::Inst() );
 }
 
-void EntityModelFactory::EntityYaml::parseYaml( const char* filename )
+bool EntityModelFactory::LoadEntity(UsagiEntity* entity, const WCHAR* filepath)
+{
+	entity->SetSourceFileName(filepath);
+
+	return true;
+}
+
+void EntityModelFactory::EntityYaml::parseYaml(const char* filename)
 {
 	FILE *fh = fopen( filename, "r" );
 	assert( fh != NULL );
