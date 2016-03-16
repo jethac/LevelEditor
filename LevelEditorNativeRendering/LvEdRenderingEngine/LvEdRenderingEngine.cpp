@@ -1253,11 +1253,22 @@ EngineInfo::EngineInfo()
 
     // add supported 3d models.
     const wchar_t* modeltype = ResourceType::ToWString(ResourceType::Model);
-    AddResNode(doc,resNodes,modeltype,L"Model",L"3d model",L".atgi,.dae,.cmdl,.yml");
+    AddResNode(doc,resNodes,modeltype,L"Model",L"3d model",L".atgi,.dae,.cmdl");
 
     // add supported textures
     const wchar_t* textureType = ResourceType::ToWString(ResourceType::Texture);
     AddResNode(doc,resNodes,textureType,L"Texture",L"Texture file",L".dds,.bmp,.jpg,.png,.tga,.tif");
+
+	// add entity info
+	const wchar_t* entityType = ResourceType::ToWString(ResourceType::UsagiEntity);
+	AddResNode(
+		doc,
+		resNodes,
+		entityType,
+		L"UsagiEntity",
+		L"Entity information",
+		L".yml"
+	);
 
     // Add any other engine information
 
