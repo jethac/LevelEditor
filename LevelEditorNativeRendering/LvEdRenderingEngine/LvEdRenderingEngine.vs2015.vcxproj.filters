@@ -70,6 +70,9 @@
     <None Include="Resources\fa-map-marker.png">
       <Filter>Shaders\Resources</Filter>
     </None>
+    <None Include="Resources\vitei_256.png">
+      <Filter>Shaders\Resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LvEdRenderingEngine.h" />

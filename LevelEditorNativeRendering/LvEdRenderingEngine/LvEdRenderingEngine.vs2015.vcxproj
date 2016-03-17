@@ -396,6 +396,9 @@
     <None Include="Resources\fa-map-marker.png" />
     <None Include="Resources\fa-user.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\vitei_256.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
