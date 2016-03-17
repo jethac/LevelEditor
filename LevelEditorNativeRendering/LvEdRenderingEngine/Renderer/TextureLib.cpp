@@ -109,37 +109,9 @@ void TextureLib::InitInstance(ID3D11Device* device)
     
     pImple->m_whiteTexture = CreateSolidTexture2D(device, 8, 8, 0xFFFFFFFF);
 
-    typedef std::pair<std::wstring, Texture*> NameTexPair;
-
-    const wchar_t* resName = L"Light.png";
-    const wchar_t* resType = L"Texture";
-    HRESULT hr = E_FAIL;
-
-    Texture* tex = NULL;
-    ID3D11Resource* dxresource = NULL;
-    ID3D11ShaderResourceView* dxTexView = NULL;
-    uint32_t  resSize = 0;
-    uint8_t* data = (uint8_t*)ResUtil::LoadResource(resType, resName,&resSize);
-    hr = CreateWICTextureFromMemory( device,
-                                             NULL,
-                                             data,
-                                             resSize,
-                                             &dxresource,
-                                             &dxTexView);
-   free(data);
-   if (!Logger::IsFailureLog(hr, L"Error loading %s\n", resName))
-   {
-       D3D11_RESOURCE_DIMENSION resDim = D3D11_RESOURCE_DIMENSION_UNKNOWN;
-       dxresource->GetType( &resDim );
-       assert( resDim == D3D11_RESOURCE_DIMENSION_TEXTURE2D);
-       ID3D11Texture2D* dxTex = NULL;
-       hr = dxresource->QueryInterface( __uuidof(ID3D11Texture2D), (void**) &dxTex );
-       dxresource->Release();
-       assert(dxTex);
-       tex = new Texture(dxTex,dxTexView);
-       auto insertResult = pImple->m_textures.insert(NameTexPair(resName,tex));
-       assert(insertResult.second);
-   }
+	// load embedded textures, i.e. textures that are embedded resources
+	// open resource.rc in a text editor for info
+	LoadEmbeddedTexture(device, L"Light.png");
 }
 
  void TextureLib::DestroyInstance(void)
@@ -182,5 +154,44 @@ Texture* TextureLib::CreateSolidTexture2D(ID3D11Device* device, int w, int h, ui
 {
     return CreateCheckerboardTexture2D(device, w, h, color, color);
 }
-    
+
+// ----------------------------------------------------------------------------------------------
+Texture* TextureLib::LoadEmbeddedTexture(ID3D11Device* device, const wchar_t* name)
+{
+	assert(s_Inst != NULL);
+	Imple* pImple = s_Inst->m_pImple;
+
+	typedef std::pair<std::wstring, Texture*> NameTexPair;
+	const wchar_t* resType = L"Texture";
+	HRESULT hr = E_FAIL;
+
+	Texture* tex = NULL;
+	ID3D11Resource* dxresource = NULL;
+	ID3D11ShaderResourceView* dxTexView = NULL;
+	uint32_t  resSize = 0;
+	uint8_t* data = (uint8_t*)ResUtil::LoadResource(resType, name, &resSize);
+	hr = CreateWICTextureFromMemory(device,
+		NULL,
+		data,
+		resSize,
+		&dxresource,
+		&dxTexView);
+	free(data);
+	if (!Logger::IsFailureLog(hr, L"Error loading %s\n", name))
+	{
+		D3D11_RESOURCE_DIMENSION resDim = D3D11_RESOURCE_DIMENSION_UNKNOWN;
+		dxresource->GetType(&resDim);
+		assert(resDim == D3D11_RESOURCE_DIMENSION_TEXTURE2D);
+		ID3D11Texture2D* dxTex = NULL;
+		hr = dxresource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&dxTex);
+		dxresource->Release();
+		assert(dxTex);
+		tex = new Texture(dxTex, dxTexView);
+		auto insertResult = pImple->m_textures.insert(NameTexPair(name, tex));
+		assert(insertResult.second);
+	}
+
+	return tex;
+}
+
 }; // namespace

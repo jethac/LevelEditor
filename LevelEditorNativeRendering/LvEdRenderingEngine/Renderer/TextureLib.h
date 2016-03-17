@@ -24,6 +24,8 @@ public:
     Texture* GetByName(const wchar_t* name);
     static Texture* CreateSolidTexture2D(ID3D11Device* device, int w, int h, uint32_t color);
 
+	static Texture* LoadEmbeddedTexture(ID3D11Device* device, const wchar_t* name);
+
 private:
     
     TextureLib();
