@@ -120,6 +120,7 @@ bool EntityModelFactory::LoadResource( Resource* resource, const WCHAR * filenam
 	std::string yamlPath( filenameRelative );
 	do {
 		EntityYaml yamlParser;
+		yamlParser.mResource = resource;
 
 		// Wait! Let's see whether we have any escaped ruby in the file first.
 		bool bNeedsExpansion = NeedsRubyExpansion(filename_mb);
