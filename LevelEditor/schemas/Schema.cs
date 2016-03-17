@@ -543,6 +543,23 @@ namespace LevelEditor
             standardBaseType.componentChild = standardBaseType.Type.GetChildInfo("component");
             standardBaseType.resourceChild = standardBaseType.Type.GetChildInfo("resource");
 
+            usagiEntityReferenceType.Type = getNodeType("gap", "usagiEntityReferenceType");
+            usagiEntityReferenceType.uriAttribute = usagiEntityReferenceType.Type.GetAttributeInfo("uri");
+            usagiEntityReferenceType.tagAttribute = usagiEntityReferenceType.Type.GetAttributeInfo("tag");
+
+            usagiEntityType.Type = getNodeType("gap", "usagiEntityType");
+            usagiEntityType.transformAttribute = usagiEntityType.Type.GetAttributeInfo("transform");
+            usagiEntityType.translateAttribute = usagiEntityType.Type.GetAttributeInfo("translate");
+            usagiEntityType.rotateAttribute = usagiEntityType.Type.GetAttributeInfo("rotate");
+            usagiEntityType.scaleAttribute = usagiEntityType.Type.GetAttributeInfo("scale");
+            usagiEntityType.pivotAttribute = usagiEntityType.Type.GetAttributeInfo("pivot");
+            usagiEntityType.nameAttribute = usagiEntityType.Type.GetAttributeInfo("name");
+            usagiEntityType.visibleAttribute = usagiEntityType.Type.GetAttributeInfo("visible");
+            usagiEntityType.lockedAttribute = usagiEntityType.Type.GetAttributeInfo("locked");
+            usagiEntityType.transformationTypeAttribute = usagiEntityType.Type.GetAttributeInfo("transformationType");
+            usagiEntityType.componentChild = usagiEntityType.Type.GetChildInfo("component");
+            usagiEntityType.resourceChild = usagiEntityType.Type.GetChildInfo("resource");
+
             staticModelType.Type = getNodeType("gap", "staticModelType");
             staticModelType.transformAttribute = staticModelType.Type.GetAttributeInfo("transform");
             staticModelType.translateAttribute = staticModelType.Type.GetAttributeInfo("translate");
@@ -1331,6 +1348,29 @@ namespace LevelEditor
             public static AttributeInfo lockedAttribute;
             public static AttributeInfo transformationTypeAttribute;
             public static AttributeInfo lifeAttribute;
+            public static ChildInfo componentChild;
+            public static ChildInfo resourceChild;
+        }
+
+        public static class usagiEntityReferenceType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo uriAttribute;
+            public static AttributeInfo tagAttribute;
+        }
+
+        public static class usagiEntityType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo transformAttribute;
+            public static AttributeInfo translateAttribute;
+            public static AttributeInfo rotateAttribute;
+            public static AttributeInfo scaleAttribute;
+            public static AttributeInfo pivotAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo visibleAttribute;
+            public static AttributeInfo lockedAttribute;
+            public static AttributeInfo transformationTypeAttribute;
             public static ChildInfo componentChild;
             public static ChildInfo resourceChild;
         }

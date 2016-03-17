@@ -487,6 +487,34 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="usagiEntityReferenceType">
+    <xs:annotation>
+      <xs:appinfo>
+        <sce.atf.referenceConstraint resourceType ="UsagiEntity"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="resourceReferenceType">
+        <xs:attribute name="tag" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="usagiEntityType">
+    <xs:annotation>
+      <xs:appinfo>
+        <LeGe.NativeType nativeName="UsagiEntityGob"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="gameObjectType">
+        <xs:sequence>
+          <xs:element name="resource" type="usagiEntityReferenceType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="staticModelType" abstract="true">
     <xs:annotation>
       <xs:appinfo>

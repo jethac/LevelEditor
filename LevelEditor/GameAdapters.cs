@@ -82,7 +82,9 @@ namespace LevelEditor
             Schema.gameReferenceType.Type.Define(new ExtensionInfo<GameReference>());            
             Schema.resourceReferenceType.Type.Define(new ExtensionInfo<ResourceReference>());
             Schema.gameObjectReferenceType.Type.Define(new ExtensionInfo<GameObjectReference>());
-            
+
+            // usagi...?
+            Schema.usagiEntityType.Type.Define(new ExtensionInfo<LevelEditor.Usagi.UsagiEntity>());
 
             Schema.layerType.Type.Define(new ExtensionInfo<Layer>());                                    
             Schema.bookmarkType.Type.Define(new ExtensionInfo<Bookmark>());

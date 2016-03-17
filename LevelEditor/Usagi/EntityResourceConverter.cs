@@ -11,6 +11,7 @@ using RenderingInterop;
 using LevelEditor;
 using Sce.Atf.Adaptation;
 using LevelEditor.DomNodeAdapters;
+using LevelEditor.Usagi;
 
 namespace Vitei.RenderingInteropUsagi
 {
@@ -54,11 +55,11 @@ namespace Vitei.RenderingInteropUsagi
                 gob = locator as IGameObject;
                 */
 
-                GameObject adapter = new DomNode(
-                    Schema.standardBaseType.Type
-                ).As<GameObject>();
-                adapter.DomNode.InitializeExtensions();
-                gob = adapter;                
+                UsagiEntity entity = UsagiEntity.Create();
+                IReference<IResource> resRef = ResourceReference.Create(resource);
+                entity.Reference = resRef;
+                entity.DomNode.InitializeExtensions();
+                gob = entity;                
             }
             return gob;
         }

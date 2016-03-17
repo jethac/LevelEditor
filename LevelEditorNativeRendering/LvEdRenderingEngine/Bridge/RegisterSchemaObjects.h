@@ -37,6 +37,7 @@
 #include "../GobSystem/Tank/ItemPopPointGob.h"
 #include "../GobSystem/Tank/AI/AIWaypointGob.h"
 #include "../GobSystem/Tank/AI/AIBlockingAreaGob.h"
+#include "../GobSystem/Tank/UsagiEntityGob.h"
 
 #include "../Renderer/Resource.h"
 

@@ -147,6 +147,7 @@
     <Compile Include="Terrain\TerrainManipulator.cs" />
     <Compile Include="Usagi\EntityResolver.cs" />
     <Compile Include="Usagi\EntityResourceConverter.cs" />
+    <Compile Include="Usagi\UsagiEntity.cs" />
     <Compile Include="Validators\CustomLockingValidator.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

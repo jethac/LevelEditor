@@ -426,6 +426,9 @@
     <ClInclude Include="Model3d\Ayataka\UsagiEntity.h">
       <Filter>Model3d\Ayataka</Filter>
     </ClInclude>
+    <ClInclude Include="GobSystem\Tank\UsagiEntityGob.h">
+      <Filter>GobSystem\Tank</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -765,6 +768,9 @@
     </ClCompile>
     <ClCompile Include="Model3d\Ayataka\UsagiEntity.cpp">
       <Filter>Model3d\Ayataka</Filter>
+    </ClCompile>
+    <ClCompile Include="GobSystem\Tank\UsagiEntityGob.cpp">
+      <Filter>GobSystem\Tank</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

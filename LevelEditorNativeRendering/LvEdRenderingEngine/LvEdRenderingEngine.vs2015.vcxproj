@@ -193,6 +193,7 @@
     <ClInclude Include="GobSystem\Tank\SpawnPointGob.h" />
     <ClInclude Include="GobSystem\Tank\StandardBaseGob.h" />
     <ClInclude Include="GobSystem\Tank\StaticModelGob.h" />
+    <ClInclude Include="GobSystem\Tank\UsagiEntityGob.h" />
     <ClInclude Include="GobSystem\Terrain\DecorationMap.h" />
     <ClInclude Include="GobSystem\Terrain\LayerMap.h" />
     <ClInclude Include="GobSystem\Terrain\TerrainGob.h" />
@@ -327,6 +328,7 @@
     <ClCompile Include="GobSystem\Tank\SpawnPointGob.cpp" />
     <ClCompile Include="GobSystem\Tank\StandardBaseGob.cpp" />
     <ClCompile Include="GobSystem\Tank\StaticModelGob.cpp" />
+    <ClCompile Include="GobSystem\Tank\UsagiEntityGob.cpp" />
     <ClCompile Include="GobSystem\Terrain\DecorationMap.cpp" />
     <ClCompile Include="GobSystem\Terrain\LayerMap.cpp" />
     <ClCompile Include="GobSystem\Terrain\TerrainGob.cpp" />

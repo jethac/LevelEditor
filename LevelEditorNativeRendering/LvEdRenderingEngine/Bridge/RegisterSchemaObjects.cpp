@@ -934,6 +934,14 @@ void StandardBaseGob_Resource_Remove(ObjectGUID parentId, ObjectGUID childId)
 }
 
 //-----------------------------------------------------------------------------
+//UsagiEntityGob
+//-----------------------------------------------------------------------------
+Object* UsagiEntityGob_Create(ObjectTypeGUID tid, void* data, int size)
+{
+    return new UsagiEntityGob();
+}
+
+//-----------------------------------------------------------------------------
 //StaticModelGob
 //-----------------------------------------------------------------------------
 Object* StaticModelGob_Create(ObjectTypeGUID tid, void* data, int size)
@@ -1322,6 +1330,8 @@ void InitGobBridge(GobBridge& bridge)
   bridge.RegisterObject( "StandardBaseGob", &StandardBaseGob_Create );
   bridge.RegisterProperty( "StandardBaseGob", "Life", &StandardBaseGob_Life_Set, NULL );
   bridge.RegisterChildList( "StandardBaseGob", "Resource", &StandardBaseGob_Resource_Add, &StandardBaseGob_Resource_Remove);
+
+  bridge.RegisterObject( "UsagiEntityGob", &UsagiEntityGob_Create );
 
   bridge.RegisterObject( "StaticModelGob", &StaticModelGob_Create );
 
