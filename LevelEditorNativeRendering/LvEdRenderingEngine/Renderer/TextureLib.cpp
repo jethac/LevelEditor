@@ -115,13 +115,13 @@ void TextureLib::InitInstance(ID3D11Device* device)
     LoadEmbeddedTexture(device, L"fa-map-marker.png");
     LoadEmbeddedTexture(device, L"fa-user.png");
     LoadEmbeddedTexture(device, L"fa-cube.png");
+    LoadEmbeddedTexture(device, L"vitei_256.png");
 }
 
- void TextureLib::DestroyInstance(void)
- {
-     SAFE_DELETE(s_Inst);
- }
-
+void TextureLib::DestroyInstance(void)
+{
+    SAFE_DELETE(s_Inst);
+}
 
 // ----------------------------------------------------------------------------------------------
 static Texture* CreateCheckerboardTexture2D(ID3D11Device* device, int w, int h, uint32_t color1,  uint32_t color2,bool cubemap, bool useSRGBView)
