@@ -942,6 +942,22 @@ Object* UsagiEntityGob_Create(ObjectTypeGUID tid, void* data, int size)
 }
 
 //-----------------------------------------------------------------------------
+void UsagiEntityGob_Resource_Add(ObjectGUID parentId, ObjectGUID childId, int index)
+{
+    UsagiEntityGob* parent = reinterpret_cast<UsagiEntityGob*>(parentId);
+    ResourceReference* child = reinterpret_cast<ResourceReference*>(childId);
+    parent->AddResource(child, index);
+}
+
+//-----------------------------------------------------------------------------
+void UsagiEntityGob_Resource_Remove(ObjectGUID parentId, ObjectGUID childId)
+{
+    UsagiEntityGob* parent = reinterpret_cast<UsagiEntityGob*>(parentId);
+    ResourceReference* child = reinterpret_cast<ResourceReference*>(childId);
+    parent->RemoveResource(child);
+}
+
+//-----------------------------------------------------------------------------
 //StaticModelGob
 //-----------------------------------------------------------------------------
 Object* StaticModelGob_Create(ObjectTypeGUID tid, void* data, int size)
@@ -1332,6 +1348,7 @@ void InitGobBridge(GobBridge& bridge)
   bridge.RegisterChildList( "StandardBaseGob", "Resource", &StandardBaseGob_Resource_Add, &StandardBaseGob_Resource_Remove);
 
   bridge.RegisterObject( "UsagiEntityGob", &UsagiEntityGob_Create );
+  bridge.RegisterChildList( "UsagiEntityGob", "Resource", &UsagiEntityGob_Resource_Add, &UsagiEntityGob_Resource_Remove);
 
   bridge.RegisterObject( "StaticModelGob", &StaticModelGob_Create );
 

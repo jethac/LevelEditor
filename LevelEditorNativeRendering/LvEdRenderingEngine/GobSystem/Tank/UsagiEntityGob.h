@@ -1,6 +1,7 @@
 #pragma once
 #include "../GameObject.h"
 #include "../../Usagi/UsagiUtil.h"
+#include "../../Renderer/Resource.h"
 
 namespace LvEdEngine
 {
@@ -17,6 +18,9 @@ namespace LvEdEngine
 		virtual void Update(float dt);
 
 		virtual void GetRenderables(RenderableNodeCollector* collector, RenderContext* context);
+
+		void AddResource(ResourceReference * ref, int index);
+		void RemoveResource(ResourceReference * ref);
 	protected:
 		Mesh* m_mesh;
 		void BuildRenderables();

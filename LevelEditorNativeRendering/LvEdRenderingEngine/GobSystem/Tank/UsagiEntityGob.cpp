@@ -44,6 +44,16 @@ void LvEdEngine::UsagiEntityGob::GetRenderables(RenderableNodeCollector* collect
 
 }
 
+void LvEdEngine::UsagiEntityGob::AddResource(ResourceReference * ref, int index)
+{
+
+}
+
+void LvEdEngine::UsagiEntityGob::RemoveResource(ResourceReference * ref)
+{
+
+}
+
 void LvEdEngine::UsagiEntityGob::BuildRenderables()
 {
 

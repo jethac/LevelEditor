@@ -504,6 +504,7 @@
     <xs:annotation>
       <xs:appinfo>
         <LeGe.NativeType nativeName="UsagiEntityGob"/>
+        <LeGe.NativeElement name="resource" nativeName="Resource" nativeType="ResourceReference" />
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
