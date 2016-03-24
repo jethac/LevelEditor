@@ -504,6 +504,7 @@ namespace RenderingInterop
 
             ITransformable xformnode = ghost.Cast<ITransformable>();
             IBoundable bnode  = ghost.As<IBoundable>();
+            if (bnode == null) return;
             AABB box = bnode.BoundingBox;
             
             Vec3F pt;
