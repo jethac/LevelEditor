@@ -56,7 +56,7 @@ TextureLib::TextureLib()
     m_pImple = new Imple();
     for(int i = TextureType::MIN; i < TextureType::MAX; ++i)
         m_pImple->m_defaultTextures[i] = NULL;
-    
+
 }
 TextureLib::~TextureLib()
 {
@@ -84,8 +84,8 @@ void TextureLib::InitInstance(ID3D11Device* device)
 {
     s_Inst = new TextureLib();
     Imple* pImple = s_Inst->m_pImple;
-    
-    
+
+
     pImple->m_defaultTextures[TextureType::DIFFUSE] = CreateCheckerboardTexture2D(device, 128, 128, 0xFF404040, 0xFF808080, false,true);
     pImple->m_defaultTextures[TextureType::DIFFUSE]->SetTextureType(TextureType::DIFFUSE);
 
@@ -98,7 +98,7 @@ void TextureLib::InitInstance(ID3D11Device* device)
     pImple->m_defaultTextures[TextureType::LIGHT] = CreateSolidTexture2D(device, 8, 8, 0xFFFFFFFF);
     pImple->m_defaultTextures[TextureType::LIGHT]->SetTextureType(TextureType::LIGHT);
 
-    pImple->m_defaultTextures[TextureType::SPEC] = CreateSolidTexture2D(device, 8, 8, 0xFF000000);    
+    pImple->m_defaultTextures[TextureType::SPEC] = CreateSolidTexture2D(device, 8, 8, 0xFF000000);
     pImple->m_defaultTextures[TextureType::SPEC]->SetTextureType(TextureType::SPEC);
 
     pImple->m_defaultTextures[TextureType::BlankMask] = CreateSolidTexture2D(device, 4, 4, 0x00);
@@ -106,7 +106,7 @@ void TextureLib::InitInstance(ID3D11Device* device)
 
     pImple->m_defaultTextures[TextureType::FullMask] = CreateSolidTexture2D(device, 4, 4, 0xFFFFFFFF);
     pImple->m_defaultTextures[TextureType::FullMask]->SetTextureType(TextureType::FullMask);
-    
+
     pImple->m_whiteTexture = CreateSolidTexture2D(device, 8, 8, 0xFFFFFFFF);
 
 	// load embedded textures, i.e. textures that are embedded resources
@@ -121,7 +121,7 @@ void TextureLib::InitInstance(ID3D11Device* device)
  {
      SAFE_DELETE(s_Inst);
  }
- 
+
 
 // ----------------------------------------------------------------------------------------------
 static Texture* CreateCheckerboardTexture2D(ID3D11Device* device, int w, int h, uint32_t color1,  uint32_t color2,bool cubemap, bool useSRGBView)
@@ -147,7 +147,7 @@ static Texture* CreateCheckerboardTexture2D(ID3D11Device* device, int w, int h, 
     assert(tex);
     assert(view);
     delete[] buf;
-    Texture* texture =  new Texture(tex, view);    
+    Texture* texture =  new Texture(tex, view);
     return texture;
 }
 
