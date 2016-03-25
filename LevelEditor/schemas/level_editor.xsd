@@ -521,7 +521,7 @@
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
-        <xs:extension base="coneTestType">
+        <xs:extension base="gameObjectType">
           <xs:attribute name="team" type="xs:int" default="0" />
         </xs:extension>
     </xs:complexContent>

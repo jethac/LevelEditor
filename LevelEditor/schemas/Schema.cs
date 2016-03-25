@@ -584,13 +584,6 @@ namespace LevelEditor
             spawnPointType.visibleAttribute = spawnPointType.Type.GetAttributeInfo("visible");
             spawnPointType.lockedAttribute = spawnPointType.Type.GetAttributeInfo("locked");
             spawnPointType.transformationTypeAttribute = spawnPointType.Type.GetAttributeInfo("transformationType");
-            spawnPointType.colorAttribute = spawnPointType.Type.GetAttributeInfo("color");
-            spawnPointType.emissiveAttribute = spawnPointType.Type.GetAttributeInfo("emissive");
-            spawnPointType.specularAttribute = spawnPointType.Type.GetAttributeInfo("specular");
-            spawnPointType.specularPowerAttribute = spawnPointType.Type.GetAttributeInfo("specularPower");
-            spawnPointType.diffuseAttribute = spawnPointType.Type.GetAttributeInfo("diffuse");
-            spawnPointType.normalAttribute = spawnPointType.Type.GetAttributeInfo("normal");
-            spawnPointType.textureTransformAttribute = spawnPointType.Type.GetAttributeInfo("textureTransform");
             spawnPointType.teamAttribute = spawnPointType.Type.GetAttributeInfo("team");
             spawnPointType.componentChild = spawnPointType.Type.GetChildInfo("component");
 
@@ -1405,13 +1398,6 @@ namespace LevelEditor
             public static AttributeInfo visibleAttribute;
             public static AttributeInfo lockedAttribute;
             public static AttributeInfo transformationTypeAttribute;
-            public static AttributeInfo colorAttribute;
-            public static AttributeInfo emissiveAttribute;
-            public static AttributeInfo specularAttribute;
-            public static AttributeInfo specularPowerAttribute;
-            public static AttributeInfo diffuseAttribute;
-            public static AttributeInfo normalAttribute;
-            public static AttributeInfo textureTransformAttribute;
             public static AttributeInfo teamAttribute;
             public static ChildInfo componentChild;
         }

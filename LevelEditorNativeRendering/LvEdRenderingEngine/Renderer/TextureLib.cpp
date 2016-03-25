@@ -112,6 +112,7 @@ void TextureLib::InitInstance(ID3D11Device* device)
 	// load embedded textures, i.e. textures that are embedded resources
 	// open resource.rc in a text editor for info
 	LoadEmbeddedTexture(device, L"Light.png");
+	LoadEmbeddedTexture(device, L"marker.png");
 }
 
  void TextureLib::DestroyInstance(void)

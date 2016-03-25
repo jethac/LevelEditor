@@ -1,5 +1,7 @@
 #include "SpawnPointGob.h"
-#include "..\PrimitiveShapeGob.h"
+#include "../../Renderer/Model.h"
+#include "../../Renderer/ShapeLib.h"
+#include "../../Renderer/TextureLib.h"
 
 using namespace LvEdEngine;
 
@@ -7,20 +9,46 @@ void SpawnPointGob::SetTeam( int team )
 {
 	mTeam = team;
 
-	int red = 0xffff0000;
-	int blue = 0xff0000ff;
-	SetColor( mTeam == 0 ? red : blue );
+	switch (mTeam)
+	{
+	case 0:
+		ConvertColor(0xFFE80806, &mColor);
+		break;
+	case 1:
+		ConvertColor(0xFF060CE8, &mColor);
+		break;
+	default:
+		ConvertColor(0xffffffff, &mColor);
+		break;
+	}
+
 }
 
 // virtual
-void SpawnPointGob::SetupRenderable( RenderableNode* r, RenderContext* context )
+void SpawnPointGob::GetRenderables(RenderableNodeCollector* collector, RenderContext* context)
 {
-	PrimitiveShapeGob::SetupRenderable( r, context );
-	
-	// Arrange cone's direction and scale
-	Matrix rotX_p90 = Matrix::CreateRotationX( ToRadian( 90.0f ) );
-	Matrix scale_2x = Matrix::CreateScale( float3( 2.0f, 2.0f, 2.0f ) );
-	Matrix trans_y = Matrix::CreateTranslation( 0.0f, 0.5f, 0.0f );
-	r->WorldXform = rotX_p90 * scale_2x * trans_y * r->WorldXform;
+	if (!IsVisible(context->Cam().GetFrustum()))
+		return;
+
+	// Marker node.
+	RenderableNode marker_node;
+	GameObject::SetupRenderable(&marker_node, context);
+
+	marker_node.mesh = m_meshQuad;
+	marker_node.diffuse = mColor;
+	LvEdEngine::Texture* pTeamTexture = TextureLib::Inst()->GetByName(L"marker.png");
+#ifdef _DEBUG
+	assert(pTeamTexture != nullptr);
+#endif
+	marker_node.textures[TextureType::DIFFUSE] = pTeamTexture;
+
+	float3 objectPos = &m_world.M41;
+	Camera& cam = context->Cam();
+	Matrix billboard = Matrix::CreateBillboard(objectPos, cam.CamPos(), cam.CamUp(), cam.CamLook());
+	Matrix scale = Matrix::CreateScale(1.0f);
+	marker_node.WorldXform = scale * billboard;
+
+	RenderFlagsEnum flags = RenderFlags::Textured;
+	collector->Add(marker_node, flags, Shaders::BillboardShader);
 }
 

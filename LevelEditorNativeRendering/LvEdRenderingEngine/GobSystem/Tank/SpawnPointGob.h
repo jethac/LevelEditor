@@ -5,21 +5,29 @@
 
 namespace LvEdEngine
 {
-	class SpawnPointGob : public ConeGob
+	class SpawnPointGob : public GameObject
 	{
 	public:
-		SpawnPointGob() : ConeGob() {
+		SpawnPointGob() : GameObject() {
+			m_meshQuad = ShapeLibGetMesh(RenderShape::Quad);
+			m_localBounds = AABB(float3(-0.5f, -0.5f, -0.5f), float3(0.5f, 0.5f, 0.5f));
+
 			mTeam = 0;
+			ConvertColor(0xffff0000, &mColor);
 		}
 		virtual const char* ClassName() const { return StaticClassName(); }
 		static const char* StaticClassName(){ return "SpawnPointGob"; }
 
 		void SetTeam( int team );
 
-		virtual void SetupRenderable( RenderableNode* r, RenderContext* context );
+		virtual void GetRenderables(RenderableNodeCollector* collector, RenderContext* context);
 
 	private:
 		int mTeam;
+
+		float4 mColor;
+
+		Mesh* m_meshQuad;
 	};
 }
 

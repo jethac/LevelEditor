@@ -61,6 +61,9 @@
     <None Include="Shaders\BasicRenderer.hlsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Resources\marker.png">
+      <Filter>Shaders\Resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LvEdRenderingEngine.h" />
@@ -752,9 +755,6 @@
     <Filter Include="VectorMath">
       <UniqueIdentifier>{98d6d434-aa0b-4b5e-b24d-6712e9a57df8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ResourceManager">
-      <UniqueIdentifier>{20e0684a-5f53-4632-aa6f-ba387aa4abc4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Renderer">
       <UniqueIdentifier>{c28af9ce-924c-4396-b1ce-ecf84f65e1eb}</UniqueIdentifier>
     </Filter>
@@ -805,6 +805,9 @@
     </Filter>
     <Filter Include="GobSystem\Tank\AI">
       <UniqueIdentifier>{a1c176bf-11e0-4514-abfb-a92947ade204}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ResourceManager">
+      <UniqueIdentifier>{20e0684a-5f53-4632-aa6f-ba387aa4abc4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
