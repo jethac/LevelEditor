@@ -565,13 +565,6 @@ namespace LevelEditor
             itemPopPointType.visibleAttribute = itemPopPointType.Type.GetAttributeInfo("visible");
             itemPopPointType.lockedAttribute = itemPopPointType.Type.GetAttributeInfo("locked");
             itemPopPointType.transformationTypeAttribute = itemPopPointType.Type.GetAttributeInfo("transformationType");
-            itemPopPointType.colorAttribute = itemPopPointType.Type.GetAttributeInfo("color");
-            itemPopPointType.emissiveAttribute = itemPopPointType.Type.GetAttributeInfo("emissive");
-            itemPopPointType.specularAttribute = itemPopPointType.Type.GetAttributeInfo("specular");
-            itemPopPointType.specularPowerAttribute = itemPopPointType.Type.GetAttributeInfo("specularPower");
-            itemPopPointType.diffuseAttribute = itemPopPointType.Type.GetAttributeInfo("diffuse");
-            itemPopPointType.normalAttribute = itemPopPointType.Type.GetAttributeInfo("normal");
-            itemPopPointType.textureTransformAttribute = itemPopPointType.Type.GetAttributeInfo("textureTransform");
             itemPopPointType.componentChild = itemPopPointType.Type.GetChildInfo("component");
 
             spawnPointType.Type = getNodeType("gap", "spawnPointType");
@@ -597,13 +590,6 @@ namespace LevelEditor
             aiWaypointType.visibleAttribute = aiWaypointType.Type.GetAttributeInfo("visible");
             aiWaypointType.lockedAttribute = aiWaypointType.Type.GetAttributeInfo("locked");
             aiWaypointType.transformationTypeAttribute = aiWaypointType.Type.GetAttributeInfo("transformationType");
-            aiWaypointType.colorAttribute = aiWaypointType.Type.GetAttributeInfo("color");
-            aiWaypointType.emissiveAttribute = aiWaypointType.Type.GetAttributeInfo("emissive");
-            aiWaypointType.specularAttribute = aiWaypointType.Type.GetAttributeInfo("specular");
-            aiWaypointType.specularPowerAttribute = aiWaypointType.Type.GetAttributeInfo("specularPower");
-            aiWaypointType.diffuseAttribute = aiWaypointType.Type.GetAttributeInfo("diffuse");
-            aiWaypointType.normalAttribute = aiWaypointType.Type.GetAttributeInfo("normal");
-            aiWaypointType.textureTransformAttribute = aiWaypointType.Type.GetAttributeInfo("textureTransform");
             aiWaypointType.componentChild = aiWaypointType.Type.GetChildInfo("component");
 
             aiBlockingAreaType.Type = getNodeType("gap", "aiBlockingAreaType");
@@ -1376,13 +1362,6 @@ namespace LevelEditor
             public static AttributeInfo visibleAttribute;
             public static AttributeInfo lockedAttribute;
             public static AttributeInfo transformationTypeAttribute;
-            public static AttributeInfo colorAttribute;
-            public static AttributeInfo emissiveAttribute;
-            public static AttributeInfo specularAttribute;
-            public static AttributeInfo specularPowerAttribute;
-            public static AttributeInfo diffuseAttribute;
-            public static AttributeInfo normalAttribute;
-            public static AttributeInfo textureTransformAttribute;
             public static ChildInfo componentChild;
         }
 
@@ -1414,13 +1393,6 @@ namespace LevelEditor
             public static AttributeInfo visibleAttribute;
             public static AttributeInfo lockedAttribute;
             public static AttributeInfo transformationTypeAttribute;
-            public static AttributeInfo colorAttribute;
-            public static AttributeInfo emissiveAttribute;
-            public static AttributeInfo specularAttribute;
-            public static AttributeInfo specularPowerAttribute;
-            public static AttributeInfo diffuseAttribute;
-            public static AttributeInfo normalAttribute;
-            public static AttributeInfo textureTransformAttribute;
             public static ChildInfo componentChild;
         }
 

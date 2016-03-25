@@ -10,7 +10,7 @@ namespace LvEdEngine
 	public:
 		SpawnPointGob() : GameObject() {
 			m_meshQuad = ShapeLibGetMesh(RenderShape::Quad);
-			m_localBounds = AABB(float3(-0.5f, -0.5f, -0.5f), float3(0.5f, 0.5f, 0.5f));
+			m_localBounds = AABB(float3(-1.0f, 0.0f, -1.0f), float3(1.0f, 2.0f, 1.0f));
 
 			mTeam = 0;
 			ConvertColor(0xffff0000, &mColor);

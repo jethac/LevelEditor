@@ -24,7 +24,6 @@ void SpawnPointGob::SetTeam( int team )
 
 }
 
-// virtual
 void SpawnPointGob::GetRenderables(RenderableNodeCollector* collector, RenderContext* context)
 {
 	if (!IsVisible(context->Cam().GetFrustum()))
@@ -45,8 +44,9 @@ void SpawnPointGob::GetRenderables(RenderableNodeCollector* collector, RenderCon
 	float3 objectPos = &m_world.M41;
 	Camera& cam = context->Cam();
 	Matrix billboard = Matrix::CreateBillboard(objectPos, cam.CamPos(), cam.CamUp(), cam.CamLook());
-	Matrix scale = Matrix::CreateScale(1.0f);
-	marker_node.WorldXform = scale * billboard;
+	Matrix scale = Matrix::CreateScale(2.0f);
+	Matrix tx = Matrix::CreateTranslation(0, 1.0f, 0);
+	marker_node.WorldXform = scale * tx * billboard;
 
 	RenderFlagsEnum flags = RenderFlags::Textured;
 	collector->Add(marker_node, flags, Shaders::BillboardShader);

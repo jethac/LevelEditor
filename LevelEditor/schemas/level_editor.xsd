@@ -31,15 +31,15 @@
 
 
     <!-- example gameObject components -->
-    
+
     <xs:complexType name="meshComponentType">
         <xs:annotation>
             <xs:appinfo>
                 <LeGe.NativeType nativeName="MeshComponent"/>
-                <LeGe.NativeProperty name="ref" nativeName="Ref" nativeType="wchar_t*" access="set"/>                
+                <LeGe.NativeProperty name="ref" nativeName="Ref" nativeType="wchar_t*" access="set"/>
             </xs:appinfo>
         </xs:annotation>
-        
+
         <xs:complexContent>
             <xs:extension base="renderComponentType">
                 <xs:attribute name="ref" type="xs:anyURI"/>
@@ -47,23 +47,23 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="spinnerComponentType">
         <xs:annotation>
             <xs:appinfo>
                 <LeGe.NativeType nativeName="SpinnerComponent"/>
-                <LeGe.NativeProperty name="rps" nativeName="RPS" nativeType="float3" access="set"/>                
+                <LeGe.NativeProperty name="rps" nativeName="RPS" nativeType="float3" access="set"/>
             </xs:appinfo>
         </xs:annotation>
-        
+
         <xs:complexContent>
             <xs:extension base="gameObjectComponentType">
                 <xs:attribute name="rps" type="vector3Type" default="0 0 0"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
-   
+
+
   <!-- reference for 3d models collada, atgi, etc  -->
   <xs:complexType name="modelReferenceType">
     <xs:annotation>
@@ -75,10 +75,10 @@
       <xs:extension base="resourceReferenceType">
         <xs:attribute name="tag" type="xs:string"/>
       </xs:extension>
-    </xs:complexContent>        
+    </xs:complexContent>
   </xs:complexType>
 
-   
+
 
     <xs:complexType name="locatorType">
         <xs:annotation>
@@ -97,8 +97,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-  
-  
+
+
     <!-- lights-->
     <xs:complexType name="DirLight">
         <xs:annotation>
@@ -194,7 +194,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  
+
   <!-- Linear curve  (poly lines) -->
   <xs:complexType name="curveType">
     <xs:annotation>
@@ -208,7 +208,7 @@
         <scea.dom.editors name="PolyLine" category="Linears" image="LevelEditorCore.Resources.Polyline.png" description="Linear curve"/>
         <scea.dom.editors.attribute category="Linear" name="color" displayName="Color" description="Object Color" editor="Sce.Atf.Controls.PropertyEditing.ColorEditor,Atf.Gui" converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
         <scea.dom.editors.attribute category="Linear" name="isClosed" displayName="Is Closed" description="Whether curve has extra edge connection first and last points" editor="Sce.Atf.Controls.PropertyEditing.BoolEditor,Atf.Gui.WinForms"/>
-        <scea.dom.editors.attribute category="Linear" name="steps" displayName="Steps" description="Number of steps to take during interpolation" />        
+        <scea.dom.editors.attribute category="Linear" name="steps" displayName="Steps" description="Number of steps to take during interpolation" />
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
@@ -250,7 +250,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
 
 <!-- examples -->
   <xs:complexType name="skyDomeType">
@@ -326,7 +326,7 @@
             <xs:extension base="shapeTestType" />
         </xs:complexContent>
     </xs:complexType>
-    
+
 
     <xs:complexType name="sphereTestType">
         <xs:annotation>
@@ -397,7 +397,7 @@
         </xs:extension>
     </xs:complexContent>
   </xs:complexType>
- 
+
   <xs:complexType name="orcType">
     <xs:annotation>
       <xs:appinfo>
@@ -439,7 +439,7 @@
           displayName="Toenail Color"
           description="Orc's toenail color"
           editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
-          converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />        
+          converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
         <scea.dom.editors.elementCollection
           name="children"
           displayName="Children"
@@ -506,7 +506,7 @@
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
-        <xs:extension base="cubeTestType" />
+        <xs:extension base="gameObjectType" />
     </xs:complexContent>
   </xs:complexType>
 
@@ -537,7 +537,7 @@
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
-        <xs:extension base="coneTestType" />
+        <xs:extension base="gameObjectType" />
     </xs:complexContent>
   </xs:complexType>
 
@@ -568,11 +568,11 @@
         <LeGe.NativeProperty name="normal" nativeName="Normal" nativeType="wchar_t*" access="set"/>
         <LeGe.NativeProperty name="specular" nativeName="Specular" nativeType="wchar_t*" access="set"/>
         <LeGe.NativeProperty name="mask" nativeName="Mask" nativeType="wchar_t*" access="set"/>
-        
+
         <scea.dom.editors.attribute name="name" displayName="Name" description="Map name"/>
         <scea.dom.editors.attribute name="visible" displayName="Visibility" description="Whether the map is visible" category="Display" editor="Sce.Atf.Controls.PropertyEditing.BoolEditor,Atf.Gui.WinForms"/>
-        <scea.dom.editors.attribute name="minHeight" 
-                                    displayName="Min Height" 
+        <scea.dom.editors.attribute name="minHeight"
+                                    displayName="Min Height"
                                     description="minimum height, lower limit of this map"/>
         <scea.dom.editors.attribute name="maxHeight"
                                     displayName="Max Height"
@@ -602,7 +602,7 @@
           displayName="Specular"
           description = "specular map texture"
           category="Textures"
-          editor="Sce.Atf.Controls.PropertyEditing.FileUriEditor,Atf.Gui.WinForms:Texture (*.png, *.dds, *.bmp, *.tga, *.tif)|*.png;*.dds;*.bmp;*.tga;*.tif"/>               
+          editor="Sce.Atf.Controls.PropertyEditing.FileUriEditor,Atf.Gui.WinForms:Texture (*.png, *.dds, *.bmp, *.tga, *.tif)|*.png;*.dds;*.bmp;*.tga;*.tif"/>
       </xs:appinfo>
     </xs:annotation>
     <xs:attribute name="name" type="xs:string"/>
@@ -614,9 +614,9 @@
     <xs:attribute name="diffuse" type="xs:anyURI"/>
     <xs:attribute name="normal" type="xs:anyURI"/>
     <xs:attribute name="specular" type="xs:anyURI"/>
-    <xs:attribute name="mask" type="xs:anyURI"/>    
+    <xs:attribute name="mask" type="xs:anyURI"/>
   </xs:complexType>
-    
+
   <xs:complexType name="decorationMapType">
     <xs:annotation>
       <xs:appinfo>
@@ -625,7 +625,7 @@
         <LeGe.NativeProperty name="numOfDecorators" nativeName="NumOfDecorators" nativeType="int32_t" access="set"/>
         <LeGe.NativeProperty name="lodDistance" nativeName="LodDistance" nativeType="float" access="set"/>
         <LeGe.NativeProperty name="useBillboard" nativeName="UseBillboard" nativeType="bool" access="set"/>
-        
+
 
         <scea.dom.editors.attribute name="scale"
                                     displayName="Scale"
@@ -643,14 +643,14 @@
                                     editor="Sce.Atf.Controls.PropertyEditing.BoolEditor,Atf.Gui.WinForms"/>
 
       </xs:appinfo>
-    </xs:annotation>    
+    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="terrainMapType">
-        <xs:attribute name="scale" type="xs:float" default="1.0"/>                
+        <xs:attribute name="scale" type="xs:float" default="1.0"/>
         <xs:attribute name="numOfDecorators" type="xs:int" default="1"/>
         <xs:attribute name="lodDistance" type="xs:float" default="1000" />
         <xs:attribute name="useBillboard" type="xs:boolean" default="true"/>
-      </xs:extension>           
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
@@ -660,7 +660,7 @@
         <LeGe.NativeType nativeName="LayerMap"/>
         <LeGe.NativeProperty name="lodTexture" nativeName="LodTexture" nativeType="wchar_t*" access="set"/>
         <LeGe.NativeProperty name="textureScale" nativeName="TextureScale" nativeType="float" access="set"/>
-        
+
         <scea.dom.editors.attribute name="lodTexture"
                                     displayName="LOD Texture"
                                     description="A low res texture used when rendering distanec terrain patch"
@@ -669,7 +669,7 @@
                                     displayName="Texture Scale"
                                     description="scales layer texture"
                                     category="Textures"/>
-        
+
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
@@ -684,8 +684,8 @@
   <xs:complexType name="terrainGobType">
     <xs:annotation>
       <xs:appinfo>
-        <LeGe.NativeType nativeName="TerrainGob"/>        
-        <LeGe.NativeProperty name="cellSize" nativeName="CellSize" nativeType="float" access="set"/>        
+        <LeGe.NativeType nativeName="TerrainGob"/>
+        <LeGe.NativeProperty name="cellSize" nativeName="CellSize" nativeType="float" access="set"/>
         <LeGe.NativeProperty name="heightMap" nativeName="HeightMap" nativeType="wchar_t*" access="set"/>
         <LeGe.NativeElement name="layerMap" nativeName="LayerMap" nativeType="LayerMap" />
         <LeGe.NativeElement name="decorationMap" nativeName="DecorationMap" nativeType="DecorationMap" />
@@ -695,21 +695,21 @@
           name="cellSize"
           displayName="CellSize"
           description="size of terrain cell"
-          category="HieightMaps"/>                                   
+          category="HieightMaps"/>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="gameObjectType">
-        <xs:sequence>          
+        <xs:sequence>
           <xs:element name="layerMap" type="layerMapType" minOccurs="0" maxOccurs="unbounded" />
-          <xs:element name="decorationMap" type="decorationMapType" minOccurs="0" maxOccurs="unbounded"/>          
-        </xs:sequence>        
-        <xs:attribute name="cellSize" type="xs:float" default="1"/>        
+          <xs:element name="decorationMap" type="decorationMapType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="cellSize" type="xs:float" default="1"/>
         <xs:attribute name="heightMap" type="xs:anyURI"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-    
+
   <!--  sample resource (asset) meta-data types   -->
   <xs:complexType name="resourceMetadataType">
     <xs:annotation>
@@ -769,16 +769,16 @@
   <xs:element name="resourceMetadata" type="resourceMetadataType"/>
 
   <!-- end of asset metadata -->
-  
-  
+
+
   <!-- statemachine plugin -->
-  
+
   <xs:complexType name="stateMachineRefType">
     <xs:annotation>
       <xs:appinfo>
         <sce.atf.referenceConstraint validResourceFileExts =".stmproj"/>
       </xs:appinfo>
-    </xs:annotation>    
+    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="resourceReferenceType">
         <xs:sequence>

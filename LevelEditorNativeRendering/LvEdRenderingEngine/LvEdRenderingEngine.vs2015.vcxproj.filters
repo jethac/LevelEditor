@@ -417,7 +417,9 @@
     <ClInclude Include="GobSystem\SpinnerComponent.h">
       <Filter>GobSystem</Filter>
     </ClInclude>
-    <ClInclude Include="GobSystem\Tank\ItemPopPointGob.h" />
+    <ClInclude Include="GobSystem\Tank\ItemPopPointGob.h">
+      <Filter>GobSystem\Tank</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -752,7 +754,9 @@
     <ClCompile Include="GobSystem\SpinnerComponent.cpp">
       <Filter>GobSystem</Filter>
     </ClCompile>
-    <ClCompile Include="GobSystem\Tank\ItemPopPointGob.cpp" />
+    <ClCompile Include="GobSystem\Tank\ItemPopPointGob.cpp">
+      <Filter>GobSystem\Tank</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GobSystem">

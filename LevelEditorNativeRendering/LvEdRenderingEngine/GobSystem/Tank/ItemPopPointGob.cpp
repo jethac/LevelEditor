@@ -1,15 +1,35 @@
 #include "ItemPopPointGob.h"
+#include "../../Renderer/Model.h"
+#include "../../Renderer/ShapeLib.h"
+#include "../../Renderer/TextureLib.h"
 
 using namespace LvEdEngine;
 
-// virtual
-void ItemPopPointGob::SetupRenderable( RenderableNode* r, RenderContext* context )
+void ItemPopPointGob::GetRenderables(RenderableNodeCollector* collector, RenderContext* context)
 {
-	PrimitiveShapeGob::SetupRenderable( r, context );
-	SetColor( 0xFFFFFF00 ); // Yellow
+	if (!IsVisible(context->Cam().GetFrustum()))
+		return;
 
-	// Arrange cube's position
-	Matrix trans_y = Matrix::CreateTranslation( 0.0f, 0.5f, 0.0f );
-	r->WorldXform = trans_y * r->WorldXform;
+	// Marker node.
+	RenderableNode marker_node;
+	GameObject::SetupRenderable(&marker_node, context);
+
+	marker_node.mesh = m_meshQuad;
+	ConvertColor(0xFFFFFF00, &marker_node.diffuse);
+	LvEdEngine::Texture* pTeamTexture = TextureLib::Inst()->GetByName(L"fa-cube.png");
+#ifdef _DEBUG
+	assert(pTeamTexture != nullptr);
+#endif
+	marker_node.textures[TextureType::DIFFUSE] = pTeamTexture;
+
+	float3 objectPos = &m_world.M41;
+	Camera& cam = context->Cam();
+	Matrix billboard = Matrix::CreateBillboard(objectPos, cam.CamPos(), cam.CamUp(), cam.CamLook());
+	Matrix scale = Matrix::CreateScale(2.0f);
+	Matrix tx = Matrix::CreateTranslation(0, 1.0f, 0);
+	marker_node.WorldXform = scale * tx * billboard;
+
+	RenderFlagsEnum flags = RenderFlags::Textured;
+	collector->Add(marker_node, flags, Shaders::BillboardShader);
 }
 
