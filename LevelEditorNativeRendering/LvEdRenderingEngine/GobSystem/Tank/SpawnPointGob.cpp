@@ -36,7 +36,7 @@ void SpawnPointGob::GetRenderables(RenderableNodeCollector* collector, RenderCon
 
 	marker_node.mesh = m_meshQuad;
 	marker_node.diffuse = mColor;
-	LvEdEngine::Texture* pTeamTexture = TextureLib::Inst()->GetByName(L"marker.png");
+	LvEdEngine::Texture* pTeamTexture = TextureLib::Inst()->GetByName(L"fa-user.png");
 #ifdef _DEBUG
 	assert(pTeamTexture != nullptr);
 #endif

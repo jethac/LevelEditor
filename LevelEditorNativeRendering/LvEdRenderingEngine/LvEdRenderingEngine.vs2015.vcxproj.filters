@@ -61,7 +61,13 @@
     <None Include="Shaders\BasicRenderer.hlsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Resources\marker.png">
+    <None Include="Resources\fa-user.png">
+      <Filter>Shaders\Resources</Filter>
+    </None>
+    <None Include="Resources\fa-cube.png">
+      <Filter>Shaders\Resources</Filter>
+    </None>
+    <None Include="Resources\fa-map-marker.png">
       <Filter>Shaders\Resources</Filter>
     </None>
   </ItemGroup>

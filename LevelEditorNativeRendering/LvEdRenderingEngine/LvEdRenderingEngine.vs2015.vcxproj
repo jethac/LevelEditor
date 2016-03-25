@@ -390,7 +390,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\marker.png" />
+    <None Include="Resources\fa-cube.png" />
+    <None Include="Resources\fa-map-marker.png" />
+    <None Include="Resources\fa-user.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
