@@ -47,8 +47,7 @@ private:
     {
         Matrix worldXform;
         Matrix textureXForm;
-        float intensity;
-        float3 pad;
+        float4 color;
     };
 
     ID3D11VertexShader*     m_vertexShader;
