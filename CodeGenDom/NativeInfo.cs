@@ -75,42 +75,45 @@ namespace DomGen
     {
         public NativePropertyInfo(XmlElement elm)
         {
-            string nativeName = elm.GetAttribute(SchemaStrings.NativeName);
-            string nativeType = elm.GetAttribute(SchemaStrings.NativeType);
-            string access = elm.GetAttribute(SchemaStrings.Access);
-            bool canSet = access.Contains(SchemaStrings.Set);
-            bool canGet = access.Contains(SchemaStrings.Get);
-            m_name = nativeName;
-            m_type = nativeType;
-            m_access = access;
-            m_setable = canSet;
-            m_getable = canGet;
+            NativeName = elm.GetAttribute(SchemaStrings.NativeName);
+            NativeType = elm.GetAttribute(SchemaStrings.NativeType);
+            Access = elm.GetAttribute(SchemaStrings.Access);
+
+            bool canSet = true;
+            bool canGet = true;
+            if (!String.IsNullOrEmpty(Access))
+            {
+                canSet = Access.Contains(SchemaStrings.Set);
+                canGet = Access.Contains(SchemaStrings.Get);
+            }
+            Setable = canSet;
+            Getable = canGet;
 
         }
-        private string m_name;
         public string NativeName
         {
-            get { return m_name; }
+            get;
+            private set;
         }
-        private string m_type;
         public string NativeType
         {
-            get { return m_type; }
+            get;
+            private set;
         }
-        private string m_access;
         public string Access
         {
-            get { return m_access; }
+            get;
+            private set;
         }
-        private bool m_setable;
         public bool Setable
         {
-            get { return m_setable; }
+            get;
+            private set;
         }
-        private bool m_getable;
         public bool Getable
         {
-            get { return m_getable; }
+            get;
+            private set;
         }
 
     }
