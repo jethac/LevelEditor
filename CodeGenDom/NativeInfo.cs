@@ -145,14 +145,12 @@ namespace DomGen
         public List<NativePropertyInfo> Properties
         {
             get { return m_properties; }
-            set { }
         }
 
         private List<NativeListInfo> m_lists;
         public List<NativeListInfo> Lists
         {
             get { return m_lists; }
-            set { }
         }
 
     }
