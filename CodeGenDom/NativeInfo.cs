@@ -123,23 +123,21 @@ namespace DomGen
     {
         public NativeClassInfo(XmlElement element, bool abstractType)
         {
-            m_name = element.GetAttribute(SchemaStrings.NativeName);
-            m_abstract = abstractType;
+            NativeName = element.GetAttribute(SchemaStrings.NativeName);
+            Abstract = abstractType;
             m_properties = new List<NativePropertyInfo>();
             m_lists = new List<NativeListInfo>();
         }
-
-        private string m_name;
+        
         public string NativeName
         {
-            get { return m_name;  }
-            set { }
+            get;
+            private set;
         }
-        private bool m_abstract;
         public bool Abstract
         {
-            get { return m_abstract; }
-            set { }
+            get;
+            private set;
         }
 
 
