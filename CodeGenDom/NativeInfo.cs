@@ -8,7 +8,7 @@ using Sce.Atf.Dom;
 
 namespace DomGen
 {
-    // strings found in the .xsd file and those added as tags to the DOM objects
+    // Strings found in the .xsd file and those added as tags to the DOM objects.
     public static class SchemaStrings
     {
         public const string LegeNativeType = "LeGe.NativeType";
@@ -115,8 +115,8 @@ namespace DomGen
 
     }
 
-    // a native class in a class that can be instantiated by the native code.
-    // The class info stores the name of the class as well as inforamtion 
+    // A native class in a class that can be instantiated by the native code.
+    // The class info stores the name of the class as well as information 
     // about all the native properties and lists.
     public class NativeClassInfo
     {
@@ -158,7 +158,7 @@ namespace DomGen
 
     }
 
-    // the native schema info contains all the inforation about 
+    // The native schema info contains all the information about 
     // classes, properties and list supported by the native code.
     public class NativeSchemaInfo
     {
