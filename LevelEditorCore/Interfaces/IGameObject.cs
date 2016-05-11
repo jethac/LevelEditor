@@ -6,7 +6,9 @@ namespace LevelEditorCore
     /// Interface for game objects</summary>
     public interface IGameObject : ITransformable, INameable, IVisible,ILockable, IListable
     {
-        // todo, add IGame GetGame()
-        // returns the game that owns this gameobject or null.
+        /// <summary>
+        /// Gets the game that owns this game object.</summary>
+        /// <returns>The game that owns this game object, or null if this object isn't owned.</returns>
+        IGame GetGame();
     }
 }
