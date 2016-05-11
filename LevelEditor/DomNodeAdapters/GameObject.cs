@@ -1,10 +1,12 @@
 //Copyright © 2014 Sony Computer Entertainment America LLC. See License.txt.
 
+using System.Linq;
 
 using LevelEditorCore;
 
 using Sce.Atf;
 using Sce.Atf.Applications;
+using Sce.Atf.Adaptation;
 using Sce.Atf.Dom;
 using Sce.Atf.VectorMath;
 
@@ -159,6 +161,24 @@ namespace LevelEditor.DomNodeAdapters
         }
       
         #endregion          
+
+        #region IGameObject Members
+        /// <summary>
+        /// Gets the game that owns this game object.</summary>
+        /// <returns>The game that owns this game object, or null if this object isn't owned.</returns>
+        IGame IGameObject.GetGame()
+        {
+            IGame game = null;
+
+            var lineage = DomNode.Lineage;
+            if (lineage?.Count(dn => dn.As<IGame>() != null) > 0)
+            {
+                game = lineage.First(dn => dn.As<IGame>() != null)?.As<IGame>();
+            }
+
+            return game;
+        }
+        #endregion
     }
    
 }
