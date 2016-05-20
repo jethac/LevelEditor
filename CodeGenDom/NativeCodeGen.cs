@@ -186,8 +186,26 @@ namespace DomGen
                 WriteLine(sb, "    {0}* instance = reinterpret_cast<{0}*>(instanceId);", classInfo.NativeName);
                 WriteLine(sb, "    static {0} localData;", info.NativeType);
                 WriteLine(sb, "    localData = instance->Get{0}();", info.NativeName);
-                WriteLine(sb, "    *data = (void*)&localData;");
-                WriteLine(sb, "    *size = sizeof(localData);");
+
+                // need special handling for strings and wide strings here,
+                // or you'll end up trying to marshal the memory address
+                // instead of the contents into a managed string downstream
+                switch(info.NativeType)
+                {
+                    case "wchar_t*":
+                        WriteLine(sb, "    *data = (void*)localData;");
+                        WriteLine(sb, "    *size = wcslen(localData);");
+                        break;
+                    case "char*":
+                        WriteLine(sb, "    *data = (void*)localData;");
+                        WriteLine(sb, "    *size = strlen(localData);");
+                        break;
+
+                    default:
+                        WriteLine(sb, "    *data = (void*)&localData;");
+                        WriteLine(sb, "    *size = sizeof(localData);");
+                        break;
+                }
                 WriteLine(sb, "}}");
             }
         }
