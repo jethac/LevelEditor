@@ -8,7 +8,7 @@ using Sce.Atf.Dom;
 
 namespace DomGen
 {
-    // strings found in the .xsd file and those added as tags to the DOM objects
+    // Strings found in the .xsd file and those added as tags to the DOM objects.
     public static class SchemaStrings
     {
         public const string LegeNativeType = "LeGe.NativeType";
@@ -27,46 +27,44 @@ namespace DomGen
     {
         public NativeListInfo(XmlElement elm)
         {
-            string name = elm.GetAttribute(SchemaStrings.NativeName);
-            string type = elm.GetAttribute(SchemaStrings.NativeType);
-            string access = elm.GetAttribute(SchemaStrings.Access);
+            NativeName = elm.GetAttribute(SchemaStrings.NativeName);
+            NativeType = elm.GetAttribute(SchemaStrings.NativeType);
+            Access = elm.GetAttribute(SchemaStrings.Access);
+
             bool canSet = true; 
             bool canGet = true;
-            if (null != access)
+            if (!String.IsNullOrEmpty(Access))
             {
-                canSet = access.Contains(SchemaStrings.Set);
-                canGet = access.Contains(SchemaStrings.Get);
+                canSet = Access.Contains(SchemaStrings.Set);
+                canGet = Access.Contains(SchemaStrings.Get);
             }
-            m_name = name;
-            m_type = type;
-            m_access = access;
-            m_setable = canSet;
-            m_getable = canGet;
+            Setable = canSet;
+            Getable = canGet;
         }
-        private string m_name;
         public string NativeName
         {
-            get { return m_name; }
+            get;
+            private set;
         }
-        private string m_type;
         public string NativeType
         {
-            get { return m_type; }
+            get;
+            private set;
         }
-        private string m_access;
         public string Access
         {
-            get { return m_access; }
+            get;
+            private set;
         }
-        private bool m_setable;
         public bool Setable
         {
-            get { return m_setable; }
+            get;
+            private set;
         }
-        private bool m_getable;
         public bool Getable
         {
-            get { return m_getable; }
+            get;
+            private set;
         }
     }
 
@@ -75,70 +73,71 @@ namespace DomGen
     {
         public NativePropertyInfo(XmlElement elm)
         {
-            string nativeName = elm.GetAttribute(SchemaStrings.NativeName);
-            string nativeType = elm.GetAttribute(SchemaStrings.NativeType);
-            string access = elm.GetAttribute(SchemaStrings.Access);
-            bool canSet = access.Contains(SchemaStrings.Set);
-            bool canGet = access.Contains(SchemaStrings.Get);
-            m_name = nativeName;
-            m_type = nativeType;
-            m_access = access;
-            m_setable = canSet;
-            m_getable = canGet;
+            NativeName = elm.GetAttribute(SchemaStrings.NativeName);
+            NativeType = elm.GetAttribute(SchemaStrings.NativeType);
+            Access = elm.GetAttribute(SchemaStrings.Access);
+
+            bool canSet = true;
+            bool canGet = true;
+            if (!String.IsNullOrEmpty(Access))
+            {
+                canSet = Access.Contains(SchemaStrings.Set);
+                canGet = Access.Contains(SchemaStrings.Get);
+            }
+            Setable = canSet;
+            Getable = canGet;
 
         }
-        private string m_name;
         public string NativeName
         {
-            get { return m_name; }
+            get;
+            private set;
         }
-        private string m_type;
         public string NativeType
         {
-            get { return m_type; }
+            get;
+            private set;
         }
-        private string m_access;
         public string Access
         {
-            get { return m_access; }
+            get;
+            private set;
         }
-        private bool m_setable;
         public bool Setable
         {
-            get { return m_setable; }
+            get;
+            private set;
         }
-        private bool m_getable;
         public bool Getable
         {
-            get { return m_getable; }
+            get;
+            private set;
         }
 
     }
 
-    // a native class in a class that can be instantiated by the native code.
-    // The class info stores the name of the class as well as inforamtion 
+    // A native class in a class that can be instantiated by the native code.
+    // The class info stores the name of the class as well as information 
     // about all the native properties and lists.
     public class NativeClassInfo
     {
         public NativeClassInfo(XmlElement element, bool abstractType)
         {
-            m_name = element.GetAttribute(SchemaStrings.NativeName);
-            m_abstract = abstractType;
+            NativeName = element.GetAttribute(SchemaStrings.NativeName);
+            Abstract = abstractType;
             m_properties = new List<NativePropertyInfo>();
             m_lists = new List<NativeListInfo>();
         }
-
-        private string m_name;
+        
         public string NativeName
         {
-            get { return m_name;  }
-            set { }
+            get;
+            private set;
         }
-        private bool m_abstract;
         public bool Abstract
         {
-            get { return m_abstract; }
-            set { }
+            get;
+            private set;
         }
 
 
@@ -146,19 +145,17 @@ namespace DomGen
         public List<NativePropertyInfo> Properties
         {
             get { return m_properties; }
-            set { }
         }
 
         private List<NativeListInfo> m_lists;
         public List<NativeListInfo> Lists
         {
             get { return m_lists; }
-            set { }
         }
 
     }
 
-    // the native schema info contains all the inforation about 
+    // The native schema info contains all the information about 
     // classes, properties and list supported by the native code.
     public class NativeSchemaInfo
     {
